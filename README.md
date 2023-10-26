@@ -6,7 +6,7 @@ This is a Bayesian model for estimating foodborne exposures based on dietary dat
 
 Read the full paper: https://www.mdpi.com/2304-8158/10/11/2520
 
-# Instructions
+## Instructions
 1. First install R, RStudio and OpenBUGS to your computer.
 
 https://posit.co/download/rstudio-desktop/
@@ -18,7 +18,7 @@ https://www.mrc-bsu.cam.ac.uk/software/bugs/openbugs/
 4. Install R-packages as needed.
 5. Run the app.
 
-# Cite BIKE app: 
+## Cite BIKE app: 
 Ranta J, Marinova-Todorova M, Mikkelä A, Suomi J, Tuominen P 2023. BIKE foodborne exposure model - A graphical user interface for the Bayesian dietary exposure assessment model for microbiological and chemical hazards (BIKE). Finnish Food Authority, Helsinki, Finland. Available at https://bike-expo-shiny.rahtiapp.fi/
 
 
