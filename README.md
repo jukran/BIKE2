@@ -18,4 +18,6 @@ https://www.mrc-bsu.cam.ac.uk/software/bugs/openbugs/
 4. Install R-packages as needed.
 5. Run the app.
 
+Cite BIKE app: Ranta J, Marinova-Todorova M, Mikkelä A, Suomi J, Tuominen P 2023. BIKE foodborne exposure model - A graphical user interface for the Bayesian dietary exposure assessment model for microbiological and chemical hazards (BIKE). Finnish Food Authority, Helsinki, Finland. Available at https://bike-expo-shiny.rahtiapp.fi/
+
 
