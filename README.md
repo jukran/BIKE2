@@ -8,9 +8,14 @@ Read the full paper: https://www.mdpi.com/2304-8158/10/11/2520
 
 # Instructions
 1. First install R, RStudio and OpenBUGS to your computer.
+
 https://posit.co/download/rstudio-desktop/
+
 https://www.mrc-bsu.cam.ac.uk/software/bugs/openbugs/
 
-2. Then install R-packages as needed.
+3. Download the BIKE-code files and unzip in local folder.
+4. Open the app.R file in RStudio.
+5. Install R-packages as needed.
+6. Run the app.
 
 
