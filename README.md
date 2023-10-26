@@ -13,9 +13,9 @@ https://posit.co/download/rstudio-desktop/
 
 https://www.mrc-bsu.cam.ac.uk/software/bugs/openbugs/
 
-3. Download the BIKE-code files and unzip in local folder.
-4. Open the app.R file in RStudio.
-5. Install R-packages as needed.
-6. Run the app.
+2. Download the BIKE-code files and unzip in local folder.
+3. Open the app.R file in RStudio.
+4. Install R-packages as needed.
+5. Run the app.
 
 
