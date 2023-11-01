@@ -406,7 +406,7 @@ if (is.null(params$plot51)){cat('**The plot was not generated in the app.**')} e
 
 <br />
 
-$Figure$ $5a$ Permuted MCMC samples of model parameters $mu$ and $sigma$ of the log-normal ($mu$, $sigma$)-distribution, and prevalence $q$ of the **hazard**. For each parameter, also the estimated marginal posterior distribution is shown sideways along the y-axis.
+$Figure$ $5a$ Permuted MCMC samples of model parameters $mu$ and $sigma$ of the log-normal ($mu$, $sigma$)-distribution, and prevalence $q$ of the **hazard**. For each parameter, also the approximated marginal probability density is shown.
 
 ------------------------------------------------------------------------
 
@@ -422,14 +422,14 @@ if (is.null(params$plot52)){cat('**The plot was not generated in the app.**')} e
 
 <br />
 
-$Figure$ $5b$ Permuted MCMC samples of model parameters $mu$ and $sigma$ of the log-normal ($mu$, $sigma$)-distribution, and consumption frequency $p$ of the **food**. For each parameter, also the estimated marginal posterior distribution is shown sideways along the y-axis.
+$Figure$ $5b$ Permuted MCMC samples of model parameters $mu$ and $sigma$ of the log-normal ($mu$, $sigma$)-distribution, and consumption frequency $p$ of the **food**. For each parameter, also the approximated marginal probability density is shown.
 
 :::
 
 ::: {.col data-latex="{0.4\\textwidth}" style="background-color: #F4F3F2;"}
 
 > <br>
-> The posterior distribution is computed using **Markov Chain Monte Carlo (MCMC)** sampling. In MCMC, each iteration step depends on the values generated at the previous step. This sampling converges to the correct target distribution which is the posterior distribution of all unknown parameters. In difficulties, the posterior may be nearly flat or with multiple peaks. This, and/or insufficient iterations may then result into poor convergence, and the obtained parameter estimates would not be valid. Poor convergence and poor mixing of the algorithm could be detected as instability in the parameter distributions. The MCMC sample of the parameters, and the marginal posterior distribution are provided for critical inspection. Although a visual inspection is informal and indicative, it can reveal problems in MCMC sampling. The sample should look smoothly scattered without clustering at some values only. The marginal probability density (plotted vertically on the left side) should look smooth without ‘extra bumps’. New or increased MCMC runs should lead to same results. If a possible problem is detected, increase MCMC iterations and/or investigate whether there are simply insufficient data for the parameter to be well estimated. Note also that the full joint distribution is a multidimensional distribution which cannot be pictured and these plots only show marginal one-dimensional distributions for each parameter, like shadows of the multidimensional distribution. The parameter samples can be viewed for both the concentration distributions and consumption distributions. The values at the peaks of those distributions could also be compared with the corresponding parameter estimates directly evaluated from raw (log-)data, e.g., mean and standard deviation, although censored data can make direct comparison less straightforward.
+> The posterior distribution is computed using **Markov Chain Monte Carlo (MCMC)** sampling. In MCMC, each iteration step depends on the values generated at the previous step. This sampling converges to the correct target distribution which is the posterior distribution of all unknown parameters. In difficulties, the posterior may be nearly flat or with multiple peaks. This, and/or insufficient iterations may then result into poor convergence, and the obtained parameter estimates would not be valid. Poor convergence and poor mixing of the algorithm could be detected as instability in the parameter distributions. The MCMC sample of the parameters, and the marginal posterior distribution are provided for critical inspection. Although a visual inspection is informal and indicative, it can reveal problems in MCMC sampling. The sample should look smoothly scattered without clustering at some values only. The marginal probability density should look smooth without ‘extra bumps’. New or increased MCMC runs should lead to same results. If a possible problem is detected, increase MCMC iterations and/or investigate whether there are simply insufficient data for the parameter to be well estimated. Note also that the full joint distribution is a multidimensional distribution which cannot be pictured and these plots only show marginal one-dimensional distributions for each parameter, like shadows of the multidimensional distribution. The parameter samples can be viewed for both the concentration distributions and consumption distributions. The values at the peaks of those distributions could also be compared with the corresponding parameter estimates directly evaluated from raw (log-)data, e.g., mean and standard deviation, although censored data can make direct comparison less straightforward.
 
 :::
 :::
@@ -438,35 +438,6 @@ $Figure$ $5b$ Permuted MCMC samples of model parameters $mu$ and $sigma$ of the 
 
 
 ## [Tables]{style="color: #004F71"}
-### [**Exposure limit analysis**]{style="color: #004F71"}
-
-Exposure limit analysis presents the part of the population (1 = 100%) with exposure below the limit given in the Occurrence dataset. The estimate is given for all days and for days with only positive consumption of contaminated food. The exposure limit can be set as a health based guidance value, for example tolerable daily intake TDI. Note that the exposure calculated by BIKE is in units per day (per bodyweight or as absolute), and thus a health based guidance value given in units per a longer time period  should be adjusted  to units per day before uploading data.
-
-
-```{r limits-table, echo = F}
-
-datatable(params$resultProbs, rownames = FALSE,
-          caption = "Exposure limit analysis",
-                    class = 'row-border stripe',
-                    extensions = c("Buttons", "RowGroup"),
-                    options = list(
-                      rowGroup = list(dataSrc = 0), # row grouping feature -> grouped by second column value 
-                     
-                      dom = "Bfrtip",
-                      buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
-                                          exportOptions = list(columns = ":visible"),
-                                            filename =  paste("Exposure_limit_analysis"))
-                      ),
-                      
-                      paging=FALSE, scrollY = "480px"
-                    )
-      )
-            
-```
-
-<br /> <br />
-
-<hr />
 
 ### [**Posterior predictive distributions**]{style="color: #004F71"}
 
@@ -486,6 +457,39 @@ datatable(params$resultValues, rownames = FALSE,
                       buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
                                           exportOptions = list(columns = ":visible"),
                                           filename =  paste("Posterior_predictive_distribution_summaries"))
+                      ),
+                      
+                      paging=FALSE, scrollY = "480px"
+                    )
+      )
+            
+```
+
+<br /> <br />
+
+<hr />
+
+### [**Exposure limit analysis**]{style="color: #004F71"}
+
+Exposure limit analysis presents the part of the population (1 = 100%) with exposure below the limit given in the Occurrence dataset. The estimate is given for all days and for days with only positive consumption of contaminated food. The exposure limit can be set as a health based guidance value, for example tolerable daily intake TDI. Note that the exposure calculated by BIKE is in units per day (per bodyweight or as absolute), and thus a health based guidance value given in units per a longer time period  should be adjusted  to units per day before uploading data.
+
+The columns Q05, Q50, Q95 refer to uncertainty quantiles for the 'Quantity' in first column. The 'Quantity' Q95(exposure) refer to the unknown quantiles of variability distribution. This becomes estimated with the indicated uncertainty quantiles Q05, Q50, Q95.
+
+
+
+```{r limits-table, echo = F}
+
+datatable(params$resultProbs, rownames = FALSE,
+          caption = "Exposure limit analysis",
+                    class = 'row-border stripe',
+                    extensions = c("Buttons", "RowGroup"),
+                    options = list(
+                      rowGroup = list(dataSrc = 0), # row grouping feature -> grouped by second column value 
+                     
+                      dom = "Bfrtip",
+                      buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
+                                          exportOptions = list(columns = ":visible"),
+                                            filename =  paste("Exposure_limit_analysis"))
                       ),
                       
                       paging=FALSE, scrollY = "480px"

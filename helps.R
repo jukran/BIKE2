@@ -234,7 +234,7 @@ help_limits <- function(){
              "",
              "From the defined critical exposure limits for the hazards in the input data,  
              <b>P(exposure < LIMIT)</b> is calculated for the selected hazard-food pairs. The table also contains the
-             related results of the exposure Quantile Q95 estimate presented with its uncertainty 
+             related results of the exposure Quantile <b>Q95(exposure)</b> estimate presented with its uncertainty 
              median (Q50%) and its uncertainty interval Q5%-Q95%.",
              "",
              "<b>Note:</b> The selection only specifies which results are processed as outputs, i.e., a new selection 

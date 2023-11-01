@@ -21,6 +21,7 @@ library(rmarkdown)
 
 
 
+
 source("helps.R")
 
 
@@ -335,7 +336,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                          tags$br(),
                                                          
                                                          textOutput("food_hazad_comb_na_1"),
-                                                         hidden(textOutput("plot1text")),
+                                                         hidden(htmlOutput("plot1text")),
                                                          plotOutput("distPlot1", width = "100%", height = "650px"),
                                                          
                                                          tags$br(),
@@ -352,7 +353,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                            tabPanel(
                                                              "Consumptions",
                                                              tags$br(),
-                                                             hidden(textOutput("plot2text")),
+                                                             hidden(htmlOutput("plot2text")),
                                                              plotOutput("distPlot2", width = "100%", height = "650px"),
                                                              
                                                              tags$br(),
@@ -366,7 +367,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                              value = "serveCor",
                                                              tags$br(),
                                                              textOutput("thefoodname_need6"),
-                                                             hidden(textOutput("plot6text")),
+                                                             hidden(htmlOutput("plot6text")),
                                                              plotOutput("distPlot6", width = "100%", height = "650px"),
                                                              
                                                              tags$br(),
@@ -379,7 +380,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                              value = "mserveCor",
                                                              tags$br(),
                                                              textOutput("thefoodname_need7"),
-                                                             hidden(textOutput("plot7text")),
+                                                             hidden(htmlOutput("plot7text")),
                                                              plotOutput("distPlot7", width = "100%", height = "650px"),
                                                              
                                                              tags$br(),
@@ -402,7 +403,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                                     tabPanel(
                                                                       "Exposures",
                                                                       tags$br(),
-                                                                      hidden(textOutput("plot3text")),
+                                                                      hidden(htmlOutput("plot3text")),
                                                                       plotOutput("distPlot3", width = "100%", height = "650px"),
                                                                       
                                                                       tags$br(),
@@ -413,7 +414,11 @@ ui <- navbarPage(id ="bike_tabs",
                                                                       "Quantiles",
                                                                       tags$br(),
                                                                       textOutput("thefoodname_need4"),
-                                                                      hidden(textOutput("plot4text")),
+                                                                      hidden(htmlOutput("plot4text")),
+                                                                        hidden(htmlOutput("plot4gen")),
+                                                                      tags$style("#plot4gen{color: #D0006F;}"),
+                                                                      actionButton("generateP4", "Generate plot"),
+                                                                      tags$hr(),
                                                                       plotOutput("distPlot4", width = "100%", height = "650px"),
                                                                       
                                                                       tags$br(),
@@ -466,7 +471,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                            tabPanel(
                                                              "Concentration parameters",
                                                              tags$br(),
-                                                             hidden(textOutput("plot5text")),
+                                                             hidden(htmlOutput("plot5text")),
                                                              plotOutput("distPlot5", width = "100%", height = "650px"),
                                                              
                                                              tags$br(),
@@ -476,7 +481,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                            tabPanel(
                                                              "Consumption parameters",
                                                              tags$br(),
-                                                             hidden(textOutput("plot52text")),
+                                                             hidden(htmlOutput("plot52text")),
                                                              plotOutput("distPlot52", width = "100%", height = "650px"),
                                                              
                                                              tags$br(),
@@ -486,6 +491,30 @@ ui <- navbarPage(id ="bike_tabs",
                                                          )
                                                        ),
                                                        ## tables----
+                                                       tabPanel(
+                                                         "Posterior summaries", icon = icon("table"),
+                                                         value = "summaryTab",
+                                                         tags$br(),
+                                                         fluidRow(
+                                                           h5(strong(
+                                                             "POSTERIOR PREDICTIVE DISTRIBUTION SUMMARIES", 
+                                                             style ="color:#004F71"
+                                                           )),
+                                                           
+                                                           tags$br(),
+                                                           hidden(htmlOutput("table1text")),
+                                                           hidden(htmlOutput("table1text_generate")),
+                                                           tags$style("#table1text_generate{color: #D0006F;}"),
+                                                           textOutput("resultsview_need"),
+                                                           actionButton("generateTposter", "Generate table"),
+                                                           tags$hr(),
+                                                           DT::DTOutput("values"),     # posterior predictive quantiles table
+                                                           tags$br(),
+                                                           htmlOutput("table1_cap"),
+                                                           tags$hr()
+                                                         )
+                                                         
+                                                       ),
                                                        tabPanel(
                                                          "Exposure limit", icon = icon("table"),
                                                          value = "limitsTab",
@@ -497,32 +526,18 @@ ui <- navbarPage(id ="bike_tabs",
                                                            )),
                                                            
                                                            tags$br(),
-                                                           hidden(textOutput("table2text")),
-                                                           hidden(textOutput("table2text_generate")),
-                                                           DT::DTOutput("pvalues")     # exposure limit analysis table
-                                                           
-                                                         )
-                                                       ),
-                                                       tabPanel(
-                                                         "Summary table", icon = icon("table"),
-                                                         value = "summaryTab",
-                                                         tags$br(),
-                                                         fluidRow(
-                                                           h5(strong(
-                                                             "POSTERIOR PREDICTIVE DISTRIBUTION SUMMARIES", 
-                                                             style ="color:#004F71"
-                                                           )),
-                                                           
+                                                           hidden(htmlOutput("table2text")),
+                                                           hidden(htmlOutput("table2text_generate")),
+                                                           tags$style("#table2text_generate{color: #D0006F;}"),
+                                                           actionButton("generateTlimit", "Generate table"),
+                                                           tags$hr(),
+                                                           DT::DTOutput("pvalues"),     # exposure limit analysis table
                                                            tags$br(),
-                                                           hidden(textOutput("table1text")),
-                                                           hidden(textOutput("table1text_generate")),
-                                                           textOutput("resultsview_need"),
-                                                           DT::DTOutput("values")     # posterior predictive quantiles table
-                                                           
-                                                           
+                                                           htmlOutput("table2_cap"),
+                                                           tags$hr()
                                                          )
-                                                         
                                                        ),
+                                                       
                                                        ## download report----
                                                        tabPanel(
                                                          "Download report",icon = icon("file"),
@@ -535,7 +550,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                            htmlOutput("reportDLtext"),
                                                            downloadButton("report", "Report"),
                                                            helpText(strong("In order for the report to contain all figures in the correct format, each figure should be visualized in the app right before downloading.
-                                              The tables also should be generated."))
+                                              The tables also should be generated."), style = "text-align:left;color:#D0006F")
                                                            
                                                          ))
                                                          
@@ -1206,7 +1221,7 @@ proportion of contaminated food items."
                                        )),
                               tabPanel("How to cite?", 
                                        wellPanel(
-                                         
+                                         tags$p(h4("Provisional title")),
                                          tags$p("Ranta J, Marinova-Todorova M, Mikkelä A, Suomi J, Tuominen P 2023. 
                                  BIKE foodborne exposure model - A graphical user interface for 
                                  the Bayesian dietary exposure assessment model for microbiological and chemical hazards (BIKE). 
@@ -2168,7 +2183,7 @@ source("observers.R", local = TRUE)
   
   ## Plot 4, quantiles----
   
-  distPlot4_1_1 <- reactive({ 
+  distPlot4_1_1 <- eventReactive(input$generateP4, { 
     req(currentresults())
     ocdata <- as.data.frame(ocdata())
     data1 <- data1()
@@ -2282,14 +2297,14 @@ source("observers.R", local = TRUE)
   })
   
   
-  
+ 
   output$distPlot4 <- renderPlot({
     withProgress(message = '2D simulation in progress...',
                  value = 0.1, {
     distPlot4_1_1()
   })
   })
-  
+ 
   
   output$plot4_cap <- renderText({
     req(distPlot4_1_1())
@@ -2300,7 +2315,7 @@ source("observers.R", local = TRUE)
           distribution for the selected variability quantile is shown between vertical bars (and is subject
           to Monte Carlo error of 2D simulations).")
   })
-  
+   
   
   
   
@@ -2380,8 +2395,8 @@ source("observers.R", local = TRUE)
   output$plot51_cap <- renderText({
     req(distPlot5_1_1())
     paste(tags$b("Figure 5a."), "Permuted MCMC samples of model parameters mu and sigma of the log-normal 
-          (", tags$i('mu, sigma'),")-distribution, and prevalence", tags$b(tags$i('q')), "of the", tags$b('hazard'),". For each parameter, also the estimated 
-          marginal posterior distribution is shown sideways along the y-axis.")
+          (", tags$i('mu, sigma'),")-distribution, and prevalence", tags$b(tags$i('q')), "of the", tags$b('hazard'),". 
+          For each parameter, also the approximated marginal probability density is shown.")
   })
   
   
@@ -2437,8 +2452,8 @@ source("observers.R", local = TRUE)
   output$plot52_cap <- renderText({
     req(distPlot5_2_1())
     paste(tags$b("Figure 5b."), "Permuted MCMC samples of model parameters mu and sigma of the log-normal 
-          (", tags$i('mu, sigma'),")-distribution, and consumption frequency", tags$b(tags$i('p')), "of the", tags$b('food'),". For each parameter, also 
-          the estimated marginal posterior distribution is shown sideways along the y-axis.")
+          (", tags$i('mu, sigma'),")-distribution, and consumption frequency", tags$b(tags$i('p')), "of the", tags$b('food'),". 
+          For each parameter, also the approximated marginal probability density is shown.")
   })
   
   
@@ -2451,6 +2466,11 @@ source("observers.R", local = TRUE)
     data1 <- data1()
     results <- currentresults()
     solvedBugs <- solvedBugs()
+    
+    # units for the plot
+    units_food <- units_food()
+    unit_consum <- units_food$unit_consum
+    food_consum <- units_food$food_consum
     
     foodnamesused <- input$thefoodnames21
     input_modelchoice4 <- input$modelchoice4 
@@ -2474,7 +2494,7 @@ source("observers.R", local = TRUE)
         
         
         
-        distPlot6_1(n_sim, input_modelchoice4, input_modelchoice3, foodnamesused,
+        distPlot6_1(food_consum, unit_consum, n_sim, input_modelchoice4, input_modelchoice3, foodnamesused,
                     nfused, foodindex,nr,nd,nf,logsw,
                     mus0,
                     Ss,Ss0
@@ -2506,6 +2526,11 @@ source("observers.R", local = TRUE)
     results <- currentresults()
     solvedBugs <- solvedBugs()
     
+    # units for the plot
+    units_food <- units_food()
+    unit_consum <- units_food$unit_consum
+    food_consum <- units_food$food_consum
+    
     foodnamesused <- input$thefoodnames22
     input_modelchoice3 <- input$modelchoice3
     input_modelchoice4 <- input$modelchoice4
@@ -2527,7 +2552,7 @@ source("observers.R", local = TRUE)
         Ss <- solvedBugs$Ss_m
         Ss0 <- solvedBugs$Ss0_m
         
-        distPlot7_1(n_sim, input_modelchoice4, foodnamesused, nfused, foodindex,
+        distPlot7_1(food_consum, unit_consum, n_sim, input_modelchoice4, foodnamesused, nfused, foodindex,
                     nf,nr,nd,logsw,
                     mus0,
                     Ss,Ss0
@@ -2555,9 +2580,9 @@ source("observers.R", local = TRUE)
   source("tablefunctions.R", local = TRUE)
   
   
-  ## Table 1, summary----
+  ## Table 1, posterior summary----
   
-  resultValues <- reactive({ 
+  resultValues <- eventReactive(input$generateTposter, {
     req(currentresults())
     ocdata <- as.data.frame(ocdata())
     data1 <- data1()
@@ -2682,11 +2707,18 @@ source("observers.R", local = TRUE)
       )
   })
 
-  
+  output$table1_cap <- renderText({
+    req(resultValues())
+    paste(tags$b("Table 1."), "Posterior predictive distributions present predictions where all uncertainties and 
+          variabilities are integrated into one single probability distribution. This can be a useful summary for 
+          assessing what is now probable, given all the data with all its variability and uncertainties. 
+          The distribution is obtained by averaging (weighing) the possible variability distributions over the uncertainty 
+          distribution of their parameters.")
+  })
   
   ## Table 2, exposure limit ----
   
-  resultProbs <- reactive({ 
+  resultProbs <- eventReactive(input$generateTlimit, { 
     req(currentresults())
     ocdata <- as.data.frame(ocdata())
     data1 <- data1()
@@ -2809,6 +2841,14 @@ source("observers.R", local = TRUE)
       )
   }) 
 
+  output$table2_cap <- renderText({
+    req(resultProbs())
+    paste(tags$b("Table 2."), "Exposure limit analysis presents the part of the population (1 = 100%) with exposure below the 
+          limit given in the Occurrence dataset. The estimate is given for all days and for days with only positive consumption 
+          of contaminated food. The columns", tags$b("Q05, Q50, Q95"), "refer to uncertainty quantiles for the 'Quantity' in first column.
+          The 'Quantity'", tags$b(" Q95(exposure)"), "refer to the unknown quantiles of variability distribution.  
+          This becomes estimated with the indicated uncertainty quantiles Q05, Q50, Q95.")
+  })
   
   
   # 6. Report & downloads-------

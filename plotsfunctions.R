@@ -30,8 +30,8 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
       
       for(i in 1:nfused){
         if(nexactK[hazardindexK[h],foodindex[i]]>0){ # this hazard-food is modeled
-          if(input_selectdist=="Density"){
-            if(input_selectscale=="Absolute"){
+          if(input_selectdist=="Density"){ ## density----
+            if(input_selectscale=="Absolute"){ 
               cmeanK <- exp(mucK[,hazardindexK[h],foodindex[i]]+0.5*sigcK[,hazardindexK[h],foodindex[i]]^2)
               cmedianK <- exp(mucK[,hazardindexK[h],foodindex[i]])
               
@@ -39,7 +39,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                0.5,names=FALSE)
               
               plot(density(cmedianK,from=0,to=maxx,n=2048),lwd=3,main=paste(hazardnamesusedK[h],"in",foodnamesused[i]),
-                   xlab=paste("Concentration+ (", Unit1, "per", Unit2,")"),ylab="",xlim=c(0,maxx))
+                   xlab=paste("Concentration+ (", Unit1, "per", Unit2,")"),ylab="Probability density",xlim=c(0,maxx))
               xvalues <- seq(0,maxx,length=100)
               uppervalues <- numeric()
               lowervalues <- numeric()
@@ -69,7 +69,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               minn <- quantile(qnorm(0.05,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
                                0.5,names=FALSE)
               plot(density(mucK[,hazardindexK[h],foodindex[i]]/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(hazardnamesusedK[h],"in",foodnamesused[i]),
-                   xlab=paste("log Concentration+ (", Unit1, "per", Unit2,")"),ylab="",xlim=c(minn/log(10),maxx/log(10))) 
+                   xlab=paste("log Concentration+ (", Unit1, "per", Unit2,")"),ylab="Probability density",xlim=c(minn/log(10),maxx/log(10))) 
               xvalues <- seq(minn/log(10),maxx/log(10),length=100)
               uppervalues <- numeric()
               lowervalues <- numeric()
@@ -94,7 +94,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
             #legend("topright",cex=0.6,paste(c("prev (2.5 %):","prev (50 %):","prev (97.5 %):"),round(quantile(100*pK[,hazardindexK[h],foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  ))  
           } # end of if density
           
-          if(input_selectdist=="Cumulative"){
+          if(input_selectdist=="Cumulative"){ ## cumulative ----
             par(yaxt="s")
             cump <- seq(1,n_sim)
             cump <- cump/length(cump)
@@ -105,7 +105,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               
               cmedianK <- sort(exp(mucK[,hazardindexK[h],foodindex[i]]))
               plot(cmedianK,cump,col="#F7CE3C",lwd=3,main=paste(hazardnamesusedK[h],"in",foodnamesused[i]),
-                   xlab=paste("Concentration+ (", Unit1, "per", Unit2,")"),ylab="",xlim=c(0,maxx),type="l")
+                   xlab=paste("Concentration+ (", Unit1, "per", Unit2,")"),ylab="Cumulative probability",xlim=c(0,maxx),type="l")
               xvalues <- seq(0,maxx*1.1,length=100)
               uppervalues <- numeric()
               lowervalues <- numeric()
@@ -148,7 +148,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               
               
               plot(sort(mucK[,hazardindexK[h],foodindex[i]]/log(10)),cump,lwd=3,main=paste(hazardnamesusedK[h],"in",foodnamesused[i]),
-                   xlab=paste("log Concentration+ (", Unit1, "per", Unit2,")"),ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l") 
+                   xlab=paste("log Concentration+ (", Unit1, "per", Unit2,")"),ylab="Cumulative probability",xlim=c(minn/log(10),maxx/log(10)),type="l") 
               xvalues <- seq(minn/log(10),maxx/log(10),length=100)
               uppervalues <- numeric()
               lowervalues <- numeric()
@@ -220,7 +220,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
       
       for(i in 1:nfused){
         if(nexactM[hazardindexM[h],foodindex[i]]>0){ # this hazard-food is modeled
-          if(input_selectdist=="Density"){
+          if(input_selectdist=="Density"){ ## density----
             if(input_selectscale=="Absolute"){
               cmeanM <- exp(mucM[,hazardindexM[h],foodindex[i]]+0.5*sigcM[,hazardindexM[h],foodindex[i]]^2)
               cmedianM <- exp(mucM[,hazardindexM[h],foodindex[i]])
@@ -229,7 +229,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                0.5,names=FALSE)
               
               plot(density(cmedianM,from=0,to=maxx,n=2048),lwd=3,main=paste(hazardnamesusedM[h],"in",foodnamesused[i]),
-                   xlab=paste("Concentration+ (", Unit1, "per", Unit2,")"),ylab="",xlim=c(0,maxx)) 
+                   xlab=paste("Concentration+ (", Unit1, "per", Unit2,")"),ylab="Probability density",xlim=c(0,maxx)) 
               xvalues <- seq(0,maxx,length=100)
               uppervalues <- numeric()
               lowervalues <- numeric()
@@ -261,7 +261,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                0.5,names=FALSE)
               
               plot(density(mucM[,hazardindexM[h],foodindex[i]]/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(hazardnamesusedM[h],"in",foodnamesused[i]),
-                   xlab=paste("log Concentration+ (", Unit1, "per", Unit2,")"),ylab="",xlim=c(minn/log(10),maxx/log(10))) 
+                   xlab=paste("log Concentration+ (", Unit1, "per", Unit2,")"),ylab="Probability density",xlim=c(minn/log(10),maxx/log(10))) 
               
               xvalues <- seq(minn/log(10),maxx/log(10),length=100)
               uppervalues <- numeric()
@@ -288,7 +288,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
             #legend("topright",cex=0.6,paste(c("prev (2.5 %):","prev (50 %):","prev (97.5 %):"),round(quantile(100*pM[,hazardindexM[h],foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%") ))   
           } # end of if density
           
-          if(input_selectdist=="Cumulative"){
+          if(input_selectdist=="Cumulative"){ ## cumulative ----
             par(yaxt="s")
             cump <- seq(1,n_sim)
             cump <- cump/length(cump)
@@ -301,7 +301,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                0.5,names=FALSE)
               
               plot(cmeanM,cump,col="#F7CE3C",lwd=3,main=paste(hazardnamesusedM[h],"in",foodnamesused[i]),
-                   xlab=paste("Concentration+ (", Unit1, "per", Unit2,")"),ylab="",xlim=c(0,maxx),type="l") 
+                   xlab=paste("Concentration+ (", Unit1, "per", Unit2,")"),ylab="Cumulative probability",xlim=c(0,maxx),type="l") 
               xvalues <- seq(0,maxx*1.1,length=100)
               uppervalues <- numeric()
               lowervalues <- numeric()
@@ -344,7 +344,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                0.5,names=FALSE)
               
               plot(sort(mucM[,hazardindexM[h],foodindex[i]]/log(10)),cump,lwd=3,main=paste(hazardnamesusedM[h],"in",foodnamesused[i]),
-                   xlab=paste("log Concentration+ (", Unit1, "per", Unit2,")"),ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l") 
+                   xlab=paste("log Concentration+ (", Unit1, "per", Unit2,")"),ylab="Cumulative probability",xlim=c(minn/log(10),maxx/log(10)),type="l") 
               xvalues <- seq(minn/log(10),maxx/log(10),length=100)
               uppervalues <- numeric()
               lowervalues <- numeric()
@@ -445,7 +445,7 @@ distPlot2_1 <- function(food_consum, unit_consum, input_upper, input_lower, n_si
                            0.5,names=FALSE)
           
           plot(density(meansmedian,from=0,to=maxx,n=2048),lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("C.consumption/bw+ (", Unit3,"per kg)"),ylab="",xlim=c(0,maxx)) 
+               xlab=paste("C.consumption/bw+ (", Unit3,"per kg)"),ylab="Probability density",xlim=c(0,maxx)) 
           lines(density(meansmean,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3)
           
           xvalues <- seq(0,maxx,length=100)
@@ -521,7 +521,7 @@ distPlot2_1 <- function(food_consum, unit_consum, input_upper, input_lower, n_si
                            0.5,names=FALSE)
           
           plot(density(musmean/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("log C.consumption/bw+ (", Unit3,"per kg)"),ylab="",xlim=c(minn/log(10),maxx/log(10))) 
+               xlab=paste("log C.consumption/bw+ (", Unit3,"per kg)"),ylab="Probability density",xlim=c(minn/log(10),maxx/log(10))) 
           
           xvalues <- seq(minn/log(10),maxx/log(10),length=100)
           uppervalues <- numeric()
@@ -602,7 +602,7 @@ distPlot2_1 <- function(food_consum, unit_consum, input_upper, input_lower, n_si
                            0.5,names=FALSE)
           
           plot(meansmean,cump,col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("C.consumption/bw+ (", Unit3,"per kg)"),ylab="",xlim=c(0,maxx),type="l")
+               xlab=paste("C.consumption/bw+ (", Unit3,"per kg)"),ylab="Cumulative probability",xlim=c(0,maxx),type="l")
           lines(meansmedian,cump,lwd=3)
           
           xvalues <- seq(0,maxx,length=100)
@@ -679,7 +679,7 @@ distPlot2_1 <- function(food_consum, unit_consum, input_upper, input_lower, n_si
                            0.5,names=FALSE)
           
           plot(musmean/log(10),cump,lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("log C.consumption/bw+ (", Unit3,"per kg)"),ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l")
+               xlab=paste("log C.consumption/bw+ (", Unit3,"per kg)"),ylab="Cumulative probability",xlim=c(minn/log(10),maxx/log(10)),type="l")
           
           xvalues <- seq(minn/log(10),maxx/log(10),length=100)
           uppervalues <- numeric()
@@ -830,7 +830,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                       mucK[,hazardindexK[h],foodindex[i]]+
                                       0.5*sigcK[,hazardindexK[h],foodindex[i]]^2)
               plot(density(medianexposure,from=0,to=maxx,n=2048),main=paste(hazardnamesusedK[h],"from",foodnamesused[i],"(chronic)"),
-                   xlab=paste("C.exposure/bw+  (", Unit1,"per kg)"),ylab="",xlim=c(0,maxx),lwd=3) 
+                   xlab=paste("C.exposure/bw+  (", Unit1,"per kg)"),ylab="Probability density",xlim=c(0,maxx),lwd=3) 
               
               xvalues <- seq(0,maxx,length=100)
               uppervalues <- numeric()
@@ -956,7 +956,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
              
               
               plot(density(logmeanexposure/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",main=paste(hazardnamesusedK[h],"from",foodnamesused[i],"(chronic)"),
-                   xlab=paste("log (C.exposure/bw+  (", Unit1,"per kg))"),ylab="",xlim=c(minn/log(10),maxx/log(10)),lwd=3) 
+                   xlab=paste("log (C.exposure/bw+  (", Unit1,"per kg))"),ylab="Probability density",xlim=c(minn/log(10),maxx/log(10)),lwd=3) 
               
               
               xvalues <- seq(minn/log(10),maxx/log(10),length=100)
@@ -1015,7 +1015,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                     +mucK[,hazardindexK[h],foodindex[i]]
                     +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2))
               plot(medianexposure,cump,col="#F7CE3C",main=paste(hazardnamesusedK[h],"from",foodnamesused[i],"(chronic)"),
-                   xlab=paste("C.exposure/bw+  (", Unit1,"per kg)"),ylab="",xlim=c(0,maxx),lwd=3,type="l")
+                   xlab=paste("C.exposure/bw+  (", Unit1,"per kg)"),ylab="Cumulative probability",xlim=c(0,maxx),lwd=3,type="l")
               lines(meanexposure,cump,lwd=3) 
               
               xvalues <- seq(0,maxx,length=100)
@@ -1179,7 +1179,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                0.5,names=FALSE)
               
               plot(logmeanexposure/log(10),cump,main=paste(hazardnamesusedK[h],"from",foodnamesused[i],"(chronic)"),
-                   xlab=paste("log (C.exposure/bw+  (", Unit1,"per kg))"),ylab="",xlim=c(minn/log(10),maxx/log(10)),lwd=3,type="l") 
+                   xlab=paste("log (C.exposure/bw+  (", Unit1,"per kg))"),ylab="Cumulative probability",xlim=c(minn/log(10),maxx/log(10)),lwd=3,type="l") 
               
               xvalues <- seq(minn/log(10),maxx/log(10),length=100)
               uppervalues <- numeric()
@@ -1317,7 +1317,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                       mucM[,hazardindexM[h],foodindex[i]]+muw)
               
               plot(density(medianexposure,from=0,to=maxx,n=2048),main=paste(hazardnamesusedM[h],"from",foodnamesused[i],"(acute)"),
-                   xlab=paste("A.exposure+  (", Unit1,"per day)"),ylab="",xlim=c(0,maxx),lwd=3) 
+                   xlab=paste("A.exposure+  (", Unit1,"per day)"),ylab="Probability density",xlim=c(0,maxx),lwd=3) 
               lines(density(meanexposure,from=0,to=maxx,n=2048),lwd=3,col="#F7CE3C")
               
               xvalues <- seq(0,maxx,length=100)
@@ -1448,7 +1448,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                           +sigw^2)),
                                0.5,names=FALSE)
               plot(density(logmeanexposure/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",main=paste(hazardnamesusedM[h],"from",foodnamesused[i],"(acute)"),
-                   xlab=paste("log (A.exposure+  (", Unit1,"per day))"),ylab="",xlim=c(minn/log(10),maxx/log(10)),lwd=3) 
+                   xlab=paste("log (A.exposure+  (", Unit1,"per day))"),ylab="Probability density",xlim=c(minn/log(10),maxx/log(10)),lwd=3) 
               
               xvalues <- seq(minn/log(10),maxx/log(10),length=100)
               uppervalues <- numeric()
@@ -1514,7 +1514,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                            muw))
               
               plot(meanexposure,cump,col="#F7CE3C",main=paste(hazardnamesusedM[h],"from",foodnamesused[i],"(acute)"),
-                   xlab=paste("A.exposure+  (", Unit1,"per day)"),ylab="",xlim=c(0,maxx),type="l",lwd=3) 
+                   xlab=paste("A.exposure+  (", Unit1,"per day)"),ylab="Cumulative probability",xlim=c(0,maxx),type="l",lwd=3) 
               lines(medianexposure,cump,lwd=3)
               
               xvalues <- seq(0,maxx,length=100)
@@ -1677,7 +1677,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                           +sigw^2)),
                                0.5,names=FALSE)
               plot(logmeanexposure/log(10),cump,main=paste(hazardnamesusedM[h],"from",foodnamesused[i],"(acute)"),
-                   xlab=paste("log (A.exposure+  (", Unit1,"per day))"),ylab="",xlim=c(minn/log(10),maxx/log(10)),lwd=3,type="l") 
+                   xlab=paste("log (A.exposure+  (", Unit1,"per day))"),ylab="Cumulative probability",xlim=c(minn/log(10),maxx/log(10)),lwd=3,type="l") 
               
               xvalues <- seq(minn/log(10),maxx/log(10),length=100)
               uppervalues <- numeric()
@@ -1918,7 +1918,7 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
             plot(ecdf(exposurevarsample[1,1:nV]),verticals=TRUE,do.points=FALSE,yaxt="s",
                  xlim=c(min(exposurevarsample[1:thin,1:nV]),max(exposurevarsample[1:thin,1:nV])),
                  lwd=1,lty=3,col=rgb(0.816,0.004,0.435),
-                 xlab=paste("C.exposure/bw+ (", Unit1, "per kg)"),ylab="",
+                 xlab=paste("C.exposure/bw+ (", Unit1, "per kg)"),ylab="Cumulative probability",
                  main=paste("Exposure:",hazardnamesusedK[h],"total from",nftotK,"foods (chronic)"))
             for(a in 2:thin){
               lines(ecdf(exposurevarsample[a,1:nV]),verticals=TRUE,do.points=FALSE,lwd=1,lty=3,col="#D0006F")     
@@ -1955,7 +1955,7 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
             nftotK <- sum(nexactK[hazardindexK[h],foodindex]>0) 
             plot(ecdf(log(exposurevarsample[1,1:nV])/log(10)),verticals=TRUE,do.points=FALSE,yaxt="s",
                  xlim=c(min(log(exposurevarsample[1:thin,1:nV])/log(10)),max(log(exposurevarsample[1:thin,1:nV])/log(10))),
-                 lwd=1,lty=3,col="#D0006F",ylab="",
+                 lwd=1,lty=3,col="#D0006F",ylab="Cumulative probability",
                  xlab=paste("log (C.exposure/bw+)(", Unit1,"per kg)"),
                  main=paste("Exposure:",hazardnamesusedK[h],"total from",nftotK,"foods (chronic)"))
             for(a in 2:thin){
@@ -2077,7 +2077,7 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
             plot(ecdf(exposurevarsample[1,1:nV]),verticals=TRUE,do.points=FALSE,yaxt="s",
                  xlim=c(min(exposurevarsample[1:thin,1:nV]),quantile(Qplus[,h],0.95,names=FALSE,na.rm=TRUE)  ),
                  lwd=1,lty=3,col="#D0006F",
-                 xlab=paste("C.exposure/bw+ (", Unit1, "per kg)"),ylab="",
+                 xlab=paste("C.exposure/bw+ (", Unit1, "per kg)"),ylab="Cumulative probability",
                  main=paste("Uncertainty of distribution:",hazardnamesusedK[h],"total from",nftotK,"foods (chronic)"))
             for(a in 2:thin){
               lines(ecdf(exposurevarsample[a,1:nV]),verticals=TRUE,do.points=FALSE,lwd=1,lty=3,col="#D0006F")     
@@ -2117,7 +2117,7 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
                  do.points=FALSE,yaxt="s",
                  xlim=c(min(log(exposurevarsample[1:thin,1:nV])/log(10)),
                         max(log(exposurevarsample[1:thin,1:nV])/log(10))),
-                 lwd=1,lty=3,col="#D0006F",ylab="",
+                 lwd=1,lty=3,col="#D0006F",ylab="Cumulative probability",
                  xlab=paste("log (C.exposure/bw+)(", Unit1,"per kg)"),
                  main=paste("Uncertainty of distribution:",hazardnamesusedK[h],"total from",nftotK,"foods (chronic)"))
             for(a in 2:thin){
@@ -2305,7 +2305,7 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
                           quantile(Qplus[,h],0.95,names=FALSE,na.rm=TRUE)),
                    ylim=c(0,1),
                    lwd=1,lty=3,col="#D0006F",
-                   xlab=paste("A.dose+ (", Unit1,"per day)"),ylab="",
+                   xlab=paste("A.dose+ (", Unit1,"per day)"),ylab="Cumulative probability",
                    main=paste("Exposure:",hazardnamesusedM[h],"total from",nftotM,"foods (acute)"))
             }
             for(a in 2:thin){
@@ -2349,7 +2349,7 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
                    verticals=TRUE,do.points=FALSE,yaxt="s",
                    xlim=c(log10(min(exposurevarsample[1:thin,1:max(nplus)],na.rm=TRUE)),log10(max(exposurevarsample[1:thin,1:max(nplus)],na.rm=TRUE))),
                    lwd=1,lty=3,col="#D0006F",
-                   xlab=paste("log A.dose+ (", Unit1,"per day)"),ylab="",
+                   xlab=paste("log A.dose+ (", Unit1,"per day)"),ylab="Cumulative probability",
                    main=paste("Exposure:",hazardnamesusedM[h],"total from",nftotM,"foods (acute)"))
             }
             for(a in 2:thin){
@@ -2487,7 +2487,7 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
                    xlim=c(min(exposurevarsample[1:thin,1:max(nplus)],na.rm=TRUE),
                           0.1*max(exposurevarsample[1:thin,1:max(nplus)],na.rm=TRUE)),
                    lwd=1,lty=3,col="#D0006F",
-                   xlab=paste("A.dose+ (", Unit1,"per day)"),ylab="",
+                   xlab=paste("A.dose+ (", Unit1,"per day)"),ylab="Cumulative probability",
                    main=paste("Exposure:",hazardnamesusedM[h],"total from",nftotM,"foods (acute)"))
             }
             for(a in 2:thin){
@@ -2532,7 +2532,7 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
                    xlim=c(log10(min(exposurevarsample[1:thin,1:max(nplus)],na.rm=TRUE)),
                           log10(max(exposurevarsample[1:thin,1:max(nplus)],na.rm=TRUE))),
                    lwd=1,lty=3,col="#D0006F",
-                   xlab=paste("log A.dose+ (", Unit1,"per day)"),ylab="",
+                   xlab=paste("log A.dose+ (", Unit1,"per day)"),ylab="Cumulative probability",
                    main=paste("Exposure:",hazardnamesusedM[h],"total from",nftotM,"foods (acute)"))
             }
             for(a in 2:thin){
@@ -2588,9 +2588,15 @@ distPlot5_1 <- function(n_sim, foodnamesused, nfused, foodindex,
                         mucK,mucM,pK,pM,sigcK,sigcM
 ) {
   
-  
-    par(mar=rep(2,4),mfrow=c(3,1),cex.lab=1.3,cex.main=1.3) #one hazard at a time -> required for the download option
-
+  par(oma = c(4, 3, 3, 0)) # Outer margins for legend
+    par(mar=rep(2,4),cex.lab=1.3,cex.main=1.3) #one hazard at a time -> required for the download option
+   # mfrow=c(3,1),
+    layout(mat = matrix(c(2, 1, 4, 3, 6, 5), 
+                        nrow = 2, 
+                        ncol = 3),
+           heights = c(2, 4),    # Heights of the two rows
+           widths = c(1, 1, 1))     # Widths of the two columns
+    
   
   #Chemical---- 
   
@@ -2599,13 +2605,21 @@ distPlot5_1 <- function(n_sim, foodnamesused, nfused, foodindex,
       for(i in 1:nfused){
         
         if(nexactK[hazardindexK[h],foodindex[i]]>0){ # hazard-food was modeled
-          plot(mucK[,hazardindexK[h],foodindex[i]]/log(10),pch=16,cex=0.5,main=bquote(.(hazardnamesusedK[h])~"in"~.(foodnamesused[i])~":"~mu),xlab="Iteration",col="#D0006F")
-          lines(0.3*n_sim/max(density(mucK[,hazardindexK[h],foodindex[i]]/log(10))$y)*density(mucK[,hazardindexK[h],foodindex[i]]/log(10))$y,density(mucK[,hazardindexK[h],foodindex[i]]/log(10))$x,lwd=3)
-          plot(sigcK[,hazardindexK[h],foodindex[i]]/log(10),pch=16,cex=0.5,main=bquote(.(hazardnamesusedK[h])~"in"~.(foodnamesused[i])~":"~sigma),xlab="Iteration",col="#D0006F") 
-          lines(0.3*n_sim/max(density(sigcK[,hazardindexK[h],foodindex[i]]/log(10))$y)*density(sigcK[,hazardindexK[h],foodindex[i]]/log(10))$y,density(sigcK[,hazardindexK[h],foodindex[i]]/log(10))$x,lwd=3)
-          plot(pK[,hazardindexK[h],foodindex[i]],pch=16,cex=0.5,main=bquote(.(hazardnamesusedK[h])~"in"~.(foodnamesused[i])~":"~q),xlab="Iteration",col="#D0006F") 
-          lines(0.3*n_sim/max(density(pK[,hazardindexK[h],foodindex[i]])$y)*density(pK[,hazardindexK[h],foodindex[i]])$y,density(pK[,hazardindexK[h],foodindex[i]])$x,lwd=3)
-          
+          plot(mucK[,hazardindexK[h],foodindex[i]]/log(10),y= 1:length(mucK[,hazardindexK[h],foodindex[i]]),pch=16,cex=0.5,col="#D0006F")
+          plot(density(mucK[,hazardindexK[h],foodindex[i]]/log(10))$x,0.3*n_sim/max(density(mucK[,hazardindexK[h],foodindex[i]]/log(10))$y)*density(mucK[,hazardindexK[h],foodindex[i]]/log(10))$y,main=bquote(.(hazardnamesusedK[h])~"in"~.(foodnamesused[i])~":"~mu),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+          plot(sigcK[,hazardindexK[h],foodindex[i]]/log(10),y= 1:length(sigcK[,hazardindexK[h],foodindex[i]]),pch=16,cex=0.5,col="#D0006F") 
+          plot(density(sigcK[,hazardindexK[h],foodindex[i]]/log(10))$x,0.3*n_sim/max(density(sigcK[,hazardindexK[h],foodindex[i]]/log(10))$y)*density(sigcK[,hazardindexK[h],foodindex[i]]/log(10))$y,main=bquote(.(hazardnamesusedK[h])~"in"~.(foodnamesused[i])~":"~sigma),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+          plot(pK[,hazardindexK[h],foodindex[i]],y= 1:length(pK[,hazardindexK[h],foodindex[i]]),pch=16,cex=0.5,col="#D0006F") 
+          plot(density(pK[,hazardindexK[h],foodindex[i]])$x,0.3*n_sim/max(density(pK[,hazardindexK[h],foodindex[i]])$y)*density(pK[,hazardindexK[h],foodindex[i]])$y,main=bquote(.(hazardnamesusedK[h])~"in"~.(foodnamesused[i])~":"~q),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+          mtext("Parameter value",
+                side = 1, adj = 0.5,line=2, cex = 1.3,
+                outer = TRUE)
+          mtext("MCMC samples",
+                side = 2, adj = 0.25,line=1, cex = 1.3,
+                outer = TRUE)
+          mtext("Approximated marginal probability density",
+                side = 3, adj = 0.5,line=1, cex = 1.3,
+                outer = TRUE)
         } else
           
           #Empty plot
@@ -2628,13 +2642,22 @@ distPlot5_1 <- function(n_sim, foodnamesused, nfused, foodindex,
     for(h in 1:nhusedM){
       for(i in 1:nfused){
         if(nexactM[hazardindexM[h],foodindex[i]]>0){  # hazard-food was modeled
-          plot(mucM[,hazardindexM[h],foodindex[i]]/log(10),pch=16,cex=0.5,main=bquote(.(hazardnamesusedM[h])~"in"~.(foodnamesused[i])~":"~mu),xlab="Iteration",col="#D0006F") 
-          lines(0.3*n_sim/max(density(mucM[,hazardindexM[h],foodindex[i]]/log(10))$y)*density(mucM[,hazardindexM[h],foodindex[i]]/log(10))$y,density(mucM[,hazardindexM[h],foodindex[i]]/log(10))$x,lwd=3)
-          plot(sigcM[,hazardindexM[h],foodindex[i]]/log(10),pch=16,cex=0.5,main=bquote(.(hazardnamesusedM[h])~"in"~.(foodnamesused[i])~":"~sigma),xlab="Iteration",col="#D0006F") 
-          lines(0.3*n_sim/max(density(sigcM[,hazardindexM[h],foodindex[i]]/log(10))$y)*density(sigcM[,hazardindexM[h],foodindex[i]]/log(10))$y,density(sigcM[,hazardindexM[h],foodindex[i]]/log(10))$x,lwd=3)
-          plot(pM[,hazardindexM[h],foodindex[i]],pch=16,cex=0.5,main=bquote(.(hazardnamesusedM[h])~"in"~.(foodnamesused[i])~":"~q),xlab="Iteration",col="#D0006F") 
-          lines(0.3*n_sim/max(density(pM[,hazardindexM[h],foodindex[i]])$y)*density(pM[,hazardindexM[h],foodindex[i]])$y,density(pM[,hazardindexM[h],foodindex[i]])$x,lwd=3)
-        } # end of if hazard-food modeled  
+          plot(mucM[,hazardindexM[h],foodindex[i]]/log(10),y= 1:length(mucM[,hazardindexM[h],foodindex[i]]), pch=16,cex=0.5,col="#D0006F") 
+          plot(density(mucM[,hazardindexM[h],foodindex[i]]/log(10))$x,0.3*n_sim/max(density(mucM[,hazardindexM[h],foodindex[i]]/log(10))$y)*density(mucM[,hazardindexM[h],foodindex[i]]/log(10))$y,main=bquote(.(hazardnamesusedM[h])~"in"~.(foodnamesused[i])~":"~mu),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+          plot(sigcM[,hazardindexM[h],foodindex[i]]/log(10),y= 1:length(sigcM[,hazardindexM[h],foodindex[i]]),pch=16,cex=0.5,col="#D0006F") 
+          plot(density(sigcM[,hazardindexM[h],foodindex[i]]/log(10))$x,0.3*n_sim/max(density(sigcM[,hazardindexM[h],foodindex[i]]/log(10))$y)*density(sigcM[,hazardindexM[h],foodindex[i]]/log(10))$y,main=bquote(.(hazardnamesusedM[h])~"in"~.(foodnamesused[i])~":"~sigma),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+          plot(pM[,hazardindexM[h],foodindex[i]],y= 1:length(pM[,hazardindexM[h],foodindex[i]]),pch=16,cex=0.5,col="#D0006F") 
+          plot(density(pM[,hazardindexM[h],foodindex[i]])$x,0.3*n_sim/max(density(pM[,hazardindexM[h],foodindex[i]])$y)*density(pM[,hazardindexM[h],foodindex[i]])$y,main=bquote(.(hazardnamesusedM[h])~"in"~.(foodnamesused[i])~":"~q),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+          mtext("Parameter value",
+                side = 1, adj = 0.5,line=2, cex = 1.3,
+                outer = TRUE)
+          mtext("MCMC samples",
+                side = 2, adj = 0.25,line=1, cex = 1.3,
+                outer = TRUE)
+          mtext("Approximated marginal probability density",
+                side = 3, adj = 0.5,line=1, cex = 1.3,
+                outer = TRUE)
+          } # end of if hazard-food modeled  
         else
           
           #Empty plot
@@ -2660,21 +2683,42 @@ distPlot5_2 <- function(n_sim,foodnamesused, nfused, foodindex,
                         mus0,ppred,
                         Ss
 ) {
-  
-    par(mar=rep(2,4),mfrow=c(3,1),cex.lab=1.3,cex.main=1.3) #one food at a time -> required for the download option
+  par(oma = c(4, 3, 3, 0)) # Outer margins for legend
+    par(mar=rep(2,4),cex.lab=1.3,cex.main=1.3) #one food at a time -> required for the download option
+    #mfrow=c(3,2),
+    layout(mat = matrix(c(2, 1, 4, 3, 6, 5), 
+                        nrow = 2, 
+                        ncol = 3),
+           heights = c(2, 4),    # Heights of the two rows
+           widths = c(1, 1, 1))     # Widths of the two columns
+    
     
     for(i in 1:nfused){
      Vs <- numeric() # variances
       for(u in 1:n_sim){
         Vs[u] <- Ss[u,foodindex[i],foodindex[i]]  
        }
-     plot(mus0[,foodindex[i]]/log(10),pch=16,cex=0.5,main=bquote(.(foodnamesused[i])~":"~mu),xlab="Iteration",col="#D0006F")  
-      lines(0.3*n_sim/max(density(mus0[,foodindex[i]]/log(10))$y)*density(mus0[,foodindex[i]]/log(10))$y,density(mus0[,foodindex[i]]/log(10))$x,lwd=3)
-      plot(Vs/log(10),pch=16,cex=0.5,main=bquote(.(foodnamesused[i])~":"~sigma),xlab="Iteration",col="#D0006F") 
-      lines(0.3*n_sim/max(density(Vs/log(10))$y)*density(Vs/log(10))$y,density(Vs/log(10))$x,lwd=3)
-      plot(ppred[,foodindex[i]],pch=16,cex=0.5,main=bquote(.(foodnamesused[i])~":"~p),xlab="Iteration",col="#D0006F") 
-      lines(0.3*n_sim/max(density(ppred[,foodindex[i]])$y)*density(ppred[,foodindex[i]])$y,density(ppred[,foodindex[i]])$x,lwd=3)
-    } # for
+     plot(x=mus0[,foodindex[i]]/log(10), y= 1:length(mus0[,foodindex[i]]), pch=16,cex=0.5,col="#D0006F") 
+     plot(density(mus0[,foodindex[i]]/log(10))$x, 0.3*n_sim/max(density(mus0[,foodindex[i]]/log(10))$y)*density(mus0[,foodindex[i]]/log(10))$y,main=bquote(.(foodnamesused[i])~":"~mu),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+      
+     plot(Vs/log(10),y= 1:length(Vs),pch=16,cex=0.5,col="#D0006F") 
+      plot(density(Vs/log(10))$x,0.3*n_sim/max(density(Vs/log(10))$y)*density(Vs/log(10))$y,main=bquote(.(foodnamesused[i])~":"~sigma),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+      #lines(0.3*n_sim/max(density(Vs/log(10))$y)*density(Vs/log(10))$y,density(Vs/log(10))$x,lwd=3)
+      
+      plot(ppred[,foodindex[i]],y= 1:length(ppred[,foodindex[i]]),pch=16,cex=0.5,col="#D0006F") 
+      plot(density(ppred[,foodindex[i]])$x,0.3*n_sim/max(density(ppred[,foodindex[i]])$y)*density(ppred[,foodindex[i]])$y,main=bquote(.(foodnamesused[i])~":"~p),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+      #lines(0.3*n_sim/max(density(ppred[,foodindex[i]])$y)*density(ppred[,foodindex[i]])$y,density(ppred[,foodindex[i]])$x,lwd=3)
+      
+      mtext("Parameter value",
+            side = 1, adj = 0.5,line=2, cex = 1.3,
+            outer = TRUE)
+      mtext("MCMC samples",
+            side = 2, adj = 0.25,line=1, cex = 1.3,
+            outer = TRUE)
+      mtext("Approximated marginal probability density",
+            side = 3, adj = 0.5,line=1, cex = 1.3,
+            outer = TRUE)
+      } # for
  
 }
 
@@ -2683,13 +2727,16 @@ distPlot5_2 <- function(n_sim,foodnamesused, nfused, foodindex,
 
 # Plot 6: Serving correlation----
 
-distPlot6_1 <- function(n_sim, input_modelchoice4, input_modelchoice3, foodnamesused,
+distPlot6_1 <- function(food_consum, unit_consum, n_sim, input_modelchoice4, input_modelchoice3, foodnamesused,
                         nfused, foodindex,nr,nd,nf,logsw,
                         mus0,
                         Ss,Ss0
 ) {      
   # generate results based on inputs from ui.R: 
   # Correlation plots for consumptions
+  Unit <- unit_consum[food_consum == foodnamesused] # the measurement unit used for food consumptions
+  Unit3 <- sub(".*p.", "", Unit) # Extract characters after pattern
+  
   
   
   if((nfused>1) ){  
@@ -2721,7 +2768,7 @@ distPlot6_1 <- function(n_sim, input_modelchoice4, input_modelchoice3, foodnames
     colnames(DF2) <- foodnamesused
     par(xpd=TRUE)
     pairs(rbind(DF1,DF2),
-          main="Pairwise scatterplots of log (consumption/bw+)",
+          main=paste("Pairwise scatterplots of log (consumption/bw+(", Unit3,"per kg))"),
           upper.panel=NULL,omd=c(1,1,15,1),
           cex=c(1,0.4)[group],pch=c(16,16)[group],col=c("#004F71","#D0006F")[group])
    # legend("right",legend=c("data","predicted"),
@@ -2732,13 +2779,16 @@ distPlot6_1 <- function(n_sim, input_modelchoice4, input_modelchoice3, foodnames
 
 # Plot 7: Mean serving correlations----
 
-distPlot7_1 <- function(n_sim, input_modelchoice4, foodnamesused, nfused, foodindex,
+distPlot7_1 <- function(food_consum, unit_consum, n_sim, input_modelchoice4, foodnamesused, nfused, foodindex,
                         nf,nr,nd,logsw,
                         mus0,
                         Ss,Ss0
 ) {     
   # generate results based on inputs from ui.R: 
   # Correlation plots for mean consumptions
+  
+  Unit <- unit_consum[food_consum == foodnamesused] # the measurement unit used for food consumptions
+  Unit3 <- sub(".*p.", "", Unit) # Extract characters after pattern
   
   
   
@@ -2769,7 +2819,8 @@ distPlot7_1 <- function(n_sim, input_modelchoice4, foodnamesused, nfused, foodin
     colnames(DF2) <- foodnamesused
     par(xpd=TRUE)
     pairs(rbind(DF1,DF2),
-          main="Pairwise scatterplots of log (E(consumption/bw+))",
+          main=paste("Pairwise scatterplots of log (E(consumption/bw+(", Unit3,"per kg))"),
+         # main="Pairwise scatterplots of log (E(consumption/bw+))",
           upper.panel=NULL,omd=c(1,1,15,1),
           cex=c(1,0.4)[group],pch=c(16,16)[group],col=c("#004F71","#D0006F")[group])
    # legend("right",legend=c("data","predicted"),

@@ -87,41 +87,44 @@ observeEvent(input$prep_files,{
 ## Update ui after run----
 
 output$plot1text <- renderText({
-  "Select model settings and run the simulation"
+  paste0(tags$b("Select model settings and run the simulation"))
 })
 output$plot2text <- renderText({
-  "Select model settings and run the simulation"
+  paste0(tags$b("Select model settings and run the simulation"))
 })
 output$plot3text <- renderText({
-  "Select model settings and run the simulation"
+  paste0(tags$b("Select model settings and run the simulation"))
 })
 output$plot4text <- renderText({
-  "Select total exposure quantile"
+  paste0(tags$b("Select model settings and run the simulation"))
+})
+output$plot4gen <- renderText({
+  paste0(tags$b("Select total exposure quantile and generate plot!"))
 })
 output$plot5text <- renderText({
-  "Select model settings and run the simulation"
+  paste0(tags$b("Select model settings and run the simulation"))
 })
 output$plot52text <- renderText({
-  "Select model settings and run the simulation"
+  paste0(tags$b("Select model settings and run the simulation"))
 })
 output$plot6text <- renderText({
-  "Select model settings and run the simulation"
+  paste0(tags$b("Select model settings and run the simulation"))
 })
 output$plot7text <- renderText({
-  "Select model settings and run the simulation"
+  paste0(tags$b("Select model settings and run the simulation"))
 })
 output$table1text <- renderText({
-  "Select model settings and run the simulation"
+  paste0(tags$b("Select model settings and run the simulation"))
 })
 output$table2text <- renderText({
-  "Select model settings and run the simulation"
+  paste0(tags$b("Select model settings and run the simulation"))
 })
 
 output$table1text_generate <- renderText({
-  "Select settings from the menu on the right and press 'Genarate'"
+  paste0(tags$b("Genarate new table!"))
 })
 output$table2text_generate <- renderText({
-  "Select settings from the menu on the right and press 'Genarate'"
+  paste0(tags$b("Genarate new table!"))
 })
 
 output$reportDLtext <- renderText({
@@ -177,7 +180,7 @@ observe({
   hide(id = "plot1text")
   hide(id = "plot2text")
   hide(id = "plot3text")
-  
+  hide(id = "plot4text")
   hide(id = "plot5text")
   hide(id = "plot52text")
   hide(id = "plot6text")
@@ -204,11 +207,11 @@ observe({
 
 
 # when total exposure quantile is selected, hide text message:
-observe({
-  if (input$selectQ != "None"){
-    hide(id = "plot4text")
-  }
-})
+#observe({
+#  if (input$selectQ != "None"){
+ #   hide(id = "plot4text")
+ # }
+#})
 
 
 observeEvent(input$run, {
@@ -219,12 +222,29 @@ observeEvent(input$run, {
   updateTabsetPanel(inputId = "diagchoice", selected = "Concentration parameters")
   updateSelectInput(inputId = "selectQ", selected = "None")
   
+  #updateCheckboxGroupInput(inputId = )
+  
   updateTabsetPanel(inputId = "run_sim", selected = "Concentrations")
   
   
-  show("report_dl")
+  show(id = "report_dl")
+  show(id = "plot4gen")
+  show(id = "table1text_generate")
+  show(id = "table2text_generate")
   
   
+})
+
+observeEvent(input$generateP4, {
+  hide(id = "plot4gen")
+})
+
+observeEvent(input$generateTposter, {
+  hide(id = "table1text_generate")
+})
+
+observeEvent(input$generateTlimit, {
+  hide(id = "table2text_generate")
 })
 
 
@@ -251,3 +271,6 @@ observe({
   })
   
 })
+
+
+
