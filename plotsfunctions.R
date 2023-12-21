@@ -1,8 +1,8 @@
 
 # Plot 1: Concentrations:----
 # generate results based on inputs from ui.R:  Concentrations
-
-distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused,
+## ---- distPlot1_1 --------
+distPlot1_1 <- function(input_lim, unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused,
                         nfused, foodindex, hazardnamesused, hazardtypesused, nhused, 
                         hazardnamesK, hazardnamesM, hazardnamesusedK, hazardnamesusedM,
                         nhusedK, nhusedM, hazardindex, hazardindexK, hazardindexM,
@@ -18,7 +18,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
   
   
   par(oma = c(4, 1, 0, 1),cex.lab=1.3,cex.main=1.3) # Outer margins for legend
- 
+  
   # Chemical concentrations:----
   
   if((nhusedK>0)&(nfused>0)){
@@ -35,8 +35,15 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               cmeanK <- exp(mucK[,hazardindexK[h],foodindex[i]]+0.5*sigcK[,hazardindexK[h],foodindex[i]]^2)
               cmedianK <- exp(mucK[,hazardindexK[h],foodindex[i]])
               
-              maxx <- quantile(qlnorm(0.95,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
-                               0.5,names=FALSE)
+              # maxx <- quantile(
+              #   qlnorm(0.95,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
+              #   input_lim,names=FALSE) # 0.5,names=FALSE)
+              
+              maxx <- quantile(
+                qlnorm(input_lim,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]), 
+                0.5,names=FALSE)
+              
+              # maxx<-quantile(exp(logcK[hazardindexK[h],foodindex[i],]),input_lim, na.rm = TRUE)    
               
               plot(density(cmedianK,from=0,to=maxx,n=2048),lwd=3,main=paste(hazardnamesusedK[h],"in",foodnamesused[i]),
                    xlab=paste("Concentration+ (", Unit1, "per", Unit2,")"),ylab="Probability density",xlim=c(0,maxx))
@@ -55,6 +62,8 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               }
               polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
               
+              
+              
               lines(density(cmedianK,from=0,to=maxx,n=2048),lwd=3)
               lines(density(cmeanK,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3,main=paste(hazardnamesusedK[h],"in",foodnamesused[i]),xlab="Concentration+",ylab="",xlim=c(0,maxx))
               # mark data points and possible LOD and LOQ values for censored data:
@@ -64,7 +73,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
             }
             if(input_selectscale=="Logarithmic"){
               
-              maxx <- quantile(qnorm(0.95,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
+              maxx <- quantile(qnorm(input_lim,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
                                0.5,names=FALSE)
               minn <- quantile(qnorm(0.05,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
                                0.5,names=FALSE)
@@ -100,8 +109,11 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
             cump <- cump/length(cump)
             if(input_selectscale=="Absolute"){
               
-              maxx <- quantile(qlnorm(0.95,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
-                               0.5,names=FALSE)
+              # maxx <- quantile(qlnorm(0.95,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
+              #                  0.5,names=FALSE)
+              maxx <- quantile(
+                qlnorm(input_lim,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]), 
+                0.5,names=FALSE)
               
               cmedianK <- sort(exp(mucK[,hazardindexK[h],foodindex[i]]))
               plot(cmedianK,cump,col="#F7CE3C",lwd=3,main=paste(hazardnamesusedK[h],"in",foodnamesused[i]),
@@ -141,7 +153,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
             }
             if(input_selectscale=="Logarithmic"){
               
-              maxx <- quantile(qnorm(0.95,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
+              maxx <- quantile(qnorm(input_lim,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
                                0.5,names=FALSE)
               minn <- quantile(qnorm(0.05,mucK[,hazardindexK[h],foodindex[i]],sigcK[,hazardindexK[h],foodindex[i]]),
                                0.5,names=FALSE)
@@ -225,7 +237,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               cmeanM <- exp(mucM[,hazardindexM[h],foodindex[i]]+0.5*sigcM[,hazardindexM[h],foodindex[i]]^2)
               cmedianM <- exp(mucM[,hazardindexM[h],foodindex[i]])
               
-              maxx <- quantile(qlnorm(0.95,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
+              maxx <- quantile(qlnorm(input_lim,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
                                0.5,names=FALSE)
               
               plot(density(cmedianM,from=0,to=maxx,n=2048),lwd=3,main=paste(hazardnamesusedM[h],"in",foodnamesused[i]),
@@ -255,7 +267,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
             
             if(input_selectscale=="Logarithmic"){
               
-              maxx <- quantile(qnorm(0.95,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
+              maxx <- quantile(qnorm(input_lim,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
                                0.5,names=FALSE)
               minn <- quantile(qnorm(0.05,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
                                0.5,names=FALSE)
@@ -297,7 +309,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               cmeanM <- sort(exp(mucM[,hazardindexM[h],foodindex[i]]+0.5*sigcM[,hazardindexM[h],foodindex[i]]^2))
               cmedianM <- sort(exp(mucM[,hazardindexM[h],foodindex[i]]))
               
-              maxx <- quantile(qlnorm(0.99,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
+              maxx <- quantile(qlnorm(input_lim,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
                                0.5,names=FALSE)
               
               plot(cmeanM,cump,col="#F7CE3C",lwd=3,main=paste(hazardnamesusedM[h],"in",foodnamesused[i]),
@@ -338,7 +350,7 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
             
             if(input_selectscale=="Logarithmic"){
               
-              maxx <- quantile(qnorm(0.95,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
+              maxx <- quantile(qnorm(input_lim,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
                                0.5,names=FALSE)
               minn <- quantile(qnorm(0.05,mucM[,hazardindexM[h],foodindex[i]],sigcM[,hazardindexM[h],foodindex[i]]),
                                0.5,names=FALSE)
@@ -410,8 +422,8 @@ distPlot1_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
 
 
 # Plot 2: Consumptions:----
-
-distPlot2_1 <- function(food_consum, unit_consum, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused, nfused, foodindex,
+## ---- distPlot2_1 --------
+distPlot2_1 <- function(input_lim, food_consum, unit_consum, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused, nfused, foodindex,
                         nf, nr, nd,logs, logsw,input_modelchoice,input_modelchoice2,input_modelchoice3,input_modelchoice4,input_modelchoice5,
                         mus0,muw,ppred,sigw,Ss,Ss0
 ) {
@@ -419,334 +431,334 @@ distPlot2_1 <- function(food_consum, unit_consum, input_upper, input_lower, n_si
   # Consumption amounts
   
   par(oma = c(4, 1, 0, 1)) # Outer margins for legend
- par(mfrow=c(nfused,2),cex.lab=1.3,cex.main=1.3,yaxt="n")
+  par(mfrow=c(1,2),cex.lab=1.3,cex.main=1.3,yaxt="n")
   
   OIM <- numeric() # observed individual mean consumptions
+  
+  
+  for(i in 1:nfused){
+    Unit <- unit_consum[food_consum == foodnamesused[i]] # the measurement unit used for food consumptions
+    Unit3 <- sub(".*p.", "", Unit) # Extract characters after pattern
     
+    Vs <- numeric() # variances
+    Vs0 <- numeric() # variances
+    for(u in 1:n_sim){
+      Vs[u] <- Ss[u,foodindex[i],foodindex[i]]
+      Vs0[u] <- Ss0[u,foodindex[i],foodindex[i]]
+    }
     
-    for(i in 1:nfused){
-      Unit <- unit_consum[food_consum == foodnamesused[i]] # the measurement unit used for food consumptions
-      Unit3 <- sub(".*p.", "", Unit) # Extract characters after pattern
-      
-      Vs <- numeric() # variances
-      Vs0 <- numeric() # variances
-      for(u in 1:n_sim){
-        Vs[u] <- Ss[u,foodindex[i],foodindex[i]]
-        Vs0[u] <- Ss0[u,foodindex[i],foodindex[i]]
-      }
-      
-      if(input_selectdist=="Density"){
-        if(input_selectscale=="Absolute"){
-          # distributions of chronic consumptions, on consumption days (absolute per bodyweight)
-         meansmean <- exp(mus0[,foodindex[i]]+0.5*Vs+0.5*Vs0  )
-         meansmedian <- exp(mus0[,foodindex[i]]+0.5*Vs )
-         
-          maxx <- quantile(qlnorm(0.95,mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
-                           0.5,names=FALSE)
-          
-          plot(density(meansmedian,from=0,to=maxx,n=2048),lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("C.consumption/bw+ (", Unit3,"per kg)"),ylab="Probability density",xlim=c(0,maxx)) 
-          lines(density(meansmean,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3)
-          
-          xvalues <- seq(0,maxx,length=100)
-          uppervalues <- numeric()
-          lowervalues <- numeric()
-          for(xv in 1:100){
-            uppervalues[xv] <- quantile(dlnorm(xvalues[xv],
-                                               mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
-                                        input_upper,names=FALSE) #0.975,names=FALSE)
-            
-            lowervalues[xv] <- quantile(dlnorm(xvalues[xv],
-                                               mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
-                                        input_lower,names=FALSE) #0.025,names=FALSE)
-            }
-          polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
-          lines(density(meansmedian,from=0,to=maxx,n=2048),lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="C.consumption/bw+",ylab="",xlim=c(0,maxx),type="l")
-          lines(density(meansmean,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3)
-          
-          for(r in 1:nr){
-            OIM[r]<- mean(exp(logsw[r,1:nd,foodindex[i]]),na.rm=TRUE) 
-          } 
-          OIM<-OIM[!is.na(OIM)]
-          # mark data points: (observed individual means)
-          rug(OIM,lwd=2.5,col="#D0006F",quiet=TRUE)
-          
-          
-          #legend("topright",cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%") )) 
-          
-          # distribution of acute consumptions, on consumption days (absolute):
-          smean <- exp(mus0[,foodindex[i]]+0.5*Vs0+0.5*Vs+muw+0.5*sigw^2)
-         smedian <- exp(mus0[,foodindex[i]]+muw)
-          
-          maxx <- quantile(qlnorm(0.95,mus0[,foodindex[i]]+muw,
-                                  sqrt(Vs0+Vs+sigw^2)),
-                           0.5,names=FALSE)
-          
-          plot(density(smedian,from=0,to=maxx,n=2048),lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("A.consumption+ (", Unit3,")"),ylab="",xlim=c(0,maxx)) 
-          lines(density(smean,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3)
-          
-          xvalues <- seq(0,maxx,length=100)
-          uppervalues <- numeric()
-          lowervalues <- numeric()
-          for(xv in 1:100){
-            uppervalues[xv] <- quantile(dlnorm(xvalues[xv],
-                                               mus0[,foodindex[i]]+muw,
-                                               sqrt(Vs0+Vs+sigw^2)),
-                                        input_upper,names=FALSE) #0.975,names=FALSE)
-            lowervalues[xv] <- quantile(dlnorm(xvalues[xv],
-                                               mus0[,foodindex[i]]+muw,
-                                               sqrt(Vs0+Vs+sigw^2)),
-                                        input_lower,names=FALSE) #0.025,names=FALSE)
-            }
-          polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
-          lines(density(smedian,from=0,to=maxx,n=2048),lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="A.consumption+",ylab="",xlim=c(0,maxx),type="l") 
-          lines(density(smean,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3)
-          
-          # mark data points: (individual acute consumptions)
-          rug(exp(logs[1:nr,1:nd,foodindex[i]]),lwd=2.5,col="#D0006F",quiet=TRUE)
-          
-          
-          #legend("topright",cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
-        } # end of if absolute
+    if(input_selectdist=="Density"){
+      if(input_selectscale=="Absolute"){
+        # distributions of chronic consumptions, on consumption days (absolute per bodyweight)
+        meansmean <- exp(mus0[,foodindex[i]]+0.5*Vs+0.5*Vs0  )
+        meansmedian <- exp(mus0[,foodindex[i]]+0.5*Vs )
         
-        if(input_selectscale=="Logarithmic"){
-          
-          # distributions of chronic consumptions, on consumption days (log per bodyweight)
-          musmean <- mus0[,foodindex[i]]+0.5*Vs
-          
-          maxx <- quantile(qnorm(0.95,mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
-                           0.5,names=FALSE)
-          minn <- quantile(qnorm(0.05,mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
-                           0.5,names=FALSE)
-          
-          plot(density(musmean/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("log C.consumption/bw+ (", Unit3,"per kg)"),ylab="Probability density",xlim=c(minn/log(10),maxx/log(10))) 
-          
-          xvalues <- seq(minn/log(10),maxx/log(10),length=100)
-          uppervalues <- numeric()
-          lowervalues <- numeric()
-          for(xv in 1:100){
-           uppervalues[xv] <- quantile(dnorm(xvalues[xv],
-                                              (mus0[,foodindex[i]]+0.5*Vs)/log(10),
-                                              sqrt(Vs0)/log(10) ),
-                                       input_upper,names=FALSE) #0.975,names=FALSE)
-            lowervalues[xv] <- quantile(dnorm(xvalues[xv],
-                                              (mus0[,foodindex[i]]+0.5*Vs)/log(10),
-                                              sqrt(Vs0)/log(10) ),
-                                        input_lower,names=FALSE) #0.025,names=FALSE)
-            }
-          polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
-          lines(density(musmean/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="log C.consumption/bw+",ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l")
-          
-          
-          for(r in 1:nr){
-            OIM[r]<- log(mean(exp(logsw[r,1:nd,foodindex[i]]),na.rm=TRUE)) 
-          } 
-          OIM<-OIM[!is.na(OIM)]
-          # mark data points: (observed individual means, in log-scale)
-          rug(OIM/log(10),lwd=2.5,col="#D0006F",quiet=TRUE)
-          
-          
-          #legend("topright",cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  ))    
-          
-          # distribution of acute consumptions, on consumption days (log):
-          logsmean <- mus0[,foodindex[i]]+muw
-          
-          maxx <- quantile(qnorm(0.95,mus0[,foodindex[i]]+muw,
-                                 sqrt(Vs0+Vs+sigw^2)),
-                           0.5,names=FALSE)
-          minn <- quantile(qnorm(0.05,mus0[,foodindex[i]]+muw,
-                                 sqrt(Vs0+Vs+sigw^2)),
-                           0.5,names=FALSE)
-          
-          plot(density(logsmean/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("log A.consumption+ (", Unit3,")"),ylab="",xlim=c(minn/log(10),maxx/log(10))) 
-          
-          # mark data points: (individual acute consumptions, in log-scale)
-          rug(logs[1:nr,1:nd,foodindex[i]]/log(10),lwd=2.5,col="#D0006F",quiet=TRUE)
-          
-          xvalues <- seq(minn/log(10),maxx/log(10),length=100)
-          uppervalues <- numeric()
-          lowervalues <- numeric()
-          for(xv in 1:100){
-            uppervalues[xv] <- quantile(dnorm(xvalues[xv],
-                                              (mus0[,foodindex[i]]+muw)/log(10),
-                                              (sqrt(Vs0+Vs+sigw^2))/log(10) ),
-                                        input_upper,names=FALSE) #0.975,names=FALSE)
-            lowervalues[xv] <- quantile(dnorm(xvalues[xv],
-                                              (mus0[,foodindex[i]]+muw)/log(10),
-                                              (sqrt(Vs0+Vs+sigw^2))/log(10) ),
-                                        input_lower,names=FALSE) #0.025,names=FALSE)
-            }
-          polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
-          lines(density(logsmean/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="log A.consumption+",ylab="",xlim=c(minn/log(10),maxx/log(10))) 
-          
-          
-          #legend("topright",cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%") )) 
-          
-        } # end of if logarithmic
-      } # end of if density
-      
-      if(input_selectdist=="Cumulative"){
-        par(yaxt="s")
-        cump <- seq(1,n_sim)
-        cump <- cump/length(cump)
-        if(input_selectscale=="Absolute"){
-          
-          # distributions of chronic consumptions (absolute per bodyweight)
-          meansmean <- sort(exp(mus0[,foodindex[i]]+0.5*Vs +0.5*Vs0 ))
-         meansmedian <- sort(exp(mus0[,foodindex[i]]+0.5*Vs ))
-          
-         maxx <- quantile(qlnorm(0.95,mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
-                           0.5,names=FALSE)
-          
-          plot(meansmean,cump,col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("C.consumption/bw+ (", Unit3,"per kg)"),ylab="Cumulative probability",xlim=c(0,maxx),type="l")
-          lines(meansmedian,cump,lwd=3)
-          
-          xvalues <- seq(0,maxx,length=100)
-          uppervalues <- numeric()
-          lowervalues <- numeric()
-          for(xv in 1:100){
-            uppervalues[xv] <- quantile(plnorm(xvalues[xv],
-                                               mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
-                                        input_upper,names=FALSE) #0.975,names=FALSE)
-            lowervalues[xv] <- quantile(plnorm(xvalues[xv],
-                                               mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
-                                        input_lower,names=FALSE) #0.025,names=FALSE)
-            }
-          polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
-          lines(meansmean,cump,col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="C.consumption/bw+",ylab="",xlim=c(0,maxx),type="l")
-          lines(meansmedian,cump,lwd=3)
-          
-          for(r in 1:nr){
-            OIM[r]<- mean(exp(logsw[r,1:nd,foodindex[i]]),na.rm=TRUE) 
-          } 
-          OIM<-OIM[!is.na(OIM)]
-          # mark data points: (observed individual means)
-          rug(OIM,lwd=2.5,col="#D0006F",quiet=TRUE)
-          lines(ecdf(OIM),verticals=TRUE,do.points=FALSE,lwd=2,col="#D0006F")
-          
-          
-          #legend("bottomright",inset=0.04,cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
-          
-          # distribution of acute consumptions (absolute):
-          smean <- sort(exp(mus0[,foodindex[i]]+0.5*Vs0+0.5*Vs+muw+0.5*sigw^2))
-          smedian <- sort(exp(mus0[,foodindex[i]]+muw))
-          
-          maxx <- quantile(qlnorm(0.95,mus0[,foodindex[i]]+muw,
-                                  sqrt(Vs0+Vs+sigw^2)),
-                           0.5,names=FALSE)
-          
-          
-          plot(smean,cump,col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("A.consumption+ (", Unit3,")"),ylab="",xlim=c(0,maxx),type="l") 
-          lines(smedian,cump,lwd=3)
-          
-          xvalues <- seq(0,maxx,length=100)
-          uppervalues <- numeric()
-          lowervalues <- numeric()
-          for(xv in 1:100){
-            uppervalues[xv] <- quantile(plnorm(xvalues[xv],
-                                               mus0[,foodindex[i]]+muw,
-                                               sqrt(Vs0+Vs+sigw^2)),
-                                        input_upper,names=FALSE) #0.975,names=FALSE)
-            lowervalues[xv] <- quantile(plnorm(xvalues[xv],
-                                               mus0[,foodindex[i]]+muw,
-                                               sqrt(Vs0+Vs+sigw^2)),
-                                        input_lower,names=FALSE) #0.025,names=FALSE)
-            }
-          polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
-          lines(smean,cump,col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="A.consumption+",ylab="",xlim=c(0,maxx),type="l") 
-          lines(smedian,cump,lwd=3)
-          
-          # mark data points: (individual acute consumptions)
-          rug(exp(logs[1:nr,1:nd,foodindex[i]]),lwd=2.5,col="#D0006F",quiet=TRUE)
-          lines(ecdf(exp(logs[1:nr,1:nd,foodindex[i]])),verticals=TRUE,do.points=FALSE,lwd=2,col="#D0006F")
-          
-          
-          #legend("bottomright",inset=0.04,cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
-        } # end of if absolute
+        maxx <- quantile(qlnorm(input_lim,mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
+                         0.5,names=FALSE)
         
-        if(input_selectscale=="Logarithmic"){
-          # distributions of chronic consumptions (log per bodyweight)
-          musmean <- sort(mus0[,foodindex[i]]+0.5*Vs)
+        plot(density(meansmedian,from=0,to=maxx,n=2048),lwd=3,main=paste(foodnamesused[i],"consumption"),
+             xlab=paste("C.consumption/bw+ (", Unit3,"per kg)"),ylab="Probability density",xlim=c(0,maxx)) 
+        lines(density(meansmean,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3)
+        
+        xvalues <- seq(0,maxx,length=100)
+        uppervalues <- numeric()
+        lowervalues <- numeric()
+        for(xv in 1:100){
+          uppervalues[xv] <- quantile(dlnorm(xvalues[xv],
+                                             mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
+                                      input_upper,names=FALSE) #0.975,names=FALSE)
           
-          maxx <- quantile(qnorm(0.95,mus0[,foodindex[i]]+0.5*Vs, sqrt(Vs0) ),
-                           0.5,names=FALSE)
-          minn <- quantile(qnorm(0.05,mus0[,foodindex[i]]+0.5*Vs, sqrt(Vs0) ),
-                           0.5,names=FALSE)
-          
-          plot(musmean/log(10),cump,lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("log C.consumption/bw+ (", Unit3,"per kg)"),ylab="Cumulative probability",xlim=c(minn/log(10),maxx/log(10)),type="l")
-          
-          xvalues <- seq(minn/log(10),maxx/log(10),length=100)
-          uppervalues <- numeric()
-          lowervalues <- numeric()
-          for(xv in 1:100){
-           uppervalues[xv] <- quantile(pnorm(xvalues[xv],
-                                              (mus0[,foodindex[i]]+0.5*Vs)/log(10),
-                                              sqrt(Vs0)/log(10) ),
-                                       input_upper,names=FALSE) #0.975,names=FALSE)
-            lowervalues[xv] <- quantile(pnorm(xvalues[xv],
-                                              (mus0[,foodindex[i]]+0.5*Vs)/log(10),
-                                              sqrt(Vs0)/log(10) ),
-                                        input_lower,names=FALSE) #0.025,names=FALSE)
-            }
-          polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
-          lines(musmean/log(10),cump,lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="log C.consumption/bw+",ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l")
-          
-          
-          for(r in 1:nr){
-            OIM[r]<- log(mean(exp(logsw[r,1:nd,foodindex[i]]),na.rm=TRUE)) 
-          } 
-          OIM<-OIM[!is.na(OIM)]
-          # mark data points: (observed individual means, in log-scale)
-          rug(OIM/log(10),lwd=2.5,col="#D0006F",quiet=TRUE)
-          lines(ecdf(OIM/log(10)),verticals=TRUE,do.points=FALSE,lwd=2,col="#D0006F")
-          
-          
-          #legend("bottomright",inset=0.04,cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
-          
-          # distribution of acute consumptions (log):
-          logsmean <- sort(mus0[,foodindex[i]]+muw)
-          maxx <- quantile(qnorm(0.95,mus0[,foodindex[i]]+muw,
-                                 sqrt(Vs0+Vs+sigw^2)),
-                           0.5,names=FALSE)
-          minn <- quantile(qnorm(0.05,mus0[,foodindex[i]]+muw,
-                                 sqrt(Vs0+Vs+sigw^2)),
-                           0.5,names=FALSE)
-          plot(logsmean/log(10),cump,lwd=3,main=paste(foodnamesused[i],"consumption"),
-               xlab=paste("log A.consumption+ (", Unit3,")"),ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l")
-          
-          xvalues <- seq(minn/log(10),maxx/log(10),length=100)
-          uppervalues <- numeric()
-          lowervalues <- numeric()
-          for(xv in 1:100){
-            uppervalues[xv] <- quantile(pnorm(xvalues[xv],
-                                              (mus0[,foodindex[i]]+muw)/log(10),
-                                              (sqrt(Vs0+Vs+sigw^2))/log(10) ),
-                                        input_upper,names=FALSE) #0.975,names=FALSE)
-            lowervalues[xv] <- quantile(pnorm(xvalues[xv],
-                                              (mus0[,foodindex[i]]+muw)/log(10),
-                                              (sqrt(Vs0+Vs+sigw^2))/log(10) ),
-                                        input_lower,names=FALSE) #0.025,names=FALSE)
-            }
-          polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
-          lines(logsmean/log(10),cump,lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="log A.consumption+",ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l")
-          
-          
-          # mark data points: (individual acute consumptions, in log-scale)
-          rug(logs[1:nr,1:nd,foodindex[i]]/log(10),lwd=2.5,col="#D0006F",quiet=TRUE)
-          lines(ecdf(logs[1:nr,1:nd,foodindex[i]]/log(10)),verticals=TRUE,do.points=FALSE,lwd=2,col="#D0006F")
-          
-          
-          #legend("bottomright",inset=0.04,cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
-        } # end of if logarithmic
-      } # end of if cumulative
+          lowervalues[xv] <- quantile(dlnorm(xvalues[xv],
+                                             mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
+                                      input_lower,names=FALSE) #0.025,names=FALSE)
+        }
+        polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
+        lines(density(meansmedian,from=0,to=maxx,n=2048),lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="C.consumption/bw+",ylab="",xlim=c(0,maxx),type="l")
+        lines(density(meansmean,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3)
+        
+        for(r in 1:nr){
+          OIM[r]<- mean(exp(logsw[r,1:nd,foodindex[i]]),na.rm=TRUE) 
+        } 
+        OIM<-OIM[!is.na(OIM)]
+        # mark data points: (observed individual means)
+        rug(OIM,lwd=2.5,col="#D0006F",quiet=TRUE)
+        
+        
+        #legend("topright",cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%") )) 
+        
+        # distribution of acute consumptions, on consumption days (absolute):
+        smean <- exp(mus0[,foodindex[i]]+0.5*Vs0+0.5*Vs+muw+0.5*sigw^2)
+        smedian <- exp(mus0[,foodindex[i]]+muw)
+        
+        maxx <- quantile(qlnorm(input_lim,mus0[,foodindex[i]]+muw,
+                                sqrt(Vs0+Vs+sigw^2)),
+                         0.5,names=FALSE)
+        
+        plot(density(smedian,from=0,to=maxx,n=2048),lwd=3,main=paste(foodnamesused[i],"consumption"),
+             xlab=paste("A.consumption+ (", Unit3,")"),ylab="",xlim=c(0,maxx)) 
+        lines(density(smean,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3)
+        
+        xvalues <- seq(0,maxx,length=100)
+        uppervalues <- numeric()
+        lowervalues <- numeric()
+        for(xv in 1:100){
+          uppervalues[xv] <- quantile(dlnorm(xvalues[xv],
+                                             mus0[,foodindex[i]]+muw,
+                                             sqrt(Vs0+Vs+sigw^2)),
+                                      input_upper,names=FALSE) #0.975,names=FALSE)
+          lowervalues[xv] <- quantile(dlnorm(xvalues[xv],
+                                             mus0[,foodindex[i]]+muw,
+                                             sqrt(Vs0+Vs+sigw^2)),
+                                      input_lower,names=FALSE) #0.025,names=FALSE)
+        }
+        polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
+        lines(density(smedian,from=0,to=maxx,n=2048),lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="A.consumption+",ylab="",xlim=c(0,maxx),type="l") 
+        lines(density(smean,from=0,to=maxx,n=2048),col="#F7CE3C",lwd=3)
+        
+        # mark data points: (individual acute consumptions)
+        rug(exp(logs[1:nr,1:nd,foodindex[i]]),lwd=2.5,col="#D0006F",quiet=TRUE)
+        
+        
+        #legend("topright",cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
+      } # end of if absolute
       
-    } # end of for nfused
+      if(input_selectscale=="Logarithmic"){
+        
+        # distributions of chronic consumptions, on consumption days (log per bodyweight)
+        musmean <- mus0[,foodindex[i]]+0.5*Vs
+        
+        maxx <- quantile(qnorm(input_lim,mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
+                         0.5,names=FALSE)
+        minn <- quantile(qnorm(0.05,mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
+                         0.5,names=FALSE)
+        
+        plot(density(musmean/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
+             xlab=paste("log C.consumption/bw+ (", Unit3,"per kg)"),ylab="Probability density",xlim=c(minn/log(10),maxx/log(10))) 
+        
+        xvalues <- seq(minn/log(10),maxx/log(10),length=100)
+        uppervalues <- numeric()
+        lowervalues <- numeric()
+        for(xv in 1:100){
+          uppervalues[xv] <- quantile(dnorm(xvalues[xv],
+                                            (mus0[,foodindex[i]]+0.5*Vs)/log(10),
+                                            sqrt(Vs0)/log(10) ),
+                                      input_upper,names=FALSE) #0.975,names=FALSE)
+          lowervalues[xv] <- quantile(dnorm(xvalues[xv],
+                                            (mus0[,foodindex[i]]+0.5*Vs)/log(10),
+                                            sqrt(Vs0)/log(10) ),
+                                      input_lower,names=FALSE) #0.025,names=FALSE)
+        }
+        polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
+        lines(density(musmean/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="log C.consumption/bw+",ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l")
+        
+        
+        for(r in 1:nr){
+          OIM[r]<- log(mean(exp(logsw[r,1:nd,foodindex[i]]),na.rm=TRUE)) 
+        } 
+        OIM<-OIM[!is.na(OIM)]
+        # mark data points: (observed individual means, in log-scale)
+        rug(OIM/log(10),lwd=2.5,col="#D0006F",quiet=TRUE)
+        
+        
+        #legend("topright",cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  ))    
+        
+        # distribution of acute consumptions, on consumption days (log):
+        logsmean <- mus0[,foodindex[i]]+muw
+        
+        maxx <- quantile(qnorm(input_lim,mus0[,foodindex[i]]+muw,
+                               sqrt(Vs0+Vs+sigw^2)),
+                         0.5,names=FALSE)
+        minn <- quantile(qnorm(0.05,mus0[,foodindex[i]]+muw,
+                               sqrt(Vs0+Vs+sigw^2)),
+                         0.5,names=FALSE)
+        
+        plot(density(logsmean/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
+             xlab=paste("log A.consumption+ (", Unit3,")"),ylab="",xlim=c(minn/log(10),maxx/log(10))) 
+        
+        # mark data points: (individual acute consumptions, in log-scale)
+        rug(logs[1:nr,1:nd,foodindex[i]]/log(10),lwd=2.5,col="#D0006F",quiet=TRUE)
+        
+        xvalues <- seq(minn/log(10),maxx/log(10),length=100)
+        uppervalues <- numeric()
+        lowervalues <- numeric()
+        for(xv in 1:100){
+          uppervalues[xv] <- quantile(dnorm(xvalues[xv],
+                                            (mus0[,foodindex[i]]+muw)/log(10),
+                                            (sqrt(Vs0+Vs+sigw^2))/log(10) ),
+                                      input_upper,names=FALSE) #0.975,names=FALSE)
+          lowervalues[xv] <- quantile(dnorm(xvalues[xv],
+                                            (mus0[,foodindex[i]]+muw)/log(10),
+                                            (sqrt(Vs0+Vs+sigw^2))/log(10) ),
+                                      input_lower,names=FALSE) #0.025,names=FALSE)
+        }
+        polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
+        lines(density(logsmean/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="log A.consumption+",ylab="",xlim=c(minn/log(10),maxx/log(10))) 
+        
+        
+        #legend("topright",cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%") )) 
+        
+      } # end of if logarithmic
+    } # end of if density
+    
+    if(input_selectdist=="Cumulative"){
+      par(yaxt="s")
+      cump <- seq(1,n_sim)
+      cump <- cump/length(cump)
+      if(input_selectscale=="Absolute"){
+        
+        # distributions of chronic consumptions (absolute per bodyweight)
+        meansmean <- sort(exp(mus0[,foodindex[i]]+0.5*Vs +0.5*Vs0 ))
+        meansmedian <- sort(exp(mus0[,foodindex[i]]+0.5*Vs ))
+        
+        maxx <- quantile(qlnorm(input_lim,mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
+                         0.5,names=FALSE)
+        
+        plot(meansmean,cump,col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
+             xlab=paste("C.consumption/bw+ (", Unit3,"per kg)"),ylab="Cumulative probability",xlim=c(0,maxx),type="l")
+        lines(meansmedian,cump,lwd=3)
+        
+        xvalues <- seq(0,maxx,length=100)
+        uppervalues <- numeric()
+        lowervalues <- numeric()
+        for(xv in 1:100){
+          uppervalues[xv] <- quantile(plnorm(xvalues[xv],
+                                             mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
+                                      input_upper,names=FALSE) #0.975,names=FALSE)
+          lowervalues[xv] <- quantile(plnorm(xvalues[xv],
+                                             mus0[,foodindex[i]]+0.5*Vs,sqrt(Vs0) ),
+                                      input_lower,names=FALSE) #0.025,names=FALSE)
+        }
+        polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
+        lines(meansmean,cump,col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="C.consumption/bw+",ylab="",xlim=c(0,maxx),type="l")
+        lines(meansmedian,cump,lwd=3)
+        
+        for(r in 1:nr){
+          OIM[r]<- mean(exp(logsw[r,1:nd,foodindex[i]]),na.rm=TRUE) 
+        } 
+        OIM<-OIM[!is.na(OIM)]
+        # mark data points: (observed individual means)
+        rug(OIM,lwd=2.5,col="#D0006F",quiet=TRUE)
+        lines(ecdf(OIM),verticals=TRUE,do.points=FALSE,lwd=2,col="#D0006F")
+        
+        
+        #legend("bottomright",inset=0.04,cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
+        
+        # distribution of acute consumptions (absolute):
+        smean <- sort(exp(mus0[,foodindex[i]]+0.5*Vs0+0.5*Vs+muw+0.5*sigw^2))
+        smedian <- sort(exp(mus0[,foodindex[i]]+muw))
+        
+        maxx <- quantile(qlnorm(input_lim,mus0[,foodindex[i]]+muw,
+                                sqrt(Vs0+Vs+sigw^2)),
+                         0.5,names=FALSE)
+        
+        
+        plot(smean,cump,col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),
+             xlab=paste("A.consumption+ (", Unit3,")"),ylab="",xlim=c(0,maxx),type="l") 
+        lines(smedian,cump,lwd=3)
+        
+        xvalues <- seq(0,maxx,length=100)
+        uppervalues <- numeric()
+        lowervalues <- numeric()
+        for(xv in 1:100){
+          uppervalues[xv] <- quantile(plnorm(xvalues[xv],
+                                             mus0[,foodindex[i]]+muw,
+                                             sqrt(Vs0+Vs+sigw^2)),
+                                      input_upper,names=FALSE) #0.975,names=FALSE)
+          lowervalues[xv] <- quantile(plnorm(xvalues[xv],
+                                             mus0[,foodindex[i]]+muw,
+                                             sqrt(Vs0+Vs+sigw^2)),
+                                      input_lower,names=FALSE) #0.025,names=FALSE)
+        }
+        polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
+        lines(smean,cump,col="#F7CE3C",lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="A.consumption+",ylab="",xlim=c(0,maxx),type="l") 
+        lines(smedian,cump,lwd=3)
+        
+        # mark data points: (individual acute consumptions)
+        rug(exp(logs[1:nr,1:nd,foodindex[i]]),lwd=2.5,col="#D0006F",quiet=TRUE)
+        lines(ecdf(exp(logs[1:nr,1:nd,foodindex[i]])),verticals=TRUE,do.points=FALSE,lwd=2,col="#D0006F")
+        
+        
+        #legend("bottomright",inset=0.04,cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
+      } # end of if absolute
+      
+      if(input_selectscale=="Logarithmic"){
+        # distributions of chronic consumptions (log per bodyweight)
+        musmean <- sort(mus0[,foodindex[i]]+0.5*Vs)
+        
+        maxx <- quantile(qnorm(input_lim,mus0[,foodindex[i]]+0.5*Vs, sqrt(Vs0) ),
+                         0.5,names=FALSE)
+        minn <- quantile(qnorm(0.05,mus0[,foodindex[i]]+0.5*Vs, sqrt(Vs0) ),
+                         0.5,names=FALSE)
+        
+        plot(musmean/log(10),cump,lwd=3,main=paste(foodnamesused[i],"consumption"),
+             xlab=paste("log C.consumption/bw+ (", Unit3,"per kg)"),ylab="Cumulative probability",xlim=c(minn/log(10),maxx/log(10)),type="l")
+        
+        xvalues <- seq(minn/log(10),maxx/log(10),length=100)
+        uppervalues <- numeric()
+        lowervalues <- numeric()
+        for(xv in 1:100){
+          uppervalues[xv] <- quantile(pnorm(xvalues[xv],
+                                            (mus0[,foodindex[i]]+0.5*Vs)/log(10),
+                                            sqrt(Vs0)/log(10) ),
+                                      input_upper,names=FALSE) #0.975,names=FALSE)
+          lowervalues[xv] <- quantile(pnorm(xvalues[xv],
+                                            (mus0[,foodindex[i]]+0.5*Vs)/log(10),
+                                            sqrt(Vs0)/log(10) ),
+                                      input_lower,names=FALSE) #0.025,names=FALSE)
+        }
+        polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
+        lines(musmean/log(10),cump,lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="log C.consumption/bw+",ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l")
+        
+        
+        for(r in 1:nr){
+          OIM[r]<- log(mean(exp(logsw[r,1:nd,foodindex[i]]),na.rm=TRUE)) 
+        } 
+        OIM<-OIM[!is.na(OIM)]
+        # mark data points: (observed individual means, in log-scale)
+        rug(OIM/log(10),lwd=2.5,col="#D0006F",quiet=TRUE)
+        lines(ecdf(OIM/log(10)),verticals=TRUE,do.points=FALSE,lwd=2,col="#D0006F")
+        
+        
+        #legend("bottomright",inset=0.04,cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
+        
+        # distribution of acute consumptions (log):
+        logsmean <- sort(mus0[,foodindex[i]]+muw)
+        maxx <- quantile(qnorm(input_lim,mus0[,foodindex[i]]+muw,
+                               sqrt(Vs0+Vs+sigw^2)),
+                         0.5,names=FALSE)
+        minn <- quantile(qnorm(0.05,mus0[,foodindex[i]]+muw,
+                               sqrt(Vs0+Vs+sigw^2)),
+                         0.5,names=FALSE)
+        plot(logsmean/log(10),cump,lwd=3,main=paste(foodnamesused[i],"consumption"),
+             xlab=paste("log A.consumption+ (", Unit3,")"),ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l")
+        
+        xvalues <- seq(minn/log(10),maxx/log(10),length=100)
+        uppervalues <- numeric()
+        lowervalues <- numeric()
+        for(xv in 1:100){
+          uppervalues[xv] <- quantile(pnorm(xvalues[xv],
+                                            (mus0[,foodindex[i]]+muw)/log(10),
+                                            (sqrt(Vs0+Vs+sigw^2))/log(10) ),
+                                      input_upper,names=FALSE) #0.975,names=FALSE)
+          lowervalues[xv] <- quantile(pnorm(xvalues[xv],
+                                            (mus0[,foodindex[i]]+muw)/log(10),
+                                            (sqrt(Vs0+Vs+sigw^2))/log(10) ),
+                                      input_lower,names=FALSE) #0.025,names=FALSE)
+        }
+        polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
+        lines(logsmean/log(10),cump,lwd=3,main=paste(foodnamesused[i],"consumption"),xlab="log A.consumption+",ylab="",xlim=c(minn/log(10),maxx/log(10)),type="l")
+        
+        
+        # mark data points: (individual acute consumptions, in log-scale)
+        rug(logs[1:nr,1:nd,foodindex[i]]/log(10),lwd=2.5,col="#D0006F",quiet=TRUE)
+        lines(ecdf(logs[1:nr,1:nd,foodindex[i]]/log(10)),verticals=TRUE,do.points=FALSE,lwd=2,col="#D0006F")
+        
+        
+        #legend("bottomright",inset=0.04,cex=0.6,paste(c("freq (2.5 %):","freq (50 %):","freq (97.5 %):"),round(quantile(100*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%")  )) 
+      } # end of if logarithmic
+    } # end of if cumulative
+    
+  } # end of for nfused
   
   
   # legend ----
@@ -765,8 +777,8 @@ distPlot2_1 <- function(food_consum, unit_consum, input_upper, input_lower, n_si
 
 
 # Plot 3: Exposures:----
-
-distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, input_modelchoice, input_modelchoice2, input_modelchoice3,input_modelchoice4,
+## ---- distPlot3_1 --------
+distPlot3_1 <- function(input_lim, unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, input_modelchoice, input_modelchoice2, input_modelchoice3,input_modelchoice4,
                         foodnamesused, nfused, foodindex, hazardnames,
                         nhused,  hazardnamesusedK, hazardnamesusedM,
                         nhusedK, nhusedM, hazardindexK, hazardindexM, Rall, Pall,nhK,nhM,nf,nr,nd,
@@ -774,7 +786,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                         logs,logsw,logcK,logLOQK,logLODK,logLOQLimK,logLODLimK, logcM,logLOQM,logLODM,logLOQLimM,logLODLimM,
                         logitp0,mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
                         Ss,Ss0,Sp
-) {          
+) {
   # generate results based on inputs from ui.R: 
   # Exposures----
   
@@ -784,7 +796,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
   
   # Chemical exposures----
   if((nhusedK>0)&(nfused>0)){
-   RK = matrix(NA,nf,nhK) # factors for concentrations
+    RK = matrix(NA,nf,nhK) # factors for concentrations
     RK[1:nf,1:nhK] = Rall[1:nf,is.element(hazardnames,hazardnamesusedK)]
     logRK = log(RK)
     PK = matrix(NA,nf,nhK) # factors for prevalence
@@ -803,6 +815,13 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
             Vs0[u] <- Ss0[u,foodindex[i],foodindex[i]] 
           }  
           
+          qnormpos95K <- qlnorm(0.95,logRK[foodindex[i],hazardindexK[h]]
+                                +mus0[,foodindex[i]]
+                                +0.5*Vs
+                                +mucK[,hazardindexK[h],foodindex[i]]
+                                +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
+                                sqrt(Vs0))
+          
           ##Density----
           if(input_selectdist=="Density"){ 
             ############## exposure.chronicKbw
@@ -816,14 +835,14 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                     mucK[,hazardindexK[h],foodindex[i]]+
                                     0.5*sigcK[,hazardindexK[h],foodindex[i]]^2+
                                     0.5*Vs0 )
-              maxx <- quantile(qlnorm(0.95,logRK[foodindex[i],hazardindexK[h]]
+              maxx <- quantile(qlnorm(input_lim,logRK[foodindex[i],hazardindexK[h]]
                                       +mus0[,foodindex[i]]
                                       +0.5*Vs
                                       +mucK[,hazardindexK[h],foodindex[i]]
                                       +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
                                       sqrt(Vs0) ),
                                0.5,names=FALSE)
-               
+              
               medianexposure <- exp(logRK[foodindex[i],hazardindexK[h]]+
                                       mus0[,foodindex[i]]+
                                       0.5*Vs+
@@ -836,21 +855,19 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               uppervalues <- numeric()
               lowervalues <- numeric()
               for(xv in 1:100){
-               uppervalues[xv] <- quantile(dlnorm(xvalues[xv],
-                                                   logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
-                                                   +0.5*Vs
-                                                   +mucK[,hazardindexK[h],foodindex[i]]
-                                                   +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                                   sqrt(Vs0)),
-                                           input_upper,names=FALSE) #0.9,names=FALSE)
-                lowervalues[xv] <- quantile(dlnorm(xvalues[xv],
-                                                   logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
-                                                   +0.5*Vs
-                                                   +mucK[,hazardindexK[h],foodindex[i]]
-                                                   +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                                   sqrt(Vs0) ),
+                
+                dlnormabsK <- dlnorm(xvalues[xv],
+                                     logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
+                                     +0.5*Vs
+                                     +mucK[,hazardindexK[h],foodindex[i]]
+                                     +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
+                                     sqrt(Vs0))
+                
+                uppervalues[xv] <- quantile(dlnormabsK,
+                                            input_upper,names=FALSE) #0.9,names=FALSE)
+                lowervalues[xv] <- quantile(dlnormabsK,
                                             input_lower,names=FALSE) #0.1,names=FALSE)
-                }
+              }
               polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
               
               lines(density(meanexposure,from=0,to=maxx,n=2048),col="#F7CE3C",main=paste(hazardnamesusedK[h],"from",foodnamesused[i],"(chronic)"),xlab="C.exposure/bw+",ylab="",xlim=c(0,maxx),lwd=3)
@@ -869,7 +886,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                 if(input_modelchoice=="Independent days"){
                   if(input_modelchoice2 =="Yes"){
                     logitpconsume[foodindex[i],1:V] <- rnorm(V,logitp0[u,foodindex[i]],sqrt(Sp[u,foodindex[i],foodindex[i]])) 
-                    }
+                  }
                   if(input_modelchoice2 == "No"){
                     logitpconsume[foodindex[i],1:V] <- rep(logitp0[u,foodindex[i]],V)   
                   }
@@ -897,24 +914,11 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               
               # positive chronic exposures, 
               # posterior quantiles of variability 95%quantile:
-              qu95_50 <- round(quantile(qlnorm(0.95,logRK[foodindex[i],hazardindexK[h]]
-                                               +mus0[,foodindex[i]]
-                                               +0.5*Vs
-                                               +mucK[,hazardindexK[h],foodindex[i]]
-                                               +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                               sqrt(Vs0) ),
+              qu95_50 <- round(quantile(qnormpos95K,
                                         0.5,names=FALSE),3)
-              qu95_95 <- round(quantile(qlnorm(0.95,logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
-                                               +0.5*Vs
-                                               +mucK[,hazardindexK[h],foodindex[i]]
-                                               +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                               sqrt(Vs0 )),
+              qu95_95 <- round(quantile(qnormpos95K,
                                         0.95,names=FALSE),3)
-              qu95_05 <- round(quantile(qlnorm(0.95,logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
-                                               +0.5*Vs
-                                               +mucK[,hazardindexK[h],foodindex[i]]
-                                               +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                               sqrt(Vs0)),
+              qu95_05 <- round(quantile(qnormpos95K,
                                         0.05,names=FALSE),3)
               # legend("topright",cex=0.6,
               #        paste(c("95% exposure+ (5 %):","95% exposure+ (50 %):","95% exposure+ (95 %):"),
@@ -939,7 +943,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               logmeanexposure <- logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]+
                 0.5*Vs+mucK[,hazardindexK[h],foodindex[i]]+
                 0.5*sigcK[,hazardindexK[h],foodindex[i]]^2
-              maxx <- quantile(qnorm(0.95,logRK[foodindex[i],hazardindexK[h]]
+              maxx <- quantile(qnorm(input_lim,logRK[foodindex[i],hazardindexK[h]]
                                      +mus0[,foodindex[i]]
                                      +0.5*Vs
                                      +mucK[,hazardindexK[h],foodindex[i]]
@@ -953,7 +957,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                      +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
                                      sqrt(Vs0)),
                                0.5,names=FALSE)
-             
+              
               
               plot(density(logmeanexposure/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",main=paste(hazardnamesusedK[h],"from",foodnamesused[i],"(chronic)"),
                    xlab=paste("log (C.exposure/bw+  (", Unit1,"per kg))"),ylab="Probability density",xlim=c(minn/log(10),maxx/log(10)),lwd=3) 
@@ -963,6 +967,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               uppervalues <- numeric()
               lowervalues <- numeric()
               for(xv in 1:100){
+                
                 uppervalues[xv] <- quantile(dnorm(xvalues[xv],
                                                   (logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
                                                    +0.5*Vs
@@ -977,7 +982,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                                    +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2)/log(10),
                                                   sqrt(Vs0)/log(10) ),
                                             input_lower,names=FALSE) #0.1,names=FALSE)
-                }
+              }
               polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
               
               
@@ -1002,7 +1007,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                     +mucK[,hazardindexK[h],foodindex[i]]
                     +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2
                     +0.5*Vs0) )
-              maxx <- quantile(qlnorm(0.95,logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
+              maxx <- quantile(qlnorm(input_lim,logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
                                       +0.5*Vs
                                       +mucK[,hazardindexK[h],foodindex[i]]
                                       +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
@@ -1022,21 +1027,19 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               uppervalues <- numeric()
               lowervalues <- numeric()
               for(xv in 1:100){
-                uppervalues[xv] <- quantile(plnorm(xvalues[xv],
-                                                   logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
-                                                   +0.5*Vs
-                                                   +mucK[,hazardindexK[h],foodindex[i]]
-                                                   +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                                   sqrt(Vs0)), 
+                
+                plnormabsK <- plnorm(xvalues[xv],
+                                     logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
+                                     +0.5*Vs
+                                     +mucK[,hazardindexK[h],foodindex[i]]
+                                     +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
+                                     sqrt(Vs0))
+                
+                uppervalues[xv] <- quantile(plnormabsK, 
                                             input_upper,names=FALSE) #0.9,names=FALSE)
-                lowervalues[xv] <- quantile(plnorm(xvalues[xv],
-                                                   logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
-                                                   +0.5*Vs
-                                                   +mucK[,hazardindexK[h],foodindex[i]]
-                                                   +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                                   sqrt(Vs0) ), 
+                lowervalues[xv] <- quantile(plnormabsK, 
                                             input_lower,names=FALSE) #0.1,names=FALSE)
-                }
+              }
               polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
               
               
@@ -1087,7 +1090,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                 if(input_modelchoice=="Independent days"){
                   if(input_modelchoice2 =="Yes"){
                     logitpconsume[foodindex[i],1:V] <-  rnorm(V,logitp0[u,foodindex[i]],sqrt(Sp[u,foodindex[i],foodindex[i]]))
-                   }
+                  }
                   if(input_modelchoice2 == "No"){
                     logitpconsume[foodindex[i],1:V] <- rep(logitp0[u,foodindex[i]],V)   
                   }
@@ -1116,24 +1119,11 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               
               # positive chronic exposures, 
               # posterior quantiles of variability 95% quantile (contaminated consumptions only):
-              qu95_50 <- round(quantile(qlnorm(0.95,logRK[foodindex[i],hazardindexK[h]]
-                                               +mus0[,foodindex[i]]
-                                               +0.5*Vs
-                                               +mucK[,hazardindexK[h],foodindex[i]]
-                                               +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                               sqrt(Vs0)), 
+              qu95_50 <- round(quantile(qnormpos95K, 
                                         0.5,names=FALSE),3)
-              qu95_95 <- round(quantile(qlnorm(0.95,logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
-                                               +0.5*Vs
-                                               +mucK[,hazardindexK[h],foodindex[i]]
-                                               +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                               sqrt(Vs0)),
+              qu95_95 <- round(quantile(qnormpos95K,
                                         0.95,names=FALSE),3)
-              qu95_05 <- round(quantile(qlnorm(0.95,logRK[foodindex[i],hazardindexK[h]]+mus0[,foodindex[i]]
-                                               +0.5*Vs
-                                               +mucK[,hazardindexK[h],foodindex[i]]
-                                               +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2,
-                                               sqrt(Vs0)),
+              qu95_05 <- round(quantile(qnormpos95K,
                                         0.05,names=FALSE),3)
               # legend("topright",cex=0.6,
               #        paste(c("95% exposure+ (5 %):","95% exposure+ (50 %):","95% exposure+ (95 %):"),
@@ -1163,7 +1153,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                 +mucK[,hazardindexK[h],foodindex[i]]
                 +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2)
               
-              maxx <- quantile(qnorm(0.95,logRK[foodindex[i],hazardindexK[h]]
+              maxx <- quantile(qnorm(input_lim,logRK[foodindex[i],hazardindexK[h]]
                                      +mus0[,foodindex[i]]
                                      +0.5*Vs
                                      +mucK[,hazardindexK[h],foodindex[i]]
@@ -1199,7 +1189,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                                    +0.5*sigcK[,hazardindexK[h],foodindex[i]]^2)/log(10),
                                                   sqrt(Vs0)/log(10) ),
                                             input_lower,names=FALSE) #0.1,names=FALSE)
-                }
+              }
               polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
               
               
@@ -1237,8 +1227,8 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
               
             } # end of if logarithmic    
             #legend("bottomright",cex=0.6,paste(c("expo (2.5 %):","expo (50 %):","expo (97.5 %):"),round(quantile(100*PK[foodindex[i],hazardindexK[h]]*pK[,hazardindexK[h],foodindex[i]]*ppred[,foodindex[i]],c(0.025,0.5,0.975),names=FALSE),2),c("%","%","%") ))               
-          
-            } # end of if cumulative
+            
+          } # end of if cumulative
           
           # legend outside the figure, but onto the current plot, so it is part of the png file:
           
@@ -1303,7 +1293,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                   +0.5*Vs
                                   +0.5*sigcM[,hazardindexM[h],foodindex[i]]^2 
                                   +0.5*sigw^2 )
-              maxx <- quantile(qlnorm(0.95,logRM[foodindex[i],hazardindexM[h]]+
+              maxx <- quantile(qlnorm(input_lim,logRM[foodindex[i],hazardindexM[h]]+
                                         mus0[,foodindex[i]]+
                                         mucM[,hazardindexM[h],foodindex[i]]+
                                         muw,   
@@ -1312,7 +1302,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                               sigcM[,hazardindexM[h],foodindex[i]]^2+
                                               sigw^2) ),
                                0.5,names=FALSE)
-             medianexposure <- exp(logRM[foodindex[i],hazardindexM[h]]+
+              medianexposure <- exp(logRM[foodindex[i],hazardindexM[h]]+
                                       mus0[,foodindex[i]]+
                                       mucM[,hazardindexM[h],foodindex[i]]+muw)
               
@@ -1344,7 +1334,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                                            sigcM[,hazardindexM[h],foodindex[i]]^2+
                                                            sigw^2)),
                                             input_lower,names=FALSE) #0.1,names=FALSE)
-                }
+              }
               polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
               lines(density(meanexposure,from=0,to=maxx,n=2048),col="#F7CE3C",main=paste(hazardnamesusedM[h],"from",foodnamesused[i],"(acute)"),xlab="A.exposure+",ylab="",xlim=c(0,maxx),lwd=3) 
               lines(density(medianexposure,from=0,to=maxx,n=2048),lwd=3)
@@ -1363,7 +1353,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                 if(input_modelchoice == "Independent days"){
                   if(input_modelchoice2 =="Yes"){
                     logitpconsume[1:V] <- rnorm(V,logitp0[u,foodindex[i]],sqrt(Sp[u,foodindex[i],foodindex[i]]))
-                    }
+                  }
                   if(input_modelchoice2 == "No"){
                     logitpconsume[1:V] <- rep(logitp0[u,foodindex[i]],V)   
                   }
@@ -1429,7 +1419,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
             if(input_selectscale=="Logarithmic"){
               logmeanexposure <- logRM[foodindex[i],hazardindexM[h]]+
                 mus0[,foodindex[i]]+mucM[,hazardindexM[h],foodindex[i]]+muw
-              maxx <- quantile(qnorm(0.95,logRM[foodindex[i],hazardindexM[h]]
+              maxx <- quantile(qnorm(input_lim,logRM[foodindex[i],hazardindexM[h]]
                                      +mus0[,foodindex[i]]
                                      +mucM[,hazardindexM[h],foodindex[i]]
                                      +muw,
@@ -1474,7 +1464,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                                            sigcM[,hazardindexM[h],foodindex[i]]^2+
                                                            sigw^2))/log(10) ),
                                             input_lower,names=FALSE) #0.1,names=FALSE)
-                }
+              }
               polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
               lines(density(logmeanexposure/log(10),from=minn/log(10),to=maxx/log(10),n=2048),col="#F7CE3C",main=paste(hazardnamesusedM[h],"from",foodnamesused[i],"(acute)"),xlab="log (A.exposure+)",ylab="",xlim=c(minn/log(10),maxx/log(10)),lwd=3)
               
@@ -1499,7 +1489,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                        +0.5*Vs
                                        +0.5*sigcM[,hazardindexM[h],foodindex[i]]^2 
                                        +0.5*sigw^2 ))
-              maxx <- quantile(qlnorm(0.95,logRM[foodindex[i],hazardindexM[h]]+
+              maxx <- quantile(qlnorm(input_lim,logRM[foodindex[i],hazardindexM[h]]+
                                         mus0[,foodindex[i]]+
                                         mucM[,hazardindexM[h],foodindex[i]]+
                                         muw,   
@@ -1541,7 +1531,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                                           sigcM[,hazardindexM[h],foodindex[i]]^2+
                                                           sigw^2)),
                                             input_lower,names=FALSE) #0.1,names=FALSE)
-                }
+              }
               polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
               
               
@@ -1588,7 +1578,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                 if(input_modelchoice == "Independent days"){ 
                   if(input_modelchoice2 =="Yes"){
                     logitpconsume[1:V] <-  rnorm(V,logitp0[u,foodindex[i]],sqrt(Sp[u,foodindex[i],foodindex[i]]))
-                    }
+                  }
                   if(input_modelchoice2 == "No"){
                     logitpconsume[1:V] <- rep(logitp0[u,foodindex[i]],V)   
                   }
@@ -1620,7 +1610,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                           +Vs0[u]
                                           +sigcM[u,hazardindexM[h],foodindex[i]]^2
                                           +sigw[u]^2))
-                } # end of for u
+              } # end of for u
               
               #legend("right",cex=0.6,
               #        legend=paste(c("95% exposure (5 %):","95% exposure (50 %):","95% exposure (95 %):"),
@@ -1658,7 +1648,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                       +mus0[,foodindex[i]]
                                       +mucM[,hazardindexM[h],foodindex[i]]
                                       +muw)
-              maxx <- quantile(qnorm(0.95,logRM[foodindex[i],hazardindexM[h]]
+              maxx <- quantile(qnorm(input_lim,logRM[foodindex[i],hazardindexM[h]]
                                      +mus0[,foodindex[i]]
                                      +mucM[,hazardindexM[h],foodindex[i]]
                                      +muw,
@@ -1703,7 +1693,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
                                                            sigcM[,hazardindexM[h],foodindex[i]]^2+
                                                            sigw^2))/log(10) ),
                                             input_lower,names=FALSE) #0.1,names=FALSE)
-                }
+              }
               polygon(c(xvalues,xvalues[100:1]),c(uppervalues,lowervalues[100:1]),col="#CEB888")
               lines(logmeanexposure/log(10),cump,main=paste(hazardnamesusedM[h],"from",foodnamesused[i],"(acute)"),xlab="log (A.exposure+)",ylab="",xlim=c(minn/log(10),maxx/log(10)),lwd=3,type="l") 
               
@@ -1772,7 +1762,7 @@ distPlot3_1 <- function(unit_concen, hazard_concen, input_upper, input_lower, n_
 
 # Plot 4: Quantiles:----
 
-
+## ---- distPlot4_1 --------
 distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, input_selectQ, nV,
                         nU, Rall, Pall, input_modelchoice, input_modelchoice2,
                         input_modelchoice5, input_modelchoice4, input_modelchoice3,
@@ -1800,10 +1790,10 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
     par(oma = c(4, 1, 0, 1),cex.lab=1.3,cex.main=1.3) # Outer margins for legend
     
     
-   # if( (nhused>0)&(nfused>0) ){
-     # par(mfrow=c(nhused,1),cex.lab=1.3,cex.main=1.3,yaxt="n")
-      #par(mfrow=c(1,1),cex.lab=1.3,cex.main=1.3,yaxt="n")
-   # }
+    # if( (nhused>0)&(nfused>0) ){
+    # par(mfrow=c(nhused,1),cex.lab=1.3,cex.main=1.3,yaxt="n")
+    #par(mfrow=c(1,1),cex.lab=1.3,cex.main=1.3,yaxt="n")
+    # }
     
     # generate nU variability distributions (each with nV variability simulations), 
     # evaluate quantiles for each of those variability distributions:
@@ -2580,7 +2570,7 @@ distPlot4_1 <- function(unit_concen, hazard_concen, n_sim, input_selectscale, in
 
 
 # Plot 5.1: MCMC diagnostic plots, Concentration parameters----
-
+## ---- distPlot5_1 --------
 distPlot5_1 <- function(n_sim, foodnamesused, nfused, foodindex, 
                         hazardnamesusedK, hazardnamesusedM, nhusedK, nhusedM,
                         hazardindexK, hazardindexM,nf,nhK,nhM,
@@ -2589,14 +2579,14 @@ distPlot5_1 <- function(n_sim, foodnamesused, nfused, foodindex,
 ) {
   
   par(oma = c(4, 3, 3, 0)) # Outer margins for legend
-    par(mar=rep(2,4),cex.lab=1.3,cex.main=1.3) #one hazard at a time -> required for the download option
-   # mfrow=c(3,1),
-    layout(mat = matrix(c(2, 1, 4, 3, 6, 5), 
-                        nrow = 2, 
-                        ncol = 3),
-           heights = c(2, 4),    # Heights of the two rows
-           widths = c(1, 1, 1))     # Widths of the two columns
-    
+  par(mar=rep(2,4),cex.lab=1.3,cex.main=1.3) #one hazard at a time -> required for the download option
+  # mfrow=c(3,1),
+  layout(mat = matrix(c(2, 1, 4, 3, 6, 5), 
+                      nrow = 2, 
+                      ncol = 3),
+         heights = c(2, 4),    # Heights of the two rows
+         widths = c(1, 1, 1))     # Widths of the two columns
+  
   
   #Chemical---- 
   
@@ -2657,7 +2647,7 @@ distPlot5_1 <- function(n_sim, foodnamesused, nfused, foodindex,
           mtext("Approximated marginal probability density",
                 side = 3, adj = 0.5,line=1, cex = 1.3,
                 outer = TRUE)
-          } # end of if hazard-food modeled  
+        } # end of if hazard-food modeled  
         else
           
           #Empty plot
@@ -2677,56 +2667,56 @@ distPlot5_1 <- function(n_sim, foodnamesused, nfused, foodindex,
 
 
 # Plot 5.2: MCMC diagnostic plots, Consumption parameters----
-
+## ---- distPlot5_2 --------
 distPlot5_2 <- function(n_sim,foodnamesused, nfused, foodindex,
                         nf,
                         mus0,ppred,
                         Ss
 ) {
   par(oma = c(4, 3, 3, 0)) # Outer margins for legend
-    par(mar=rep(2,4),cex.lab=1.3,cex.main=1.3) #one food at a time -> required for the download option
-    #mfrow=c(3,2),
-    layout(mat = matrix(c(2, 1, 4, 3, 6, 5), 
-                        nrow = 2, 
-                        ncol = 3),
-           heights = c(2, 4),    # Heights of the two rows
-           widths = c(1, 1, 1))     # Widths of the two columns
+  par(mar=rep(2,4),cex.lab=1.3,cex.main=1.3) #one food at a time -> required for the download option
+  #mfrow=c(3,2),
+  layout(mat = matrix(c(2, 1, 4, 3, 6, 5), 
+                      nrow = 2, 
+                      ncol = 3),
+         heights = c(2, 4),    # Heights of the two rows
+         widths = c(1, 1, 1))     # Widths of the two columns
+  
+  
+  for(i in 1:nfused){
+    Vs <- numeric() # variances
+    for(u in 1:n_sim){
+      Vs[u] <- Ss[u,foodindex[i],foodindex[i]]  
+    }
+    plot(x=mus0[,foodindex[i]]/log(10), y= 1:length(mus0[,foodindex[i]]), pch=16,cex=0.5,col="#D0006F") 
+    plot(density(mus0[,foodindex[i]]/log(10))$x, 0.3*n_sim/max(density(mus0[,foodindex[i]]/log(10))$y)*density(mus0[,foodindex[i]]/log(10))$y,main=bquote(.(foodnamesused[i])~":"~mu),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
     
+    plot(Vs/log(10),y= 1:length(Vs),pch=16,cex=0.5,col="#D0006F") 
+    plot(density(Vs/log(10))$x,0.3*n_sim/max(density(Vs/log(10))$y)*density(Vs/log(10))$y,main=bquote(.(foodnamesused[i])~":"~sigma),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+    #lines(0.3*n_sim/max(density(Vs/log(10))$y)*density(Vs/log(10))$y,density(Vs/log(10))$x,lwd=3)
     
-    for(i in 1:nfused){
-     Vs <- numeric() # variances
-      for(u in 1:n_sim){
-        Vs[u] <- Ss[u,foodindex[i],foodindex[i]]  
-       }
-     plot(x=mus0[,foodindex[i]]/log(10), y= 1:length(mus0[,foodindex[i]]), pch=16,cex=0.5,col="#D0006F") 
-     plot(density(mus0[,foodindex[i]]/log(10))$x, 0.3*n_sim/max(density(mus0[,foodindex[i]]/log(10))$y)*density(mus0[,foodindex[i]]/log(10))$y,main=bquote(.(foodnamesused[i])~":"~mu),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
-      
-     plot(Vs/log(10),y= 1:length(Vs),pch=16,cex=0.5,col="#D0006F") 
-      plot(density(Vs/log(10))$x,0.3*n_sim/max(density(Vs/log(10))$y)*density(Vs/log(10))$y,main=bquote(.(foodnamesused[i])~":"~sigma),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
-      #lines(0.3*n_sim/max(density(Vs/log(10))$y)*density(Vs/log(10))$y,density(Vs/log(10))$x,lwd=3)
-      
-      plot(ppred[,foodindex[i]],y= 1:length(ppred[,foodindex[i]]),pch=16,cex=0.5,col="#D0006F") 
-      plot(density(ppred[,foodindex[i]])$x,0.3*n_sim/max(density(ppred[,foodindex[i]])$y)*density(ppred[,foodindex[i]])$y,main=bquote(.(foodnamesused[i])~":"~p),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
-      #lines(0.3*n_sim/max(density(ppred[,foodindex[i]])$y)*density(ppred[,foodindex[i]])$y,density(ppred[,foodindex[i]])$x,lwd=3)
-      
-      mtext("Parameter value",
-            side = 1, adj = 0.5,line=2, cex = 1.3,
-            outer = TRUE)
-      mtext("MCMC samples",
-            side = 2, adj = 0.25,line=1, cex = 1.3,
-            outer = TRUE)
-      mtext("Approximated marginal probability density",
-            side = 3, adj = 0.5,line=1, cex = 1.3,
-            outer = TRUE)
-      } # for
- 
+    plot(ppred[,foodindex[i]],y= 1:length(ppred[,foodindex[i]]),pch=16,cex=0.5,col="#D0006F") 
+    plot(density(ppred[,foodindex[i]])$x,0.3*n_sim/max(density(ppred[,foodindex[i]])$y)*density(ppred[,foodindex[i]])$y,main=bquote(.(foodnamesused[i])~":"~p),type = "l",lty = 1,lwd=1, xaxt = "n", yaxt = "n")
+    #lines(0.3*n_sim/max(density(ppred[,foodindex[i]])$y)*density(ppred[,foodindex[i]])$y,density(ppred[,foodindex[i]])$x,lwd=3)
+    
+    mtext("Parameter value",
+          side = 1, adj = 0.5,line=2, cex = 1.3,
+          outer = TRUE)
+    mtext("MCMC samples",
+          side = 2, adj = 0.25,line=1, cex = 1.3,
+          outer = TRUE)
+    mtext("Approximated marginal probability density",
+          side = 3, adj = 0.5,line=1, cex = 1.3,
+          outer = TRUE)
+  } # for
+  
 }
 
 
 
 
 # Plot 6: Serving correlation----
-
+## ---- distPlot6_1 --------
 distPlot6_1 <- function(food_consum, unit_consum, n_sim, input_modelchoice4, input_modelchoice3, foodnamesused,
                         nfused, foodindex,nr,nd,nf,logsw,
                         mus0,
@@ -2749,9 +2739,9 @@ distPlot6_1 <- function(food_consum, unit_consum, n_sim, input_modelchoice4, inp
     
     
     for(i in 1:nsample){
-        sampledmus[i,1:nf] <- rmvnorm(1,mus0[mc[i],1:nf],Ss0[mc[i],1:nf,1:nf])
-        sampledsw[i,1:nf] <- exp(rmvnorm(1,sampledmus[i,1:nf],Ss[mc[i],1:nf,1:nf]))
-        }
+      sampledmus[i,1:nf] <- rmvnorm(1,mus0[mc[i],1:nf],Ss0[mc[i],1:nf,1:nf])
+      sampledsw[i,1:nf] <- exp(rmvnorm(1,sampledmus[i,1:nf],Ss[mc[i],1:nf,1:nf]))
+    }
     
     datasw <- matrix(NA,nr*nd,nf)
     rowindex <- 0
@@ -2771,14 +2761,14 @@ distPlot6_1 <- function(food_consum, unit_consum, n_sim, input_modelchoice4, inp
           main=paste("Pairwise scatterplots of log (consumption/bw+(", Unit3,"per kg))"),
           upper.panel=NULL,omd=c(1,1,15,1),
           cex=c(1,0.4)[group],pch=c(16,16)[group],col=c("#004F71","#D0006F")[group])
-   # legend("right",legend=c("data","predicted"),
-   #       pch=c(16,16),pt.cex=c(1,0.4),col=c("#004F71","#D0006F"))
- } # nfused >1 
+    # legend("right",legend=c("data","predicted"),
+    #       pch=c(16,16),pt.cex=c(1,0.4),col=c("#004F71","#D0006F"))
+  } # nfused >1 
   #} # if serving correlations
 }
 
 # Plot 7: Mean serving correlations----
-
+## ---- distPlot7_1 --------
 distPlot7_1 <- function(food_consum, unit_consum, n_sim, input_modelchoice4, foodnamesused, nfused, foodindex,
                         nf,nr,nd,logsw,
                         mus0,
@@ -2801,10 +2791,10 @@ distPlot7_1 <- function(food_consum, unit_consum, n_sim, input_modelchoice4, foo
     sampledmeans <- matrix(NA,nsample,nf) # for the means in absolute scale
     mc <- round(seq(1,n_sim,length=nsample))
     
-   for(i in 1:nsample){
-       sampledmus[i,1:nf] <- rmvnorm(1,mus0[mc[i],1:nf],Ss0[mc[i],1:nf,1:nf])
+    for(i in 1:nsample){
+      sampledmus[i,1:nf] <- rmvnorm(1,mus0[mc[i],1:nf],Ss0[mc[i],1:nf,1:nf])
       sampledmeans[i,1:nf] <- exp(sampledmus[i,1:nf]+0.5*diag(Ss[mc[i],1:nf,1:nf]))
-      }
+    }
     
     datameansw <- matrix(NA,nr,nf)
     for(r in 1:nr){ # consumers
@@ -2820,11 +2810,11 @@ distPlot7_1 <- function(food_consum, unit_consum, n_sim, input_modelchoice4, foo
     par(xpd=TRUE)
     pairs(rbind(DF1,DF2),
           main=paste("Pairwise scatterplots of log (E(consumption/bw+(", Unit3,"per kg))"),
-         # main="Pairwise scatterplots of log (E(consumption/bw+))",
+          # main="Pairwise scatterplots of log (E(consumption/bw+))",
           upper.panel=NULL,omd=c(1,1,15,1),
           cex=c(1,0.4)[group],pch=c(16,16)[group],col=c("#004F71","#D0006F")[group])
-   # legend("right",legend=c("data","predicted"),
-   #        pch=c(16,16),pt.cex=c(1,0.4),col=c("#004F71","#D0006F"))
+    # legend("right",legend=c("data","predicted"),
+    #        pch=c(16,16),pt.cex=c(1,0.4),col=c("#004F71","#D0006F"))
   } 
   
 }

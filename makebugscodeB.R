@@ -1,7 +1,3 @@
-# Rahti:
-#tempBike <- file.path("/tmp/reportsbikemodel.txt")
-#file.copy("bikemodel.txt", tempBike, overwrite = TRUE)
-#fileConn<-file(tempBike)
 
 # Creates BUGS-code for a model with Markov model for consumption days ('dependent days' model)
 tempBike <- file.path(tempdir(), "bikemodel.txt")

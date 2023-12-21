@@ -5,8 +5,7 @@
 # create data frame containing posterior predictive summaries
 
 
-
-
+## ---- resultValues --------
 table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice3,input_modelchoice4,input_modelchoice5,
                    theresults, foodnamesused, nfused, foodindex, hazardnames, 
                    hazardnamesusedK,hazardnamesusedM, nhusedK, nhusedM, hazardindexK, hazardindexM,
@@ -24,7 +23,7 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
     DF <- data.frame(Results="No food-hazard selected")
     
     if((nhusedK>0)&(nfused>0)){  # if some chemical hazard in some food selected
-          
+      
       cKmc <- array(NA,dim=c(n_sim,nhusedK,nfused))   
       for(mc in 1:(n_sim)){  # simulate posterior predictive concentrations
         for(h in 1:nhusedK){ # actual contamination level:
@@ -188,32 +187,32 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
             
             if(nf>1){ # many foods
               if(input_modelchoice2=="Yes"){ # variability between users frequencies 
-                  logitpmc[mc,1:nf] <- rmvnorm(1,logitp0[mc,1:nf],Sp[mc,1:nf,1:nf])
-                  
+                logitpmc[mc,1:nf] <- rmvnorm(1,logitp0[mc,1:nf],Sp[mc,1:nf,1:nf])
+                
               }
               if(input_modelchoice2=="No"){ # no variability between users frequencies
                 logitpmc[mc,1:nf] <- logitp0[mc,1:nf]       
               }   
               pmc[mc,1:nf] <- exp(logitpmc[mc,1:nf])/(1+exp(logitpmc[mc,1:nf])) # individual use probability
               musmc[mc,1:nf] <- rmvnorm(1,mus0[mc,1:nf],Ss0[mc,1:nf,1:nf]) # individual mean log amount
-               
+              
             }
             if(nf==1){ # only one food
               if(input_modelchoice2=="Yes"){ # variability between users frequencies 
                 logitpmc[mc,1] <- rnorm(1,logitp0[mc,1],sqrt(Sp[mc,1,1]))
-                }
+              }
               if(input_modelchoice2=="No"){ # no variability between users frequencies
                 logitpmc[mc,1] <- logitp0[mc,1]    
               }   
               pmc[mc,1] <- exp(logitpmc[mc,1])/(1+exp(logitpmc[mc,1])) # individual use probability
               musmc[mc,1] <- rnorm(1,mus0[mc,1],sqrt(Ss0[mc,1,1])) # individual mean log amount
-              }
+            }
             
             for(h in 1:nhusedK){
               for(i in 1:nfused){
                 if(nexactK[hazardindexK[h],foodindex[i]]>0){ # hazard-food is modeled
                   # chronic (mean) exposure for a random consumer, hazard h, food i:
-                 
+                  
                   EemcK[mc,h,i] <- pK[mc,hazardindexK[h],foodindex[i]]*
                     PK[foodindex[i],hazardindexK[h]]*
                     pmc[mc,foodindex[i]]*
@@ -222,7 +221,7 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
                         +0.5*invTs[mc,foodindex[i],foodindex[i]]
                         +mucK[mc,hazardindexK[h],foodindex[i]]
                         +0.5*sigcK[mc,hazardindexK[h],foodindex[i]]^2)  
-                  }
+                }
               }
               chronictotbwK[mc,h] <- sum(EemcK[mc,h,1:nfused]) # sum over foods
             } # end of h
@@ -240,8 +239,8 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
             invTs[mc,1:nf,1:nf] <- Ss[mc,1:nf,1:nf]
             
             if(nf>1){ # many foods
-                musmc[mc,1:nf] <- rmvnorm(1,mus0[mc,1:nf],Ss0[mc,1:nf,1:nf]) # individual mean log amount 
-                
+              musmc[mc,1:nf] <- rmvnorm(1,mus0[mc,1:nf],Ss0[mc,1:nf,1:nf]) # individual mean log amount 
+              
             }
             if(nf==1){ # only one food
               musmc[mc,1] <- rnorm(1,mus0[mc,1],sqrt(Ss0[mc,1,1])) # individual mean log amount   
@@ -260,7 +259,7 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
                         +0.5*invTs[mc,foodindex[i],foodindex[i]]
                         +mucK[mc,hazardindexK[h],foodindex[i]]
                         +0.5*sigcK[mc,hazardindexK[h],foodindex[i]]^2)  
-                  }
+                }
               }
               chronictotbwK[mc,h] <- sum(EemcK[mc,h,1:nfused]) # sum over foods
             } # end of h
@@ -271,7 +270,7 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
       } # end of nhusedK 
       
       if(nhusedM>0){  # simulate posterior predictive distributions for microbial hazards
-         
+        
         
         if(input_modelchoice == "Independent days"){  
           
@@ -281,24 +280,24 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
             
             # variances for consumptions:
             invTs[mc,1:nf,1:nf] <- Ss[mc,1:nf,1:nf] 
-           
+            
             if(nf>1){  # many foods
               if(input_modelchoice2=="Yes"){ # variability between users frequencies
-                  logitpmc[mc,1:nf] <- rmvnorm(1,logitp0[mc,1:nf],Sp[mc,1:nf,1:nf])  
+                logitpmc[mc,1:nf] <- rmvnorm(1,logitp0[mc,1:nf],Sp[mc,1:nf,1:nf])  
               }
               if(input_modelchoice2=="No"){ # no variability between users frequencies
                 logitpmc[mc,1:nf] <- logitp0[mc,1:nf]   
               }   
               pmc[mc,1:nf] <- exp(logitpmc[mc,1:nf])/(1+exp(logitpmc[mc,1:nf])) # individual use probability
               musmc[mc,1:nf] <- rmvnorm(1,mus0[mc,1:nf],Ss0[mc,1:nf,1:nf])  
-               
+              
               #if(nf>1){
-                if(input_modelchoice3=="No"){ # no correlation of serving sizes
-                  smc[mc,1:nf] <- exp(rmvnorm(1,musmc[mc,1:nf],diag(diag(invTs[mc,1:nf,1:nf])))) # actual random amount  
-                }
-                if(input_modelchoice3=="Yes"){
-                  smc[mc,1:nf] <- exp(rmvnorm(1,musmc[mc,1:nf],invTs[mc,1:nf,1:nf] )) # actual random amount  
-                }
+              if(input_modelchoice3=="No"){ # no correlation of serving sizes
+                smc[mc,1:nf] <- exp(rmvnorm(1,musmc[mc,1:nf],diag(diag(invTs[mc,1:nf,1:nf])))) # actual random amount  
+              }
+              if(input_modelchoice3=="Yes"){
+                smc[mc,1:nf] <- exp(rmvnorm(1,musmc[mc,1:nf],invTs[mc,1:nf,1:nf] )) # actual random amount  
+              }
               #}
               
             } 
@@ -306,15 +305,15 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
             if(nf==1){ # only one food
               if(input_modelchoice2=="Yes"){ # variability between users frequencies
                 logitpmc[mc,1] <- rnorm(1,logitp0[mc,1],sqrt(Sp[mc,1,1]))
-                }
+              }
               if(input_modelchoice2=="No"){ # no variability between users frequencies
                 logitpmc[mc,1] <- logitp0[mc,1]     
               }   
               pmc[mc,1] <- exp(logitpmc[mc,1])/(1+exp(logitpmc[mc,1])) # individual use probability
               musmc[mc,1] <- rnorm(1,mus0[mc,1],sqrt(Ss0[mc,1,1])) # individual mean amount 
               
-             # if(nf==1){ # only one food
-                smc[mc,1] <- rlnorm(1,musmc[mc,1],sqrt(invTs[mc,1,1])) # actual random amount   
+              # if(nf==1){ # only one food
+              smc[mc,1] <- rlnorm(1,musmc[mc,1],sqrt(invTs[mc,1,1])) # actual random amount   
               #}
             }
             
@@ -361,20 +360,20 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
               musmc[mc,1:nf] <- rmvnorm(1,mus0[mc,1:nf],Ss0[mc,1:nf,1:nf])
               
               #if(nf>1){
-                if(input_modelchoice3=="No"){ # no correlation of serving sizes
-                  smc[mc,1:nf] <- exp(rmvnorm(1,musmc[mc,1:nf],diag(diag(invTs[mc,1:nf,1:nf])))) # actual random amount 
-                }
-                if(input_modelchoice3=="Yes"){ # correlation of servings sizes
-                  smc[mc,1:nf] <- exp(rmvnorm(1,musmc[mc,1:nf],invTs[mc,1:nf,1:nf])) # actual random amount  
-                }
-             # }               
+              if(input_modelchoice3=="No"){ # no correlation of serving sizes
+                smc[mc,1:nf] <- exp(rmvnorm(1,musmc[mc,1:nf],diag(diag(invTs[mc,1:nf,1:nf])))) # actual random amount 
+              }
+              if(input_modelchoice3=="Yes"){ # correlation of servings sizes
+                smc[mc,1:nf] <- exp(rmvnorm(1,musmc[mc,1:nf],invTs[mc,1:nf,1:nf])) # actual random amount  
+              }
+              # }               
             }
             if(nf==1){ # only one food
               musmc[mc,1] <- rnorm(1,mus0[mc,1],sqrt(Ss0[mc,1,1])) # individual mean log amount
-             # if(nf==1){  # only one food
-                smc[mc,1] <- rlnorm(1,musmc[mc,1],sqrt(invTs[mc,1,1]))    
-             # }
-              }
+              # if(nf==1){  # only one food
+              smc[mc,1] <- rlnorm(1,musmc[mc,1],sqrt(invTs[mc,1,1]))    
+              # }
+            }
             wmc[mc] <- rlnorm(1,muw[mc],sigw[mc]) # bodyweight for random individual
             Umc[mc,1:nf] <- rbinom(nf,rep(1,nf),ppred[mc,1:nf]) # actual random use
             
@@ -452,17 +451,17 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
         fconsup98 <- numeric(nfused)
         for(mc in 1:(n_sim)){
           if(nf>1){ # many foods
-             musmc[mc,1:nf] <- rmvnorm(1,mus0[mc,1:nf],Ss0[mc,1:nf,1:nf])
-           }
+            musmc[mc,1:nf] <- rmvnorm(1,mus0[mc,1:nf],Ss0[mc,1:nf,1:nf])
+          }
           if(nf==1){ # only one food
-           musmc[mc,1] <- rnorm(1,mus0[mc,1],sqrt(Ss0[mc,1,1]))
-            }
+            musmc[mc,1] <- rnorm(1,mus0[mc,1],sqrt(Ss0[mc,1,1]))
+          }
         }
         for(i in 1:nfused){ # posterior predictive summaries (quantiles) of individual chronic consumptions (/bw and absolute)
           Vs <- numeric() # variances
           for(mc in 1:(n_sim)){ # variances for consumptions
             Vs[mc] <-Ss[mc,foodindex[i],foodindex[i]]
-            }
+          }
           
           fconslo90bw[i] <- quantile(exp(musmc[,foodindex[i]]+0.5*Vs ),0.05,names=FALSE)
           fconslo90[i] <- quantile(exp(musmc[,foodindex[i]]+muw+0.5*Vs+0.5*sigw^2),0.05,names=FALSE)
@@ -581,12 +580,14 @@ table1 <- function(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice
   
   
   DF # results collected as data frame
+  
 }
 
 
 
 # Table 2: ----
 
+## ---- resultProbs --------
 table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfused,foodindex,hazardnames,
                    hazardnamesused,hazardtypesused,hazardnamesK,hazardnamesM,
                    hazardnamesusedK,hazardnamesusedM,nhusedK,nhusedM,hazardindexK,hazardindexM,
@@ -639,7 +640,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
             if(input_modelchoice=="Independent days"){
               if(input_modelchoice2 =="Yes"){
                 logitpconsume[foodindex[i],1:V] <- rnorm(V,logitp0[u,foodindex[i]],sqrt(Sp[u,foodindex[i],foodindex[i]]))
-                }
+              }
               if(input_modelchoice2 == "No"){
                 logitpconsume[foodindex[i],1:V] <- rep(logitp0[u,foodindex[i]],V)   
               }
@@ -648,12 +649,14 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
             if(input_modelchoice=="Dependent days"){
               pconsume[foodindex[i],1:V] <- rep(ppred[u,foodindex[i]],V)
             }
-           
-            cmeanpos[1:V] <- rlnorm(V,logRK[foodindex[i],hazardindexK[h]]
-                                    +mus0[u,foodindex[i]]
-                                    +0.5*Vs[u]
-                                    +mucK[u,hazardindexK[h],foodindex[i]]
-                                    +0.5*sigcK[u,hazardindexK[h],foodindex[i]]^2,
+            
+            fornormK <- logRK[foodindex[i],hazardindexK[h]]+
+              mus0[u,foodindex[i]]+
+              0.5*Vs[u]+
+              mucK[u,hazardindexK[h],foodindex[i]]+
+              0.5*sigcK[u,hazardindexK[h],foodindex[i]]^2
+            
+            cmeanpos[1:V] <- rlnorm(V,fornormK,
                                     sqrt(Vs0[u]) )  
             qutotal95[u]<-quantile(
               pconsume[foodindex[i],1:V]*
@@ -661,28 +664,23 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                 PK[foodindex[i],hazardindexK[h]]*
                 cmeanpos[1:V],0.95,names=FALSE)
             
+            plnormK <- plnorm(limitexpoK[h],fornormK,
+                              sqrt(Vs0[u]) )
+            
+            meanK <- mean(pconsume[foodindex[i],1:V])
+            
             # Monte Carlo estimate for P(exposure < limit) over variability dimension:
             # all days: (two possible cases: (1-P(contamination,use))*1 + P(contamination,use)*F(limit))
-           punderlimitallK[u] <- 
-              (1-mean(pconsume[foodindex[i],1:V])*
+            punderlimitallK[u] <- 
+              (1-meanK*
                  PK[foodindex[i],hazardindexK[h]]*
                  pK[u,hazardindexK[h],foodindex[i]])*1+
-              mean(pconsume[foodindex[i],1:V])*
+              meanK*
               PK[foodindex[i],hazardindexK[h]]*
               pK[u,hazardindexK[h],foodindex[i]]*  
-              plnorm(limitexpoK[h],logRK[foodindex[i],hazardindexK[h]]+
-                       mus0[u,foodindex[i]]+
-                       0.5*Vs[u]+
-                       mucK[u,hazardindexK[h],foodindex[i]]+
-                       0.5*sigcK[u,hazardindexK[h],foodindex[i]]^2,
-                     sqrt(Vs0[u]) )
+              plnormK
             # contaminated consumptions: (one possible case: F(limit) cumulative prob.)
-            punderlimitposK[u] <- plnorm(limitexpoK[h],logRK[foodindex[i],hazardindexK[h]]+
-                                           mus0[u,foodindex[i]]+
-                                           0.5*Vs[u]+
-                                           mucK[u,hazardindexK[h],foodindex[i]]+
-                                           0.5*sigcK[u,hazardindexK[h],foodindex[i]]^2,
-                                         sqrt(Vs0[u]) )
+            punderlimitposK[u] <- plnormK
             
           } # end of for u
           
@@ -692,7 +690,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                                    From = paste0("pos days"),
                                    Hazard = paste0(hazardnamesusedK[h]),
                                    Food = paste0(foodnamesused[i]),
-                                  # Limit = paste0("<",limitexpoK[h]),
+                                   # Limit = paste0("<",limitexpoK[h]),
                                    #Quantity = paste0("P(chronic ",hazardnamesusedK[h]," from pos days, ",foodnamesused[i],", <",limitexpoK[h],")"),
                                    Q05 = as.character(round(quantile(punderlimitposK,c(0.05),names=FALSE,na.rm=TRUE),2)),
                                    Q50 = as.character(round(quantile(punderlimitposK,c(0.5),names=FALSE,na.rm=TRUE),2)),
@@ -702,7 +700,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                                    From = paste0("all days"),
                                    Hazard = paste0(hazardnamesusedK[h]),
                                    Food = paste0(foodnamesused[i]),
-                                 #  Limit = paste0("<",limitexpoK[h]),
+                                   #  Limit = paste0("<",limitexpoK[h]),
                                    #Quantity = paste0("P(chronic ",hazardnamesusedK[h]," from all days, ",foodnamesused[i],", <",limitexpoK[h],")"),
                                    Q05 = as.character(round(quantile(punderlimitallK,c(0.05),names=FALSE,na.rm=TRUE),2)),
                                    Q50 = as.character(round(quantile(punderlimitallK,c(0.5),names=FALSE,na.rm=TRUE),2)),
@@ -714,7 +712,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                                  From = paste0("all days"),
                                  Hazard = paste0(hazardnamesusedK[h]),
                                  Food = paste0(foodnamesused[i]),
-                                # Limit = paste0(""),
+                                 # Limit = paste0(""),
                                  #Quantity = paste0("Q95 chronic ",hazardnamesusedK[h]," from all days, ",foodnamesused[i]), 
                                  Q05 = as.character(round(quantile(qutotal95,0.05,names=FALSE,na.rm=TRUE),2)),
                                  Q50 = as.character(round(quantile(qutotal95,0.5,names=FALSE,na.rm=TRUE),2)),
@@ -746,7 +744,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                                  From = paste0("pos days"),
                                  Hazard = paste0(hazardnamesusedK[h]),
                                  Food = paste0(foodnamesused[i]),
-                                # Limit = paste0(""),
+                                 # Limit = paste0(""),
                                  #Quantity = paste0("Q95 chronic ",hazardnamesusedK[h]," from pos days, ",foodnamesused[i]),
                                  Q05 = as.character(round(qu95_05,2)),
                                  Q50 = as.character(round(qu95_50,2)),
@@ -756,6 +754,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
           DF95 <- rbind.data.frame(DF95,DF95allK,DF95posK)
         } # end of if hazard-food is modeled    
       }} # end of for nhused nfused
+    
   } # (nhusedK>0)&(nfused>0) chemical exposures
   
   # Microbial exposures:  
@@ -789,13 +788,13 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
           for(u in 1:(n_sim)){ 
             # simulate variability for V individuals, 
             # per each uncertain parameter:
-           Vs[u] <- Ss[u,foodindex[i],foodindex[i]]
-           Vs0[u] <- Ss0[u,foodindex[i],foodindex[i]]
+            Vs[u] <- Ss[u,foodindex[i],foodindex[i]]
+            Vs0[u] <- Ss0[u,foodindex[i],foodindex[i]]
             
             if(input_modelchoice=="Independent days"){
               if(input_modelchoice2 =="Yes"){
                 logitpconsume[foodindex[i],1:V] <- rnorm(V,logitp0[u,foodindex[i]],sqrt(Sp[u,foodindex[i],foodindex[i]]))
-                }
+              }
               if(input_modelchoice2 == "No"){
                 logitpconsume[foodindex[i],1:V] <- rep(logitp0[u,foodindex[i]],V)   
               }
@@ -805,10 +804,11 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
               pconsume[foodindex[i],1:V] <- rep(ppred[u,foodindex[i]],V)
             }
             
+            meanM <- mean(pconsume[foodindex[i],1:V])
             
             # evaluate the 95% quantile of the exposure distribution including all days 
             # (not only positively contaminated consumptions), i.e. zero inflated distribution
-            PPOSM <- mean(pconsume[foodindex[i],1:V])*
+            PPOSM <- meanM*
               pM[u,hazardindexM[h],foodindex[i]]*
               PM[foodindex[i],hazardindexM[h]]
             if(0.95<=(1-PPOSM)){qutotal95[u]<-0}
@@ -821,35 +821,30 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                                          +Vs0[u]
                                          +sigcM[u,hazardindexM[h],foodindex[i]]^2
                                          +sigw[u]^2))
-              }
+            }
+            
+            plnormM <- plnorm(limitexpoM[h],logRM[foodindex[i],hazardindexM[h]]
+                              +mus0[u,foodindex[i]]
+                              +mucM[u,hazardindexM[h],foodindex[i]]
+                              +muw[u],
+                              sqrt(Vs[u]
+                                   +Vs0[u] 
+                                   +sigcM[u,hazardindexM[h],foodindex[i]]^2
+                                   +sigw[u]^2))
             
             # Monte Carlo estimate for P(exposure < limit) over variability dimension:
             # all days: (two possible cases: P(no contamination)*1 + P(contamination)*F(limit))
             punderlimitallM[u] <- 
-              (1-mean(pconsume[foodindex[i],1:V])*
+              (1-meanM*
                  PM[foodindex[i],hazardindexM[h]]*
                  pM[u,hazardindexM[h],foodindex[i]])*1+
-              mean(pconsume[foodindex[i],1:V])*
+              meanM*
               PM[foodindex[i],hazardindexM[h]]*
               pM[u,hazardindexM[h],foodindex[i]]*
-              plnorm(limitexpoM[h],logRM[foodindex[i],hazardindexM[h]]
-                     +mus0[u,foodindex[i]]
-                     +mucM[u,hazardindexM[h],foodindex[i]]
-                     +muw[u],
-                     sqrt(Vs[u]
-                          +Vs0[u] 
-                          +sigcM[u,hazardindexM[h],foodindex[i]]^2
-                          +sigw[u]^2)) 
+              plnormM 
             # contaminated consumptions: (one possible case: F(limit) cumulative prob.)
             # from lnorm-variability of single microbial exposures ('poisson means') 
-            punderlimitposM[u] <- plnorm(limitexpoM[h],logRM[foodindex[i],hazardindexM[h]]
-                                         +mus0[u,foodindex[i]]
-                                         +mucM[u,hazardindexM[h],foodindex[i]]
-                                         +muw[u],
-                                         sqrt(Vs[u]
-                                              +Vs0[u]
-                                              +sigcM[u,hazardindexM[h],foodindex[i]]^2
-                                              +sigw[u]^2)) 
+            punderlimitposM[u] <- plnormM 
             
           } # end of for u
           qu95_05 <- round(quantile(qlnorm(0.95,logRM[foodindex[i],hazardindexM[h]]
@@ -882,7 +877,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                                    From = paste0("pos days"),
                                    Hazard = paste0(hazardnamesusedM[h]),
                                    Food = paste0(foodnamesused[i]),
-                                  # Limit = paste0("<",limitexpoM[h]),
+                                   # Limit = paste0("<",limitexpoM[h]),
                                    #Quantity = paste0("P(acute ",hazardnamesusedM[h]," from pos days, ",foodnamesused[i],", <",limitexpoM[h],")"),
                                    Q05 = as.character(round(quantile(punderlimitposM,c(0.05),names=FALSE,na.rm=TRUE),2)),
                                    Q50 = as.character(round(quantile(punderlimitposM,c(0.5),names=FALSE,na.rm=TRUE),2)),
@@ -892,7 +887,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                                    From = paste0("all days"),
                                    Hazard = paste0(hazardnamesusedM[h]),
                                    Food = paste0(foodnamesused[i]),
-                                  # Limit = paste0("<",limitexpoM[h]),
+                                   # Limit = paste0("<",limitexpoM[h]),
                                    #Quantity = paste0("P(acute ",hazardnamesusedM[h]," from all days, ",foodnamesused[i],", <",limitexpoM[h],")"),
                                    Q05 = as.character(round(quantile(punderlimitallM,c(0.05),names=FALSE,na.rm=TRUE),2)),
                                    Q50 = as.character(round(quantile(punderlimitallM,c(0.5),names=FALSE,na.rm=TRUE),2)),
@@ -904,7 +899,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                                  From = paste0("all days"),
                                  Hazard = paste0(hazardnamesusedM[h]),
                                  Food = paste0(foodnamesused[i]),
-                                # Limit = paste0(""),
+                                 # Limit = paste0(""),
                                  #Quantity = paste0("Q95 acute ",hazardnamesusedM[h]," from all days, ",foodnamesused[i]), 
                                  Q05 = as.character(round(quantile(qutotal95,0.05,names=FALSE,na.rm=TRUE),2)),
                                  Q50 = as.character(round(quantile(qutotal95,0.5,names=FALSE,na.rm=TRUE),2)),
@@ -917,7 +912,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
                                  From = paste0("pos days"),
                                  Hazard = paste0(hazardnamesusedM[h]),
                                  Food = paste0(foodnamesused[i]),
-                                # Limit = paste0(""),
+                                 # Limit = paste0(""),
                                  #Quantity = paste0("Q95 acute ",hazardnamesusedM[h]," from pos days, ",foodnamesused[i]), 
                                  Q05 = as.character(round(qu95_05,2)),
                                  Q50 = as.character(round(qu95_50,2)),
@@ -932,4 +927,7 @@ table2 <- function(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfu
   
   rbind(DFplim,DF95) # results collected as data frame
   
+  
 } # end of reactive
+
+

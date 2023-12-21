@@ -22,7 +22,6 @@ help_file <- function(){
              "",
              "More details about how to prepare the files are given 
              in <b>About</b> -> The model -> Requirements for the input data."
-             # as.character(tags$a("here",href= "# prep_files_help",target="_blank"))
              
            ),
            buttonLabel = "OK", 
@@ -204,8 +203,7 @@ help_quantiles <- function(){
         the sample size to be used for producing a <b>variability distribution</b> and <b>uncertainty distribution</b> 
         for the underlying n-tuple of parameters of each variability distribution can be defined using the numeric input boxes.",
         "",
-        "<b>Currently the values are fixed to 100, because the computations are heavy and affect the app performace.
-        However, the desktop app does not have restrictions and values up to 1000 could be selected.</b>",
+        "<b>Values up to 1000 could be selected.</b>",
         "",
         "<b>Note</b>: The quantiles will be estimated only for those food-hazard pairs for which data is available. The text in the 
         figure does not specify the names of the foods used for the calculations."
@@ -307,10 +305,24 @@ help_report  <- function(){
            size = "m",
            title = "Download report",
            content = c(
-             "This report includes only the results that are visualized in the app after the latest view selections.",
+             "The results could be downloaded as <b>rds</b> and <b>html</b> files.", 
              "",
-             "From the HTML document every figure could be downloaded as a png file by using, e.g., the browser’s ‘Save image as…’ 
-             option. All tables have their own download buttons. The input data is also stored in the document."),
+             "<b>'MCMC samples' rds file</b>",
+             "The file contains the MCMC samples for all parameters for all food types and hazards.",
+             "",
+             "<b>'Report hazard' html file</b>",
+             "The file contains the input data, the settings used for the model, 
+             and the results as figures and tables for all food-hazard combinations 
+             for the selected hazard. A few plot view options are available.", 
+             "The Quantile plot is optional.
+             To be included in the report, total exposure quantile should be selected. 
+             Also variability  and uncertainty sample size could be defined. Note that this will run 2D-simulation
+             and it will take more time for the report to be generated.
+             ",
+             "",
+             "<b>'Report view' html file</b>",
+             "The file contains the input data, the settings used for the model, 
+             and the results as figures and tables that have been last visible in the app sections."),
            buttonLabel = "OK", 
            easyClose = TRUE,
            icon = "info-circle",
@@ -319,4 +331,38 @@ help_report  <- function(){
            fade = FALSE)
 }
 
-
+help_report_mcmc  <- function(){
+  tags$i()%>%
+    helper(type="inline",
+           size = "m",
+           title = "'MCMC samples' rds file",
+           content = c(
+             
+             "The file contains the MCMC samples for all parameters related to the selectedfor all food types and hazards.",
+             "",
+             "<b>Parameters</b> (<b>K</b> for chemical and <b>M</b> for microbiological hazards):",
+             "
+    mucK  </br>
+    mucM  </br>
+    sigcK  </br>
+    sigcM  </br>
+    mus0  </br>
+    Ts0  </br>
+    Ts  </br>
+    logitp0  </br>
+    ppred  </br>
+    Tp  </br>
+    muw  </br>
+    sigw  </br>
+    pK  </br>
+    pM  </br>
+    n.sims
+             ",
+             "...to be updated"),
+           buttonLabel = "OK", 
+           easyClose = TRUE,
+           icon = "info-circle",
+           colour = "#5C442C",
+           
+           fade = FALSE)
+}

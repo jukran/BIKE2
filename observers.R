@@ -1,3 +1,5 @@
+library(shiny)
+
 
 ## Switch upload data tabs:----
 observeEvent(
@@ -21,7 +23,6 @@ observeEvent(
 
 ## Food type and hazards selections (from the uploaded file with occurrence):----
 observe({
-  
   #figures:
   ##plot1 concentrations:
   updateSelectInput(session, "thefoodnames1", choices = colnames(ocdata()[,4:ncol(ocdata())]), selected = colnames(ocdata()[,4:ncol(ocdata())])[1])
@@ -50,6 +51,9 @@ observe({
   #table2:
   updateCheckboxGroupInput(session, "thefoodnames_t2", choices = colnames(ocdata()[,4:ncol(ocdata())]), selected = colnames(ocdata()[,4:ncol(ocdata())])[1])
   updateCheckboxGroupInput(session, "thehazardnames_t2", choices = ocdata()$hazardnames, selected = ocdata()$hazardnames[1])
+  
+  #report download:
+  updateSelectInput(session, "thehazardnames_dl", choices = ocdata()$hazardnames, selected = ocdata()$hazardnames[1])
   
 })
 
@@ -159,7 +163,9 @@ observe({
   show(id = "table2text")
   
   show(id = "reportDLtext")
-  hide(id = "report")
+  hide(id = "report_mcmc")
+  hide(id = "report_view_dl")
+  hide(id = "report_hazard_dl")
   
   hide(id = "distPlot1")
   hide(id = "distPlot2")
@@ -192,7 +198,9 @@ observe({
   show(id = "pvalues")
   
   hide(id = "reportDLtext")
-  show(id = "report")
+  show(id = "report_mcmc")
+  show(id = "report_view_dl")
+  show(id = "report_hazard_dl")
   
   show(id = "distPlot1")
   show(id = "distPlot2")
@@ -206,13 +214,6 @@ observe({
 })
 
 
-# when total exposure quantile is selected, hide text message:
-#observe({
-#  if (input$selectQ != "None"){
- #   hide(id = "plot4text")
- # }
-#})
-
 
 observeEvent(input$run, {
   
@@ -221,8 +222,6 @@ observeEvent(input$run, {
   updateTabsetPanel(inputId = "exposures", selected = "Exposures")
   updateTabsetPanel(inputId = "diagchoice", selected = "Concentration parameters")
   updateSelectInput(inputId = "selectQ", selected = "None")
-  
-  #updateCheckboxGroupInput(inputId = )
   
   updateTabsetPanel(inputId = "run_sim", selected = "Concentrations")
   

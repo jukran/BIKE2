@@ -61,6 +61,8 @@ params:
   nf: NA
   food: NA
   hazard: NA
+  nU: NA
+  nV: NA
   input_selectQ: NA
 
   
@@ -410,6 +412,10 @@ $Figure$ $3$ Variability distribution for mean positive exposures per bodyweight
 
 cat('\n\n', "Food-hazard combination: `",params$thehazardnames4, '` from `', params$thefoodnames4, '`\n\n')
 cat('\n',"Scale: `", params$selectscale4, '`\n')
+cat('\n',"Total exposure quantile (Q%): `", params$input_selectQ, '`\n')
+cat('\n',"Variability sample size for Q%: `", params$nV, '`\n')
+cat('\n',"Uncertainty sample size for Q%: `", params$nU, '`\n')
+
 
 if (params$input_selectQ == "None" | is.null(params$plot4)){cat('**Total exposure quantile is not selected!**')} else {params$plot4}
 

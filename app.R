@@ -45,15 +45,18 @@ ui <- navbarPage(id ="bike_tabs",
                                                tags$p("It is based on connected Bayesian 
                       hierarchical models, utilizing OpenBUGS and R in tandem. Chronic and acute exposures are estimated for chemical and microbiological 
                       hazards, respectively. Uncertainty and variability in exposures are visualized, 
-                      and a few optional model structures can be used."), 
-                                               tags$p("BIKE app is open source and available from Knowledgejunction/GitHub",tags$i(tags$b("(HERE link to Knowledgejunction/GitHub).")),
-                                                      "Simulated synthetic data resembling real occurrence and consumption data are 
+                      and a few optional model structures are available."), 
+                                               tags$p("BIKE app is open source and available from GitHub",tags$i(tags$a("(https://github.com/jukran/BIKE2)",
+                                                                                                                        href = "https://github.com/jukran/BIKE2",
+                                                                                                                        target =
+                                                                                                                          "_blank")),
+                                                      ". Simulated synthetic data resembling real occurrence and consumption data is 
                                        provided with the code as an example."),
                                                
                                                
                                                tags$br(),
                                                tags$br(),
-                                               tags$p("Find more about the BIKE model from:"),
+                                               tags$p("Find more about BIKE model from:"),
                                                tags$p(
                                                  tags$b("Ranta J, Mikkelä A, Suomi J, Tuominen P. BIKE: Dietary Exposure Model for
                                                Foodborne Microbiological and Chemical Hazards. Foods. 2021; 10(11):2520."),
@@ -72,9 +75,9 @@ ui <- navbarPage(id ="bike_tabs",
                                                fluidRow(align="center",
                                                         column(4,
                                                                wellPanel(
-                                                                 h4(tags$b("1. Prepare and upload data files"), style ="color:#D0006F"),tags$br(),
+                                                                 h4(tags$b("1. Upload data files"), style ="color:#D0006F"),tags$br(),
                                                                  tags$p(
-                                                                   "To run BIKE, four separate files need to be provided. The files have to contain data for the concentrations, 
+                                                                   "To run BIKE, four separate files are needed. The files have to contain data for the concentrations, 
                                                     the consumptions, the occurrence, and the prevalence, respectively."),
                                                                  tags$p("The columns in the files should have", tags$b("specific names.")),
                                                                  tags$p("The names of the", tags$b("food types"), "and the", tags$b("hazards"), "should match in all data files." ),
@@ -91,12 +94,12 @@ ui <- navbarPage(id ="bike_tabs",
                                                                wellPanel(
                                                                  h4(tags$b("2. Specify model settings and run simulations"), style ="color:#D0006F"),tags$br(),
                                                                  tags$p("BIKE provides an option to use model settings that are most suitable for the input data."),
-                                                                 tags$p("The settings that could be set are ",
+                                                                 tags$p("These include ",
                                                                         tags$b("Consumption model, Correlation models, Priors for variances"), "and", tags$b("Number of MCMC iterations.")
                                                                  ),
                                                                  tags$p("Note that the time for the simulations to complete depends on the number of iterations selected. 
                                                                         It is recommended to start with small numbers, e.g., the default 4000."),
-                                                                 tags$p("After the files are uploaded and the model settings are set, the simulations could be run."),
+                                                                 tags$p("After the four files are uploaded and the model is set up, the simulations could be run."),
                                                                  
                                                                  style = "padding: 30px;"
                                                                )
@@ -105,20 +108,20 @@ ui <- navbarPage(id ="bike_tabs",
                                                                wellPanel(
                                                                  h4(tags$b("3. Inspect the results"), style ="color:#D0006F"), tags$br(),
                                                                  tags$p("The results are visualized with", tags$b("figures"), " and ", tags$b("tables"), ", and their content could be 
-                                                                        changed by the selections, i.e., food type, hazard, credible interval, etc."),
+                                                                        changed, e.g., food type, hazard, credible interval, etc."),
                                                                  tags$p("In addition, adjustment factors for both the concentration level 
                                                                         and the prevalence for each food-hazard combination could be assigned in the exposures section."),
-                                                                 tags$p("The 2D simulation for the quantiles figure is running automaticaly. 
-                                                                        Any change in the selections on the right side will lead to new 2D simulation."),
-                                                                 tags$p("The exposure limit analyses table and the posterior predictive distribution summaries table
-                                                                        generate automatically. Any change in the selections will update the tables' content."),
+                                                                 tags$p("New 2D simulation for the quantiles figure is running after the button 'Generate plot' is pressed. 
+                                                                        "),
+                                                                 tags$p("The posterior predictive distribution summaries table and the exposure limit analyses table
+                                                                        generate after the button 'Generate table' is pressed."),
                                                                  style = "padding: 30px;"
                                                                  
                                                                ))
                                                ),
-                                               fluidRow("The results could be downloaded as", tags$b("html"), "file. The file will contain
-                                                         the input data, the settings used for the model, and the results that are currently visible in the app, 
-                                                        i.e., all figures and tables.", style = "padding: 45px;")
+                                               fluidRow("The results could be downloaded as",tags$b("rds"), "and", tags$b("html"), "files. The ", tags$b("rds"), "file contains
+                                                         the MCMC samples for all parameters. The ", tags$b("html"), "files contain
+                                                         the input data, the settings used for the model, and the results as figures and tables.", style = "padding: 45px;")
                                      ),
                                      tags$br(),
                                      fluidRow(align="center",
@@ -156,13 +159,13 @@ ui <- navbarPage(id ="bike_tabs",
                                          width = 3,
                                          wellPanel(style = "background-color: #FFFFFF;",
                                                    help_file(),
-                                                   h4(strong("Upload data files"), style = "color:#343841"),
+                                                   h4(strong("Upload csv data files"), style = "color:#343841"),
                                                    tags$br(),
                                                    #Upload files----
                                                    #Upload file 1:
                                                    fileInput(
                                                      "file_conct",
-                                                     strong("Concentrations", downloadLink("downloadConcenData", tags$i("(Example)"))),
+                                                     label = strong("Concentrations"),
                                                      multiple = FALSE,
                                                      accept = c("text/csv",
                                                                 "text/comma-separated-values,text/plain",
@@ -171,7 +174,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                    #Upload file 2:
                                                    fileInput(
                                                      "file_consm",
-                                                     strong("Consumptions", downloadLink("downloadConsumData", tags$i("(Example)"))),
+                                                     strong("Consumptions"),
                                                      multiple = FALSE,
                                                      accept = c("text/csv",
                                                                 "text/comma-separated-values,text/plain",
@@ -180,21 +183,31 @@ ui <- navbarPage(id ="bike_tabs",
                                                    #Upload file 3:
                                                    fileInput(
                                                      "file_occ",
-                                                     strong("Occurrence", downloadLink("downloadOccData", tags$i("(Example)"))),
+                                                     strong("Occurrence"),
                                                      multiple = FALSE,
                                                      accept = c("text/csv",
                                                                 "text/comma-separated-values,text/plain",
                                                                 ".csv")
                                                    ),
-                                                   #Upload file 3:
+                                                   #Upload file 4:
                                                    fileInput(
                                                      "file_prev",
-                                                     strong("Prevalence", downloadLink("downloadPrevData", tags$i("(Example)"))),
+                                                     strong("Prevalence"),
                                                      multiple = FALSE,
                                                      accept = c("text/csv",
                                                                 "text/comma-separated-values,text/plain",
                                                                 ".csv")
-                                                   )
+                                                   ),
+                                                   tags$hr(),
+                                                   strong("Example files:"),
+                                                   tags$br(),
+                                                   downloadLink("downloadConcenData", tags$i("DataConcentrations.csv")),
+                                                   tags$br(),
+                                                   downloadLink("downloadConsumData", tags$i("DataConsumptions.csv")), 
+                                                   tags$br(),
+                                                   downloadLink("downloadOccData", tags$i("DataOccurrence.csv")), 
+                                                   tags$br(),
+                                                   downloadLink("downloadPrevData", tags$i("DataPrevalence.csv")) 
                                          )
                                        ),
                                        mainPanel(
@@ -313,7 +326,7 @@ ui <- navbarPage(id ="bike_tabs",
                                              inputId = "run",
                                              label = "RUN simulation",
                                              class = "btn-primary", 
-                                             style="color: #fff; background-color: #337ab7; border-color: #2e6da4"
+                                             style="color: #fff; background-color: #D0006F; border-color: #D0006F"
                                              
                                            ),
                                            tags$br(),
@@ -413,12 +426,14 @@ ui <- navbarPage(id ="bike_tabs",
                                                                     tabPanel(
                                                                       "Quantiles",
                                                                       tags$br(),
+                                                                      actionButton("generateP4", "Generate plot", class = "btn-primary", 
+                                                                                   style="color: #fff; background-color: #D0006F; border-color: #D0006F"),
+                                                                      
                                                                       textOutput("thefoodname_need4"),
                                                                       hidden(htmlOutput("plot4text")),
-                                                                        hidden(htmlOutput("plot4gen")),
+                                                                      hidden(htmlOutput("plot4gen")),
                                                                       tags$style("#plot4gen{color: #D0006F;}"),
-                                                                      actionButton("generateP4", "Generate plot"),
-                                                                      tags$hr(),
+                                                                      tags$br(),
                                                                       plotOutput("distPlot4", width = "100%", height = "650px"),
                                                                       
                                                                       tags$br(),
@@ -502,12 +517,14 @@ ui <- navbarPage(id ="bike_tabs",
                                                            )),
                                                            
                                                            tags$br(),
+                                                           actionButton("generateTposter", "Generate table", class = "btn-primary", 
+                                                                        style="color: #fff; background-color: #D0006F; border-color: #D0006F"),
+                                                           tags$br(),
                                                            hidden(htmlOutput("table1text")),
                                                            hidden(htmlOutput("table1text_generate")),
                                                            tags$style("#table1text_generate{color: #D0006F;}"),
                                                            textOutput("resultsview_need"),
-                                                           actionButton("generateTposter", "Generate table"),
-                                                           tags$hr(),
+                                                           tags$br(),
                                                            DT::DTOutput("values"),     # posterior predictive quantiles table
                                                            tags$br(),
                                                            htmlOutput("table1_cap"),
@@ -526,11 +543,13 @@ ui <- navbarPage(id ="bike_tabs",
                                                            )),
                                                            
                                                            tags$br(),
+                                                           actionButton("generateTlimit", "Generate table", class = "btn-primary", 
+                                                                        style="color: #fff; background-color: #D0006F; border-color: #D0006F"),
+                                                           tags$br(),
                                                            hidden(htmlOutput("table2text")),
                                                            hidden(htmlOutput("table2text_generate")),
                                                            tags$style("#table2text_generate{color: #D0006F;}"),
-                                                           actionButton("generateTlimit", "Generate table"),
-                                                           tags$hr(),
+                                                           tags$br(),
                                                            DT::DTOutput("pvalues"),     # exposure limit analysis table
                                                            tags$br(),
                                                            htmlOutput("table2_cap"),
@@ -540,20 +559,123 @@ ui <- navbarPage(id ="bike_tabs",
                                                        
                                                        ## download report----
                                                        tabPanel(
-                                                         "Download report",icon = icon("file"),
+                                                         "Download",icon = icon("file"),
                                                          
-                                                         hidden(wellPanel(
-                                                           id = "report_dl",
-                                                           help_report(),
-                                                           tags$h4(strong("Download report"), style = "text-align:left;color:#5C442C"),
-                                                           tags$br(),
-                                                           htmlOutput("reportDLtext"),
-                                                           downloadButton("report", "Report"),
-                                                           helpText(strong("In order for the report to contain all figures in the correct format, each figure should be visualized in the app right before downloading.
-                                              The tables also should be generated."), style = "text-align:left;color:#D0006F")
-                                                           
-                                                         ))
-                                                         
+                                                         hidden(
+                                                           wellPanel(
+                                                             id = "report_dl",
+                                                             help_report(),
+                                                             htmlOutput("reportDLtext"),
+                                                             
+                                                             tags$br(),
+                                                             tags$h4(strong("Download MCMC samples"), style = "text-align:left;color:#5C442C"),
+                                                             wellPanel(id = "report_mcmc",
+                                                                       help_report_mcmc(),
+                                                                       # R-File That contains the simulation results from OpenBUGS:
+                                                                       downloadButton("MCMCsamples", "MCMC samples .Rds", #class = "butt"),
+                                                                                      class = "btn-primary", 
+                                                                                      style="color: #343841; background-color: #CEB888; border-color: #CEB888"),
+                                                                       helpText(strong("The file contains the MCMC samples for all parameters for all hazards and food types.")
+                                                                       )
+                                                             ),
+                                                             tags$br(),
+                                                             tags$h4(strong("Download reports"), style = "text-align:left;color:#5C442C"),
+                                                             
+                                                             wellPanel(id = "report_hazard_dl",
+                                                                       downloadButton("report_hazard", "Report hazard.html", class = "btn-primary", 
+                                                                                      style="color: #343841; background-color: #CEB888; border-color: #CEB888"),
+                                                                       
+                                                                       helpText(strong("The report is for the selected hazard. No figures or tables preview are needed.")),
+                                                                       
+                                                                       
+                                                                       
+                                                                       # Select hazard to be reported:
+                                                                       selectInput(
+                                                                         inputId = "thehazardnames_dl",
+                                                                         label = h4(strong(("Select hazard"), style = "text-align:left;color:#CEB888")),
+                                                                         choices = c(),
+                                                                         width = '50%'
+                                                                       ),
+                                                                       fluidRow(
+                                                                         column(4,
+                                                                                h4(strong("Plot options"), style = "color:#CEB888"),
+                                                                                selectInput(
+                                                                                  "conf_interval_dl",
+                                                                                  label = tags$span(strong("Credible interval"),
+                                                                                                    style = "color:#004F71"),
+                                                                                  choices = c(0.50, 0.80, 0.90, 0.95, 0.99),
+                                                                                  selected = 0.95,
+                                                                                  width = '200px'
+                                                                                ),
+                                                                                radioButtons(
+                                                                                  "selectscale_dl",
+                                                                                  label = h5(strong("Scale"), style = "color:#004F71"),
+                                                                                  choiceNames = list(tags$span("Absolute"),
+                                                                                                     tags$span("Logarithmic")),
+                                                                                  choiceValues = list("Absolute", "Logarithmic")
+                                                                                ),
+                                                                                radioButtons(
+                                                                                  "selectdist_dl",
+                                                                                  label = h5(strong("Distributions"), style = "color:#004F71"),
+                                                                                  choiceNames = list(tags$span("Cumulative"),
+                                                                                                     tags$span("Density")),
+                                                                                  choiceValues = list("Cumulative", "Density")
+                                                                                )
+                                                                         ), # end of plot options
+                                                                         column(6,
+                                                                                h4(strong("Quantiles figure (one plot with all food types)"), style = "color:#CEB888"),
+                                                                                selectInput(
+                                                                                  "selectQ_dl",
+                                                                                  label = tags$span(strong("Total exposure quantile"), 
+                                                                                                    style = "color:#004F71"),
+                                                                                  choices = c(
+                                                                                    "None",
+                                                                                    "Q5%"="Q5% Exposure",
+                                                                                    "Q10%"="Q10% Exposure",
+                                                                                    "Q25%"="Q25% Exposure",
+                                                                                    "Q50%"="Q50% Exposure",
+                                                                                    "Q75%"="Q75% Exposure",
+                                                                                    "Q90%"="Q90% Exposure",
+                                                                                    "Q95%"="Q95% Exposure"
+                                                                                  ),
+                                                                                  width = '200px'
+                                                                                ),
+                                                                                conditionalPanel(
+                                                                                  condition = "input.selectQ_dl != 'None'",
+                                                                                  numericInput(
+                                                                                    "nV_dl",
+                                                                                    tags$span("Variability sample size for Q%", style = "color: #004F71;"),
+                                                                                    min = 50,
+                                                                                    max = 1000,
+                                                                                    value = 100,
+                                                                                    step = 10,
+                                                                                    width = '200px'
+                                                                                  ),
+                                                                                  numericInput(
+                                                                                    "nU_dl",
+                                                                                    tags$span("Uncertainty sample size for Q%", style = "color: #004F71;"),
+                                                                                    min = 50,
+                                                                                    max = 1000,
+                                                                                    value = 100,
+                                                                                    step = 10,
+                                                                                    width = '200px'
+                                                                                  )
+                                                                                )
+                                                                         ) # end 2D-simulation selection
+                                                                       )
+                                                             ), # end of hazard report options,
+                                                             wellPanel(id = "report_view_dl",
+                                                                       tags$br(),
+                                                                       # Report with figures currently visible in the app:
+                                                                       downloadButton("report_view", "Report view.html", class = "btn-primary", 
+                                                                                      style="color: #343841; background-color: #CEB888; border-color: #CEB888"),
+                                                                       helpText(strong("The report will contain only the figures and tables currently visualized in the app.")),
+                                                                       helpText(strong("BEFORE DOWNLOAD, generate in the app:
+                                                                                      'Quantiles' figure, 'Posterior summaries' and 'Exposure limit' tables!"), 
+                                                                                style = "text-align:left;color:#D0006F")
+                                                             ), style = "background-color: #F4F3F2;"
+                                                           )
+                                                         )
                                                        )
                                                      )
                                                    ),
@@ -566,7 +688,6 @@ ui <- navbarPage(id ="bike_tabs",
                                                        wellPanel(
                                                          help_quantiles(),
                                                          tags$br(),
-                                                         
                                                          selectInput(
                                                            "selectQ",
                                                            label = h4(strong("Total exposure quantile"), style = "color:#004F71"),
@@ -679,7 +800,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                          
                                                          #### _quantiles----
                                                          conditionalPanel(
-                                                           condition = "input.selectresults == 'exposureTab'&& input.exposures == 'Quantiles'",
+                                                           condition = "input.selectresults == 'exposureTab'&& input.exposures == 'Quantiles'&& input.selectQ != 'None'",
                                                            checkboxGroupInput(
                                                              inputId = "thefoodnames4",
                                                              label = strong(("Food types"), style = "color:#004F71"),
@@ -784,6 +905,11 @@ ui <- navbarPage(id ="bike_tabs",
                                                          ### Credible interval----
                                                          conditionalPanel(
                                                            condition = "input.selectresults == 'Concentrations'",
+                                                           
+                                                           sliderInput(inputId="conf_lim1",
+                                                                       label=h5(strong("Range x-axis (%)"),
+                                                                                style = "color:#004F71"), 
+                                                                       min = 0, max = 0.99, value = 0.95, step = 0.05),
                                                            selectInput(
                                                              "conf_interval1",
                                                              h5(strong("Credible interval"),
@@ -819,6 +945,11 @@ ui <- navbarPage(id ="bike_tabs",
                                                          ### Credible interval----
                                                          conditionalPanel(
                                                            condition = "input.selectresults == 'Consumptions'",
+                                                           
+                                                           sliderInput(inputId="conf_lim2",
+                                                                       label=h5(strong("Range x-axis (%)"),
+                                                                                style = "color:#004F71"), 
+                                                                       min = 0, max = 0.99, value = 0.95, step = 0.05),
                                                            selectInput(
                                                              "conf_interval2",
                                                              h5(strong("Credible interval"),
@@ -854,6 +985,11 @@ ui <- navbarPage(id ="bike_tabs",
                                                          ### Credible interval----
                                                          conditionalPanel(
                                                            condition = "input.selectresults == 'exposureTab'&& input.exposures == 'Exposures'",
+                                                           
+                                                           sliderInput(inputId="conf_lim3",
+                                                                       label=h5(strong("Range x-axis (%)"),
+                                                                                style = "color:#004F71"), 
+                                                                       min = 0, max = 0.99, value = 0.95, step = 0.05),
                                                            selectInput(
                                                              "conf_interval3",
                                                              h5(strong("Credible interval"),
@@ -889,7 +1025,7 @@ ui <- navbarPage(id ="bike_tabs",
                                                          
                                                          ### Scale----
                                                          conditionalPanel(
-                                                           condition = "input.selectresults == 'exposureTab'&& input.exposures == 'Quantiles'",
+                                                           condition = "input.selectresults == 'exposureTab'&& input.exposures == 'Quantiles'&& input.selectQ != 'None'",
                                                            radioButtons(
                                                              "selectscale4",
                                                              label = h5(strong("Scale"), style = "color:#004F71"),
@@ -1239,11 +1375,23 @@ proportion of contaminated food items."
 # Server logic required to run BUGS model and draw results----  
 server <- function(input, output, session) {
   
-
+  
   observe_helpers()
   
+  # 1. Source files----
   
-  # 1. Upload data files and print them:----
+  # file with the functions used for generating the plots:
+  source("plotsfunctions.R",local=TRUE)
+  
+  # file with the functions used for generating the tables:
+  source("tablefunctions.R", local = TRUE)
+  
+  # observers
+  source("observers.R", local = TRUE)
+  
+  
+  
+  # 2. Upload data files and print them:----
   ## Check if all files are uploaded:----
   output$uploadFiles <- renderUI({
     if (is.null(input$file_conct) | is.null(input$file_consm) |
@@ -1281,7 +1429,7 @@ server <- function(input, output, session) {
     
     validate(
       need(all(required_columns %in% column_names), 
-           "You don't have the required data. Check the file format (the decimal and field separator!) and the column names.")
+           "This file does not meet the requirements. \nCheck the file format (the decimal and field separator!) and the column names.")
     )
     
     file_contents
@@ -1316,7 +1464,7 @@ server <- function(input, output, session) {
     
     validate(
       need(all(required_columns %in% column_names), 
-           "You don't have the required data. Check the file format (the decimal and field separator!) and the column names.")
+           "This file does not meet the requirements. \nCheck the file format (the decimal and field separator!) and the column names.")
     )
     
     file_contents
@@ -1350,9 +1498,7 @@ server <- function(input, output, session) {
     
     validate(
       need(all(required_columns %in% column_names), 
-           "You don't have the required data. Check the file format (the decimal and field separator!) and the column names."),
-      need(all(column_names != 'infoods', column_names != 'npositive', column_names != 'nsamples'), 
-           "You don't have the required data. Check the file format (the decimal and field separator!) and the column names.")
+           "This file does not meet the requirements. \nCheck the file format (the decimal and field separator!) and the column names.")
     )
     
     file_contents
@@ -1389,7 +1535,7 @@ server <- function(input, output, session) {
     
     validate(
       need(all(required_columns %in% column_names), 
-           "You don't have the required data. Check the file format (the decimal and field separator!) and the column names.")
+           "This file does not meet the requirements. \nCheck the file format (the decimal and field separator!) and the column names.")
     )
     
     file_contents
@@ -1425,6 +1571,7 @@ server <- function(input, output, session) {
       summarise(.groups = 'drop')                  # Tibble with list of hazards and the units used for each
     
   })
+  
   # saving the uploaded formatted date in data1() so it can be used further in the code
   data1 <- reactive({
     req(ocdata(), consum(), concen())
@@ -1436,18 +1583,11 @@ server <- function(input, output, session) {
   })
   
   
-  
-  
-  
-  # 2. Observers----
-  
-source("observers.R", local = TRUE)
-  
-  
   # 3. Computations----
   
   
   ## Reactive values for BUGS results:---- 
+  # This is modified attach.bugs function from R package R2OpenBUGS
   observe({
     r2 <- reactiveValues()
     reactiveValuesToList(r2)
@@ -1486,76 +1626,76 @@ source("observers.R", local = TRUE)
       withProgress(message = 'Computing in progress...',
                    value = 0.1, {
                      
-      if (input$modelchoice2 == "No") {
-        between.user.pvar <- 0
-      }
-      # model without user variability in consumption frequency
-      if (input$modelchoice2 == "Yes") {
-        between.user.pvar <- 1
-      }
-      
-      
-      source("makebugscodeA.R", local = TRUE)     # write code for OpenBUGS
-      source("RunBUGSfunctionA.R", local = TRUE)  # run BUGS
-                   
-      
-        if((nhK > 0)&
-           (nhM > 0)) {
-          
-          logcK 
-          logLODK
-          logLODLimK
-          logLOQK
-          logLOQLimK
-          nbelowLODK
-          nbelowLOQK
-          nexactK
-          nhK
-          sdpriorlimK
-          
-          logcM 
-          logLODM
-          logLODLimM
-          logLOQM
-          logLOQLimM
-          nbelowLODM
-          nbelowLOQM
-          nexactM
-          nhM
-          sdpriorlimM
-        } else
-          if ((nhK > 0) & (nhM == 0)) {
-            
-            logcK 
-            logLODK
-            logLODLimK
-            logLOQK
-            logLOQLimK
-            nbelowLODK
-            nbelowLOQK
-            nexactK
-            nhK
-            sdpriorlimK
-          } else
-            if ((nhK == 0) & (nhM > 0)) {
-              
-              logcM 
-              logLODM
-              logLODLimM
-              logLOQM
-              logLOQLimM
-              nbelowLODM
-              nbelowLOQM
-              nexactM
-              nhM
-              sdpriorlimM
-            }
-       
-      bugs(data,inits,model.file="bikemodel.txt",debug=FALSE,parameters,n.chains=1,n.burnin=burnin,n.iter=iter_n,DIC=FALSE,codaPkg=FALSE)%>%
-          attachbugs()
-                    
-       
-    })
+                     if (input$modelchoice2 == "No") {
+                       between.user.pvar <- 0
+                     }
+                     # model without user variability in consumption frequency
+                     if (input$modelchoice2 == "Yes") {
+                       between.user.pvar <- 1
+                     }
+                     
+                     
+                     source("makebugscodeA.R", local = TRUE)     # write code for OpenBUGS
+                     source("RunBUGSfunctionA.R", local = TRUE)  # run BUGS
+                     
+                     
+                     if((nhK > 0)&
+                        (nhM > 0)) {
+                       
+                       logcK 
+                       logLODK
+                       logLODLimK
+                       logLOQK
+                       logLOQLimK
+                       nbelowLODK
+                       nbelowLOQK
+                       nexactK
+                       nhK
+                       sdpriorlimK
+                       
+                       logcM 
+                       logLODM
+                       logLODLimM
+                       logLOQM
+                       logLOQLimM
+                       nbelowLODM
+                       nbelowLOQM
+                       nexactM
+                       nhM
+                       sdpriorlimM
+                     } else
+                       if ((nhK > 0) & (nhM == 0)) {
+                         
+                         logcK 
+                         logLODK
+                         logLODLimK
+                         logLOQK
+                         logLOQLimK
+                         nbelowLODK
+                         nbelowLOQK
+                         nexactK
+                         nhK
+                         sdpriorlimK
+                       } else
+                         if ((nhK == 0) & (nhM > 0)) {
+                           
+                           logcM 
+                           logLODM
+                           logLODLimM
+                           logLOQM
+                           logLOQLimM
+                           nbelowLODM
+                           nbelowLOQM
+                           nexactM
+                           nhM
+                           sdpriorlimM
+                         }
+                     
+                     bugs(data,inits,model.file="bikemodel.txt",debug=FALSE,parameters,n.chains=1,n.burnin=burnin,n.iter=iter_n,DIC=FALSE,codaPkg=FALSE)%>%
+                       attachbugs()
+                     
+                     
+                   })
       
     } else
       
@@ -1565,74 +1705,74 @@ source("observers.R", local = TRUE)
       withProgress(message = 'Computing in progress',
                    value = 0.1, {
                      
-      source("makebugscodeB.R", local = TRUE)     # write code for OpenBUGS
-      source("RunBUGSfunctionB.R", local = TRUE)  # run BUGS
-                   
-      
-        if((nhK > 0)&
-           (nhM > 0)) {
-          
-          logcK 
-          logLODK
-          logLODLimK
-          logLOQK
-          logLOQLimK
-          nbelowLODK
-          nbelowLOQK
-          nexactK
-          nhK
-          sdpriorlimK
-          
-          logcM 
-          logLODM
-          logLODLimM
-          logLOQM
-          logLOQLimM
-          nbelowLODM
-          nbelowLOQM
-          nexactM
-          nhM
-          sdpriorlimM
-        } else
-          if ((nhK > 0) & (nhM == 0)) {
-            
-            logcK 
-            logLODK
-            logLODLimK
-            logLOQK
-            logLOQLimK
-            nbelowLODK
-            nbelowLOQK
-            nexactK
-            nhK
-            sdpriorlimK
-          } else
-            if ((nhK == 0) & (nhM > 0)) {
-              
-              logcM 
-              logLODM
-              logLODLimM
-              logLOQM
-              logLOQLimM
-              nbelowLODM
-              nbelowLOQM
-              nexactM
-              nhM
-              sdpriorlimM
-            }
-        
-        bugs(data,inits,model.file="bikemodel.txt",debug=FALSE,parameters,n.chains=1,n.burnin=burnin,n.iter=iter_n,DIC=FALSE,codaPkg=FALSE)%>%
-          attachbugs()
+                     source("makebugscodeB.R", local = TRUE)     # write code for OpenBUGS
+                     source("RunBUGSfunctionB.R", local = TRUE)  # run BUGS
+                     
+                     
+                     if((nhK > 0)&
+                        (nhM > 0)) {
                        
-      })
+                       logcK 
+                       logLODK
+                       logLODLimK
+                       logLOQK
+                       logLOQLimK
+                       nbelowLODK
+                       nbelowLOQK
+                       nexactK
+                       nhK
+                       sdpriorlimK
+                       
+                       logcM 
+                       logLODM
+                       logLODLimM
+                       logLOQM
+                       logLOQLimM
+                       nbelowLODM
+                       nbelowLOQM
+                       nexactM
+                       nhM
+                       sdpriorlimM
+                     } else
+                       if ((nhK > 0) & (nhM == 0)) {
+                         
+                         logcK 
+                         logLODK
+                         logLODLimK
+                         logLOQK
+                         logLOQLimK
+                         nbelowLODK
+                         nbelowLOQK
+                         nexactK
+                         nhK
+                         sdpriorlimK
+                       } else
+                         if ((nhK == 0) & (nhM > 0)) {
+                           
+                           logcM 
+                           logLODM
+                           logLODLimM
+                           logLOQM
+                           logLOQLimM
+                           nbelowLODM
+                           nbelowLOQM
+                           nexactM
+                           nhM
+                           sdpriorlimM
+                         }
+                     
+                     bugs(data,inits,model.file="bikemodel.txt",debug=FALSE,parameters,n.chains=1,n.burnin=burnin,n.iter=iter_n,DIC=FALSE,codaPkg=FALSE)%>%
+                       attachbugs()
+                     
+                   })
       
     }
     
   })
   
-
   
-  ## Format bugs results---- 
+  
+  ## Format some of the bugs results---- 
   solvedBugs <- eventReactive(input$run, {
     req(currentresults())
     results <- currentresults()
@@ -1652,170 +1792,167 @@ source("observers.R", local = TRUE)
     input_modelchoice4 <- input$modelchoice4
     input_modelchoice5 <- input$modelchoice5
     
-      n_sim <- results$n.sims
-      mucK <- results$mucK
-      mucM <- results$mucM
-      pK <- results$pK
-      pM <- results$pM
-      sigcK <- results$sigcK
-      sigcM <- results$sigcM
-      mus0 <- results$mus0
-      Ts <- results$Ts
-      Ts0 <- results$Ts0
-      Tp <- results$Tp
-      ppred <- results$ppred
-      logitp0 <- results$logitp0
+    n_sim <- results$n.sims
+    mucK <- results$mucK
+    mucM <- results$mucM
+    pK <- results$pK
+    pM <- results$pM
+    sigcK <- results$sigcK
+    sigcM <- results$sigcM
+    mus0 <- results$mus0
+    Ts <- results$Ts
+    Ts0 <- results$Ts0
+    Tp <- results$Tp
+    ppred <- results$ppred
+    logitp0 <- results$logitp0
+    
+    # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
+    # if there is only one food in the input data
+    if (nf==1) {
+      mus0_s <- matrix(mus0,n_sim,1)
+      ppred_s <- matrix(ppred,n_sim,1)
       
-      # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
-      # if there is only one food in the input data
-      if (nf==1) {
-        mus0_s <- matrix(mus0,n_sim,1)
-        ppred_s <- matrix(ppred,n_sim,1)
+      Ts_s <- array(Ts,dim=c(n_sim,1,1))
+      Ss_s <- array(0,dim=c(n_sim,nf,nf))
+      for(u in 1:n_sim){  
+        Ss_s[u,1:nf,1:nf] <- solve(Ts_s[u,1:nf,1:nf])  # Ss (solved Ts)
+      }
+      
+      Ts0_s <- array(Ts0,dim=c(n_sim,1,1))
+      Ss0_s <- array(0,dim=c(n_sim,nf,nf))
+      for(u in 1:n_sim){  
+        Ss0_s[u,1:nf,1:nf] <- solve(Ts0_s[u,1:nf,1:nf])  # Ss0 (solved Ts0)
+      }
+      
+      if(input_modelchoice=="Independent days"){
+        logitp0_s <- matrix(logitp0,n_sim,1)
         
-        Ts_s <- array(Ts,dim=c(n_sim,1,1))
-        Ss_s <- array(0,dim=c(n_sim,nf,nf))
-        for(u in 1:n_sim){  
-          Ss_s[u,1:nf,1:nf] <- solve(Ts_s[u,1:nf,1:nf])  # Ss (solved Ts)
-        }
-        
-        Ts0_s <- array(Ts0,dim=c(n_sim,1,1))
-        Ss0_s <- array(0,dim=c(n_sim,nf,nf))
-        for(u in 1:n_sim){  
-          Ss0_s[u,1:nf,1:nf] <- solve(Ts0_s[u,1:nf,1:nf])  # Ss0 (solved Ts0)
-        }
-        
-        if(input_modelchoice=="Independent days"){
-          logitp0_s <- matrix(logitp0,n_sim,1)
-          
-          if(input_modelchoice2=="Yes"){
-            Tp_s <- array(Tp,dim=c(n_sim,1,1))
-            Sp_s <- array(0,dim=c(n_sim,nf,nf))
-            for(u in 1:n_sim){  
-              Sp_s[u,1:nf,1:nf] <- solve(Tp_s[u,1:nf,1:nf])  # Sp (solved Tp) for Independent days and between user variability
-            }
-          } else {
-            Tp_s = NULL
-            Sp_s = NULL
+        if(input_modelchoice2=="Yes"){
+          Tp_s <- array(Tp,dim=c(n_sim,1,1))
+          Sp_s <- array(0,dim=c(n_sim,nf,nf))
+          for(u in 1:n_sim){  
+            Sp_s[u,1:nf,1:nf] <- solve(Tp_s[u,1:nf,1:nf])  # Sp (solved Tp) for Independent days and between user variability
           }
         } else {
-          logitp0_s = NULL
           Tp_s = NULL
           Sp_s = NULL
         }
-        
-        # for chemical, if there is only one hazard:
-        if(nhK==1){
-          mucK_s <- array(mucK,dim=c(n_sim,1,1))
-          sigcK_s <- array(sigcK,dim=c(n_sim,1,1))
-          pK_s <- array(pK,dim=c(n_sim,1,1))
-        }    else {
-          mucK_s = NULL
-          sigcK_s = NULL
-          pK_s = NULL
-        }
-        
-        # for microbiological, if there is only one hazard:
-        if(nhM==1){
-          mucM_s <- array(mucM,dim=c(n_sim,1,1))
-          sigcM_s <- array(sigcM,dim=c(n_sim,1,1))
-          pM_s <- array(pM,dim=c(n_sim,1,1))
-        } else {
-          mucM_s = NULL
-          sigcM_s = NULL
-          pM_s = NULL
-        }
-        
-       
-        
-        # formatted results for one food one hazard in the input data
-        fresurlts <- list(mucK_s=mucK_s,sigcK_s=sigcK_s,pK_s=pK_s,
-                          mucM_s=mucM_s,sigcM_s=sigcM_s,pM_s=pM_s,
-                          mus0_s=mus0_s,Ts_s=Ts_s,Ts0_s=Ts0_s,Tp_s=Tp_s,
-                          ppred_s=ppred_s, logitp0_s=logitp0_s,Ss_s=Ss_s,Ss0_s=Ss0_s,Sp_s=Sp_s
-        )
+      } else {
+        logitp0_s = NULL
+        Tp_s = NULL
+        Sp_s = NULL
+      }
+      
+      # for chemical, if there is only one hazard:
+      if(nhK==1){
+        mucK_s <- array(mucK,dim=c(n_sim,1,1))
+        sigcK_s <- array(sigcK,dim=c(n_sim,1,1))
+        pK_s <- array(pK,dim=c(n_sim,1,1))
+      }    else {
+        mucK_s = NULL
+        sigcK_s = NULL
+        pK_s = NULL
+      }
+      
+      # for microbiological, if there is only one hazard:
+      if(nhM==1){
+        mucM_s <- array(mucM,dim=c(n_sim,1,1))
+        sigcM_s <- array(sigcM,dim=c(n_sim,1,1))
+        pM_s <- array(pM,dim=c(n_sim,1,1))
+      } else {
+        mucM_s = NULL
+        sigcM_s = NULL
+        pM_s = NULL
       }
       
       
-      # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
-      # if there are more than one food in the input data  
-      if(nf>1){
-        
-        if(input_modelchoice3=="No"){  # no correlations for log-amounts, reconstruct bugs matrix: 
-          Ts_m <- array(0,dim=c(n_sim,nf,nf))
-          for(j in 1:n_sim){
-            diag(Ts_m[j,1:nf,1:nf]) <- diag(Ts[j,1:nf,1:nf]) 
-          }
-        } else {
-          Ts_m = Ts
+      
+      # formatted results for one food one hazard in the input data
+      fresurlts <- list(mucK_s=mucK_s,sigcK_s=sigcK_s,pK_s=pK_s,
+                        mucM_s=mucM_s,sigcM_s=sigcM_s,pM_s=pM_s,
+                        mus0_s=mus0_s,Ts_s=Ts_s,Ts0_s=Ts0_s,Tp_s=Tp_s,
+                        ppred_s=ppred_s, logitp0_s=logitp0_s,Ss_s=Ss_s,Ss0_s=Ss0_s,Sp_s=Sp_s
+      )
+    }
+    
+    
+    # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
+    # if there are more than one food in the input data  
+    if(nf>1){
+      
+      if(input_modelchoice3=="No"){  # no correlations for log-amounts, reconstruct bugs matrix: 
+        Ts_m <- array(0,dim=c(n_sim,nf,nf))
+        for(j in 1:n_sim){
+          diag(Ts_m[j,1:nf,1:nf]) <- diag(Ts[j,1:nf,1:nf]) 
         }
-        Ss_m <- array(0,dim=c(n_sim,nf,nf))
-        for(u in 1:n_sim){  
-          Ss_m[u,1:nf,1:nf] <- solve(Ts_m[u,1:nf,1:nf])  
+      } else {
+        Ts_m = Ts
+      }
+      Ss_m <- array(0,dim=c(n_sim,nf,nf))
+      for(u in 1:n_sim){  
+        Ss_m[u,1:nf,1:nf] <- solve(Ts_m[u,1:nf,1:nf])  
+      }
+      
+      
+      if(input_modelchoice4=="No"){  # no correlations for mean log-amounts, reconstruct bugs matrix: 
+        Ts0_m <- array(0,dim=c(n_sim,nf,nf))
+        for(j in 1:(n_sim)){
+          diag(Ts0_m[j,1:nf,1:nf]) <- diag(Ts0[j,1:nf,1:nf])   
         }
-        
-        
-        if(input_modelchoice4=="No"){  # no correlations for mean log-amounts, reconstruct bugs matrix: 
-          Ts0_m <- array(0,dim=c(n_sim,nf,nf))
-          for(j in 1:(n_sim)){
-            diag(Ts0_m[j,1:nf,1:nf]) <- diag(Ts0[j,1:nf,1:nf])   
-          }
-        } else {
-          Ts0_m = Ts0
-        }
-        Ss0_m <- array(0,dim=c(n_sim,nf,nf))
-        for(u in 1:n_sim){  
-          Ss0_m[u,1:nf,1:nf] <- solve(Ts0_m[u,1:nf,1:nf])  
-        }
-        
-        
-        if(input_modelchoice=="Independent days"){
-          if(input_modelchoice2=="Yes"){ # variability of individual consumption frequencies (between user variability)
-            if(input_modelchoice5=="No"){  
-              # no correlations for logit-consumption frequencies, reconstruct bugs matrix: 
-              Tp_m <- array(0,dim=c(n_sim,nf,nf))
-              for(j in 1:(n_sim)){
-                diag(Tp_m[j,1:nf,1:nf]) <- diag(Tp[j,1:nf,1:nf])   
-              }
-              Sp_m <- array(0,dim=c(n_sim,nf,nf))
-              for(u in 1:n_sim){  
-                Sp_m[u,1:nf,1:nf] <- solve(Tp_m[u,1:nf,1:nf])  
-              }
-            } 
-            
-            if(input_modelchoice5=="Yes"){  # if correlation "Yes"
-              Tp_m <- Tp # full matrix directly from BUGS
-              Sp_m <- array(0,dim=c(n_sim,nf,nf))
-              for(u in 1:n_sim){  
-                Sp_m[u,1:nf,1:nf] <- solve(Tp_m[u,1:nf,1:nf])  
-              }
+      } else {
+        Ts0_m = Ts0
+      }
+      Ss0_m <- array(0,dim=c(n_sim,nf,nf))
+      for(u in 1:n_sim){  
+        Ss0_m[u,1:nf,1:nf] <- solve(Ts0_m[u,1:nf,1:nf])  
+      }
+      
+      
+      if(input_modelchoice=="Independent days"){
+        if(input_modelchoice2=="Yes"){ # variability of individual consumption frequencies (between user variability)
+          if(input_modelchoice5=="No"){  
+            # no correlations for logit-consumption frequencies, reconstruct bugs matrix: 
+            Tp_m <- array(0,dim=c(n_sim,nf,nf))
+            for(j in 1:(n_sim)){
+              diag(Tp_m[j,1:nf,1:nf]) <- diag(Tp[j,1:nf,1:nf])   
             }
-            
-          } else {
-            Tp_m = NULL
-            Sp_m = NULL
-            
+            Sp_m <- array(0,dim=c(n_sim,nf,nf))
+            for(u in 1:n_sim){  
+              Sp_m[u,1:nf,1:nf] <- solve(Tp_m[u,1:nf,1:nf])  
+            }
           } 
+          
+          if(input_modelchoice5=="Yes"){  # if correlation "Yes"
+            Tp_m <- Tp # full matrix directly from BUGS
+            Sp_m <- array(0,dim=c(n_sim,nf,nf))
+            for(u in 1:n_sim){  
+              Sp_m[u,1:nf,1:nf] <- solve(Tp_m[u,1:nf,1:nf])  
+            }
+          }
+          
         } else {
           Tp_m = NULL
           Sp_m = NULL
           
         } 
-      
+      } else {
+        Tp_m = NULL
+        Sp_m = NULL
         
-        fresurlts <- list(Ts_m=Ts_m,Ts0_m=Ts0_m,Tp_m=Tp_m,
-                          Ss_m=Ss_m,Ss0_m=Ss0_m,Sp_m=Sp_m)
-      }
+      } 
       
-      fresurlts
+      
+      fresurlts <- list(Ts_m=Ts_m,Ts0_m=Ts0_m,Tp_m=Tp_m,
+                        Ss_m=Ss_m,Ss0_m=Ss0_m,Sp_m=Sp_m)
+    }
+    
+    fresurlts
     
   })
   
   
   
   # 4. Figures----
-  
-  # file with the functions used for generating the plots:
-  source("plotsfunctions.R",local=TRUE)
   
   
   ## Plot 1, concentrations----
@@ -1832,12 +1969,15 @@ source("observers.R", local = TRUE)
     unit_concen <- units_hazard$unit_concen
     hazard_concen <- units_hazard$hazard_concen
     
+    # range x-axis
+    input_lim <- as.double(input$conf_lim1)
+    
     # transform the credible interval selected by the user to upper and lower limits:
     input_conf_interval <- as.double(input$conf_interval1)
     input_upper <- 1-(1-input_conf_interval)/2
     input_lower <- (1-input_conf_interval)/2
     
-    input_selectdist <- input$selectdist1
+    input_selectdist <- input$selectdist1 # cumulative or density
     input_selectscale <- input$selectscale1  # absolute or logarithmic  
     foodnamesused <- input$thefoodnames1 # selected foods
     hazardnamesused <- input$thehazardnames1 # selected hazards
@@ -1876,39 +2016,39 @@ source("observers.R", local = TRUE)
     nexactK <- data1$nexactK
     nexactM <- data1$nexactM
     
-   
-      n_sim <- results$n.sims
-      
-        # redefine dimensions if scalars were returned from BUGS:
-        if(nf==1){
-          mucK <- solvedBugs$mucK_s
-          sigcK <- solvedBugs$sigcK_s
-          pK <- solvedBugs$pK_s
-          mucM <- solvedBugs$mucM_s
-          sigcM <- solvedBugs$sigcM_s
-          pM <- solvedBugs$pM_s
-        }
-        if(nf>1){
-          mucK <- results$mucK
-          sigcK <- results$sigcK
-          pK <- results$pK
-          mucM <- results$mucM
-          sigcM <- results$sigcM
-          pM <- results$pM
-          
-        }
-        
-        
-        distPlot1_1(unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused,
-                    nfused, foodindex, hazardnamesused, hazardtypesused, nhused, 
-                    hazardnamesK, hazardnamesM, hazardnamesusedK, hazardnamesusedM,
-                    nhusedK, nhusedM, hazardindex, hazardindexK, hazardindexM,
-                    nexactK,nexactM,
-                    nhK, nf, mucK, sigcK, pK, nhM, mucM, sigcM, pM,
-                    logcK, logLOQK, logLODK, logLOQLimK, logLODLimK, logcM, logLOQM, logLODM, logLOQLimM, logLODLimM
-        )
     
-     recordPlot()
+    n_sim <- results$n.sims
+    
+    # redefine dimensions if scalars were returned from BUGS:
+    if(nf==1){
+      mucK <- solvedBugs$mucK_s
+      sigcK <- solvedBugs$sigcK_s
+      pK <- solvedBugs$pK_s
+      mucM <- solvedBugs$mucM_s
+      sigcM <- solvedBugs$sigcM_s
+      pM <- solvedBugs$pM_s
+    }
+    if(nf>1){
+      mucK <- results$mucK
+      sigcK <- results$sigcK
+      pK <- results$pK
+      mucM <- results$mucM
+      sigcM <- results$sigcM
+      pM <- results$pM
+      
+    }
+    
+    # call plot function:
+    distPlot1_1(input_lim, unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused,
+                nfused, foodindex, hazardnamesused, hazardtypesused, nhused, 
+                hazardnamesK, hazardnamesM, hazardnamesusedK, hazardnamesusedM,
+                nhusedK, nhusedM, hazardindex, hazardindexK, hazardindexM,
+                nexactK,nexactM,
+                nhK, nf, mucK, sigcK, pK, nhM, mucM, sigcM, pM,
+                logcK, logLOQK, logLODK, logLOQLimK, logLODLimK, logcM, logLOQM, logLODM, logLOQLimM, logLODLimM
+    )
+    
+    recordPlot()
     
   })
   
@@ -1917,8 +2057,9 @@ source("observers.R", local = TRUE)
     
   })
   
+  
+  
   output$plot1_cap <- renderText({
-    req(distPlot1_1_1())
     paste(tags$b("Figure 1."), "Variability distribution for positive hazard concentrations in food. 
           The uncertainty of the true variability distribution is expressed by plotting a range 
           (e.g. pointwise 95%CI) of probable variability distributions (straw color). The uncertainty 
@@ -1949,14 +2090,17 @@ source("observers.R", local = TRUE)
     unit_consum <- units_food$unit_consum
     food_consum <- units_food$food_consum
     
+    # range x-axis
+    input_lim <- as.double(input$conf_lim2)
+    
     # transform the credible interval selected by the user to upper and lower limits:
     input_conf_interval <- as.double(input$conf_interval2)
     input_upper <- 1-(1-input_conf_interval)/2
     input_lower <- (1-input_conf_interval)/2
     
-    input_selectdist <-input$selectdist2
+    input_selectdist <-input$selectdist2 # cumulative or density
     input_selectscale <- input$selectscale2  # absolute or logarithmic
-    foodnamesused <- input$thefoodnames2
+    foodnamesused <- input$thefoodnames2 # selected foods
     
     input_modelchoice <- input$modelchoice
     input_modelchoice2 <- input$modelchoice2
@@ -1976,33 +2120,34 @@ source("observers.R", local = TRUE)
     logsw <- data1$logsw
     
     n_sim <- results$n.sims
-      muw <- results$muw
-      sigw <- results$sigw
+    muw <- results$muw
+    sigw <- results$sigw
+    
+    
+    
+    # redefine dimensions if scalars were returned from BUGS:
+    if(nf==1){
+      mus0<- solvedBugs$mus0_s
+      ppred <- solvedBugs$ppred_s 
+      Ss<- solvedBugs$Ss_s
+      Ss0 <- solvedBugs$Ss0_s
       
+    }
+    if(nf>1){ 
+      mus0 <- results$mus0
+      ppred <- results$ppred
+      Ss <- solvedBugs$Ss_m
+      Ss0 <- solvedBugs$Ss0_m
       
-      
-        # redefine dimensions if scalars were returned from BUGS:
-        if(nf==1){
-          mus0<- solvedBugs$mus0_s
-          ppred <- solvedBugs$ppred_s 
-          Ss<- solvedBugs$Ss_s
-          Ss0 <- solvedBugs$Ss0_s
-          
-        }
-        if(nf>1){ 
-          mus0 <- results$mus0
-          ppred <- results$ppred
-          Ss <- solvedBugs$Ss_m
-          Ss0 <- solvedBugs$Ss0_m
-          
-        }  
-        
-        distPlot2_1(food_consum, unit_consum, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused, nfused, foodindex,
-                    nf, nr, nd,logs, logsw,input_modelchoice,input_modelchoice2,input_modelchoice3,input_modelchoice4,input_modelchoice5,
-                    mus0,muw,ppred,sigw,Ss,Ss0
-        )
-      
-      recordPlot()
+    }  
+    
+    # call plot function:
+    distPlot2_1(input_lim, food_consum, unit_consum, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused, nfused, foodindex,
+                nf, nr, nd,logs, logsw,input_modelchoice,input_modelchoice2,input_modelchoice3,input_modelchoice4,input_modelchoice5,
+                mus0,muw,ppred,sigw,Ss,Ss0
+    )
+    
+    recordPlot()
     
   })
   
@@ -2011,7 +2156,6 @@ source("observers.R", local = TRUE)
   })
   
   output$plot2_cap <- renderText({
-    req(distPlot2_1_1())
     paste(tags$b("Figure 2a."),"Variability distributions for both mean consumptions per bodyweight 
           ('chronic') and single consumptions ('acute'). The uncertainty of the true variability 
           distribution of positive consumptions is expressed by plotting a range (e.g. pointwise 95%CI) 
@@ -2026,7 +2170,7 @@ source("observers.R", local = TRUE)
   
   
   ## Plot 3, exposures----
-
+  
   distPlot3_1_1 <- reactive({
     req(currentresults())
     ocdata <- as.data.frame(ocdata())
@@ -2038,21 +2182,24 @@ source("observers.R", local = TRUE)
     unit_concen <- units_hazard$unit_concen
     hazard_concen <- units_hazard$hazard_concen
     
+    # range x-axis
+    input_lim <- as.double(input$conf_lim3)
+    
     # transform the credible interval selected by the user to upper and lower limits:
     input_conf_interval <- as.double(input$conf_interval3)
     input_upper <- 1-(1-input_conf_interval)/2
     input_lower <- (1-input_conf_interval)/2
     
-    input_selectdist <-input$selectdist3
-    input_selectscale <- input$selectscale3
+    input_selectdist <-input$selectdist3 # cumulative or density
+    input_selectscale <- input$selectscale3 # absolute or logarithmic
     input_modelchoice <- input$modelchoice
     input_modelchoice2 <- input$modelchoice2
     input_modelchoice3 <- input$modelchoice3
     input_modelchoice4 <- input$modelchoice4
     input_modelchoice5 <- input$modelchoice5
     
-    foodnamesused <- input$thefoodnames3
-    hazardnamesused <- input$thehazardnames3
+    foodnamesused <- input$thefoodnames3 # selected foods
+    hazardnamesused <- input$thehazardnames3 # selected hazard
     Rall <- input$factor  # adjustment factor for concentrations
     Pall <- input$pfactor # adjustment factor for prevalences
     
@@ -2097,66 +2244,66 @@ source("observers.R", local = TRUE)
     
     
     n_sim <- results$n.sims
-      mus0 <- results$mus0
-      muw <- results$muw
-      sigw <- results$sigw
+    mus0 <- results$mus0
+    muw <- results$muw
+    sigw <- results$sigw
+    
+    
+    # redefine dimensions if scalars were returned from BUGS:
+    if(nf==1){
+      mucK <- solvedBugs$mucK_s
+      sigcK <- solvedBugs$sigcK_s
+      pK <- solvedBugs$pK_s
+      mucM <- solvedBugs$mucM_s
+      sigcM <- solvedBugs$sigcM_s
+      pM <- solvedBugs$pM_s
+      mus0<- solvedBugs$mus0_s
+      ppred <- solvedBugs$ppred_s 
+      Ss<- solvedBugs$Ss_s
+      Ss0 <- solvedBugs$Ss0_s
       
-       
-        # redefine dimensions if scalars were returned from BUGS:
-        if(nf==1){
-          mucK <- solvedBugs$mucK_s
-          sigcK <- solvedBugs$sigcK_s
-          pK <- solvedBugs$pK_s
-          mucM <- solvedBugs$mucM_s
-          sigcM <- solvedBugs$sigcM_s
-          pM <- solvedBugs$pM_s
-          mus0<- solvedBugs$mus0_s
-          ppred <- solvedBugs$ppred_s 
-          Ss<- solvedBugs$Ss_s
-          Ss0 <- solvedBugs$Ss0_s
-          
-          
-          if(input_modelchoice=="Independent days"){
-            logitp0 <- solvedBugs$logitp0_s
-            
-            if(input_modelchoice2=="Yes"){
-              Sp <- solvedBugs$Sp_s
-            }
-          }
-          
+      
+      if(input_modelchoice=="Independent days"){
+        logitp0 <- solvedBugs$logitp0_s
+        
+        if(input_modelchoice2=="Yes"){
+          Sp <- solvedBugs$Sp_s
         }
-        
-        # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
-        if(nf>1){
-          mucK <- results$mucK
-          sigcK <- results$sigcK
-          pK <- results$pK
-          mucM <- results$mucM
-          sigcM <- results$sigcM
-          pM <- results$pM
-          mus0 <- results$mus0
-          ppred <- results$ppred
-          logitp0 <- results$logitp0
-          
-          
-          Ss <- solvedBugs$Ss_m
-          Ss0 <- solvedBugs$Ss0_m
-          Sp <- solvedBugs$Sp_m
-          
-        }
-        
-        
-        distPlot3_1(unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, input_modelchoice, input_modelchoice2, input_modelchoice3,input_modelchoice4,
-                    foodnamesused, nfused, foodindex, hazardnames,
-                    nhused,  hazardnamesusedK, hazardnamesusedM,
-                    nhusedK, nhusedM, hazardindexK, hazardindexM, Rall, Pall,nhK,nhM,nf,nr,nd,
-                    nexactK, nexactM, 
-                    logs,logsw,logcK,logLOQK,logLODK,logLOQLimK,logLODLimK, logcM,logLOQM,logLODM,logLOQLimM,logLODLimM,
-                    logitp0,mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
-                    Ss,Ss0,Sp
-        )
-       
-      recordPlot()
+      }
+      
+    }
+    
+    # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
+    if(nf>1){
+      mucK <- results$mucK
+      sigcK <- results$sigcK
+      pK <- results$pK
+      mucM <- results$mucM
+      sigcM <- results$sigcM
+      pM <- results$pM
+      mus0 <- results$mus0
+      ppred <- results$ppred
+      logitp0 <- results$logitp0
+      
+      
+      Ss <- solvedBugs$Ss_m
+      Ss0 <- solvedBugs$Ss0_m
+      Sp <- solvedBugs$Sp_m
+      
+    }
+    
+    # call plot function:
+    distPlot3_1(input_lim, unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, input_modelchoice, input_modelchoice2, input_modelchoice3,input_modelchoice4,
+                foodnamesused, nfused, foodindex, hazardnames,
+                nhused,  hazardnamesusedK, hazardnamesusedM,
+                nhusedK, nhusedM, hazardindexK, hazardindexM, Rall, Pall,nhK,nhM,nf,nr,nd,
+                nexactK, nexactM, 
+                logs,logsw,logcK,logLOQK,logLODK,logLOQLimK,logLODLimK, logcM,logLOQM,logLODM,logLOQLimM,logLODLimM,
+                logitp0,mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
+                Ss,Ss0,Sp
+    )
+    
+    recordPlot()
     
     
   })
@@ -2166,7 +2313,6 @@ source("observers.R", local = TRUE)
   }) 
   
   output$plot3_cap <- renderText({
-    req(distPlot3_1_1())
     paste(tags$b("Figure 3."), "Variability distribution for mean positive exposures per bodyweight (chemical) 
           or acute positive exposures (microbial). The uncertainty of the true variability distribution of 
           positive exposures is expressed by plotting a range (e.g. pointwise 95%CI) of probable variability 
@@ -2205,8 +2351,8 @@ source("observers.R", local = TRUE)
     input_modelchoice3 <- input$modelchoice3
     input_modelchoice4 <- input$modelchoice4
     input_modelchoice5 <- input$modelchoice5
-    foodnamesused = input$thefoodnames4
-    hazardnamesused = input$thehazardnames4
+    foodnamesused = input$thefoodnames4 # selected foods
+    hazardnamesused = input$thehazardnames4 # selected hazard
     
     foodnames<-names(ocdata[4:dim(ocdata)[2]])
     foodindex = match(foodnamesused,foodnames) # indexing of selected foods in all foods
@@ -2233,81 +2379,80 @@ source("observers.R", local = TRUE)
     nexactM <- data1$nexactM
     
     
-      n_sim <- results$n.sims
-      muw <- results$muw
-      sigw <- results$sigw
-     
-        # redefine dimensions if scalars were returned from BUGS:
-        if(nf==1){
-          mucK <- solvedBugs$mucK_s
-          sigcK <- solvedBugs$sigcK_s
-          pK <- solvedBugs$pK_s
-          mucM <- solvedBugs$mucM_s
-          sigcM <- solvedBugs$sigcM_s
-          pM <- solvedBugs$pM_s
-          mus0<- solvedBugs$mus0_s
-          ppred <- solvedBugs$ppred_s  
-          Ss<- solvedBugs$Ss_s
-          Ss0 <- solvedBugs$Ss0_s
-          
-          if(input_modelchoice=="Independent days"){
-            logitp0 <- solvedBugs$logitp0_s
-            
-            if(input_modelchoice2=="Yes"){
-              Sp<- solvedBugs$Sp_s
-            }
-          }
-          
-        }
-        
-        # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
-        if(nf>1){ 
-          mucK <- results$mucK
-          sigcK <- results$sigcK
-          pK <- results$pK
-          mucM <- results$mucM
-          sigcM <- results$sigcM
-          pM <- results$pM
-          mus0 <- results$mus0
-          ppred <- results$ppred
-          logitp0 <- results$logitp0
-          
-          Ss <- solvedBugs$Ss_m
-          Ss0 <- solvedBugs$Ss0_m
-          Sp <- solvedBugs$Sp_m
-          
-        }
-        
-        
-        distPlot4_1(unit_concen, hazard_concen, n_sim, input_selectscale, input_selectQ, nV,
-                    nU, Rall, Pall, input_modelchoice, input_modelchoice2,
-                    input_modelchoice5, input_modelchoice4, input_modelchoice3,
-                    nfused, foodindex, 
-                    nexactK, nexactM, 
-                    nhused, hazardnames, hazardnamesusedK, hazardnamesusedM,
-                    nhusedK, nhusedM, hazardindexK, hazardindexM, nhK,nhM,nf,
-                    mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
-                    Ss,Ss0,Sp,
-                    logitp0
-        )
+    n_sim <- results$n.sims
+    muw <- results$muw
+    sigw <- results$sigw
+    
+    # redefine dimensions if scalars were returned from BUGS:
+    if(nf==1){
+      mucK <- solvedBugs$mucK_s
+      sigcK <- solvedBugs$sigcK_s
+      pK <- solvedBugs$pK_s
+      mucM <- solvedBugs$mucM_s
+      sigcM <- solvedBugs$sigcM_s
+      pM <- solvedBugs$pM_s
+      mus0<- solvedBugs$mus0_s
+      ppred <- solvedBugs$ppred_s  
+      Ss<- solvedBugs$Ss_s
+      Ss0 <- solvedBugs$Ss0_s
       
-      recordPlot()
+      if(input_modelchoice=="Independent days"){
+        logitp0 <- solvedBugs$logitp0_s
+        
+        if(input_modelchoice2=="Yes"){
+          Sp<- solvedBugs$Sp_s
+        }
+      }
+      
+    }
+    
+    # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
+    if(nf>1){ 
+      mucK <- results$mucK
+      sigcK <- results$sigcK
+      pK <- results$pK
+      mucM <- results$mucM
+      sigcM <- results$sigcM
+      pM <- results$pM
+      mus0 <- results$mus0
+      ppred <- results$ppred
+      logitp0 <- results$logitp0
+      
+      Ss <- solvedBugs$Ss_m
+      Ss0 <- solvedBugs$Ss0_m
+      Sp <- solvedBugs$Sp_m
+      
+    }
+    
+    # call plot function:
+    distPlot4_1(unit_concen, hazard_concen, n_sim, input_selectscale, input_selectQ, nV,
+                nU, Rall, Pall, input_modelchoice, input_modelchoice2,
+                input_modelchoice5, input_modelchoice4, input_modelchoice3,
+                nfused, foodindex, 
+                nexactK, nexactM, 
+                nhused, hazardnames, hazardnamesusedK, hazardnamesusedM,
+                nhusedK, nhusedM, hazardindexK, hazardindexM, nhK,nhM,nf,
+                mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
+                Ss,Ss0,Sp,
+                logitp0
+    )
+    
+    recordPlot()
     
     
   })
   
   
- 
+  
   output$distPlot4 <- renderPlot({
     withProgress(message = '2D simulation in progress...',
                  value = 0.1, {
-    distPlot4_1_1()
+                   distPlot4_1_1()
+                 })
   })
-  })
- 
+  
   
   output$plot4_cap <- renderText({
-    req(distPlot4_1_1())
     paste(tags$b("Figure 4."), "Cumulative distributions for separation of uncertainty and variability for 
           mean exposures per bodyweight (chemical) or acute exposures (microbial). The uncertainty of 
           true variability distribution of positive exposures summed from all selected foods is expressed 
@@ -2315,7 +2460,7 @@ source("observers.R", local = TRUE)
           distribution for the selected variability quantile is shown between vertical bars (and is subject
           to Monte Carlo error of 2D simulations).")
   })
-   
+  
   
   
   
@@ -2328,8 +2473,8 @@ source("observers.R", local = TRUE)
     results <- currentresults()
     solvedBugs <- solvedBugs()
     
-    foodnamesused <- input$thefoodnames5
-    hazardnamesused <- input$thehazardnames5
+    foodnamesused <- input$thefoodnames5 # selected foods
+    hazardnamesused <- input$thehazardnames5 # selected hazard
     
     foodnames<-names(ocdata[4:dim(ocdata)[2]])
     foodindex <- match(foodnamesused, foodnames)
@@ -2353,37 +2498,38 @@ source("observers.R", local = TRUE)
     nexactK <- data1$nexactK
     nexactM <- data1$nexactM
     
-   
-      n_sim <- results$n.sims
+    
+    n_sim <- results$n.sims
+    
+    
+    # redefine dimensions if scalars were returned from BUGS:
+    if(nf==1) {
+      mucK <- solvedBugs$mucK_s
+      sigcK <- solvedBugs$sigcK_s
+      pK <- solvedBugs$pK_s
+      mucM <- solvedBugs$mucM_s
+      sigcM <- solvedBugs$sigcM_s
+      pM <- solvedBugs$pM_s
+    }
+    if(nf>1) {
+      mucK <- results$mucK
+      sigcK <- results$sigcK
+      pK <- results$pK
+      mucM <- results$mucM
+      sigcM <- results$sigcM
+      pM <- results$pM
       
-     
-        # redefine dimensions if scalars were returned from BUGS:
-        if(nf==1) {
-          mucK <- solvedBugs$mucK_s
-          sigcK <- solvedBugs$sigcK_s
-          pK <- solvedBugs$pK_s
-          mucM <- solvedBugs$mucM_s
-          sigcM <- solvedBugs$sigcM_s
-          pM <- solvedBugs$pM_s
-        }
-        if(nf>1) {
-          mucK <- results$mucK
-          sigcK <- results$sigcK
-          pK <- results$pK
-          mucM <- results$mucM
-          sigcM <- results$sigcM
-          pM <- results$pM
-          
-        }
-        
-        distPlot5_1(n_sim, foodnamesused, nfused, foodindex, 
-                    hazardnamesusedK, hazardnamesusedM, nhusedK, nhusedM,
-                    hazardindexK, hazardindexM,nf,nhK,nhM,
-                    nexactK, nexactM,
-                    mucK,mucM,pK,pM,sigcK,sigcM
-        )
-      
-      recordPlot()
+    }
+    
+    # call plot function:
+    distPlot5_1(n_sim, foodnamesused, nfused, foodindex, 
+                hazardnamesusedK, hazardnamesusedM, nhusedK, nhusedM,
+                hazardindexK, hazardindexM,nf,nhK,nhM,
+                nexactK, nexactM,
+                mucK,mucM,pK,pM,sigcK,sigcM
+    )
+    
+    recordPlot()
     
   })
   
@@ -2393,7 +2539,6 @@ source("observers.R", local = TRUE)
   
   
   output$plot51_cap <- renderText({
-    req(distPlot5_1_1())
     paste(tags$b("Figure 5a."), "Permuted MCMC samples of model parameters mu and sigma of the log-normal 
           (", tags$i('mu, sigma'),")-distribution, and prevalence", tags$b(tags$i('q')), "of the", tags$b('hazard'),". 
           For each parameter, also the approximated marginal probability density is shown.")
@@ -2410,8 +2555,8 @@ source("observers.R", local = TRUE)
     results <- currentresults()
     solvedBugs <- solvedBugs()
     
-    foodnamesused <- input$thefoodnames52
-    input_modelchoice3 <- input$modelchoice3
+    foodnamesused <- input$thefoodnames52 # selected foods
+    input_modelchoice3 <- input$modelchoice3 # selected hazard
     
     foodnames<-names(ocdata[4:dim(ocdata)[2]])
     nfused <- length(foodnamesused)     # number of selected foods
@@ -2420,28 +2565,28 @@ source("observers.R", local = TRUE)
     nf <- length(foodnames)   # Calculate the number of foods
     
     n_sim <- results$n.sims
+    
+    # redefine dimensions if scalars were returned from BUGS:
+    if(nf==1){
+      mus0<- solvedBugs$mus0_s
+      ppred <- solvedBugs$ppred_s 
+      Ss <- solvedBugs$Ss_s
+    }
+    if(nf>1){ 
+      mus0 <- results$mus0
+      ppred <- results$ppred
+      Ss <- solvedBugs$Ss_m
       
-      # redefine dimensions if scalars were returned from BUGS:
-        if(nf==1){
-          mus0<- solvedBugs$mus0_s
-          ppred <- solvedBugs$ppred_s 
-          Ss <- solvedBugs$Ss_s
-        }
-        if(nf>1){ 
-          mus0 <- results$mus0
-          ppred <- results$ppred
-          Ss <- solvedBugs$Ss_m
-          
-        }
-        
-        
-        distPlot5_2(n_sim,foodnamesused, nfused, foodindex,
-                    nf,
-                    mus0,ppred,
-                    Ss
-        )
-      
-      recordPlot()
+    }
+    
+    # call plot function:
+    distPlot5_2(n_sim,foodnamesused, nfused, foodindex,
+                nf,
+                mus0,ppred,
+                Ss
+    )
+    
+    recordPlot()
     
   })
   
@@ -2450,7 +2595,6 @@ source("observers.R", local = TRUE)
   })
   
   output$plot52_cap <- renderText({
-    req(distPlot5_2_1())
     paste(tags$b("Figure 5b."), "Permuted MCMC samples of model parameters mu and sigma of the log-normal 
           (", tags$i('mu, sigma'),")-distribution, and consumption frequency", tags$b(tags$i('p')), "of the", tags$b('food'),". 
           For each parameter, also the approximated marginal probability density is shown.")
@@ -2472,7 +2616,7 @@ source("observers.R", local = TRUE)
     unit_consum <- units_food$unit_consum
     food_consum <- units_food$food_consum
     
-    foodnamesused <- input$thefoodnames21
+    foodnamesused <- input$thefoodnames21 # selected foods
     input_modelchoice4 <- input$modelchoice4 
     input_modelchoice3 <- input$modelchoice3 
     
@@ -2486,21 +2630,21 @@ source("observers.R", local = TRUE)
     logsw <- data1$logsw
     
     n_sim <- results$n.sims
-      mus0 <- results$mus0
-      
-      # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
-        Ss <- solvedBugs$Ss_m
-        Ss0 <- solvedBugs$Ss0_m
-        
-        
-        
-        distPlot6_1(food_consum, unit_consum, n_sim, input_modelchoice4, input_modelchoice3, foodnamesused,
-                    nfused, foodindex,nr,nd,nf,logsw,
-                    mus0,
-                    Ss,Ss0
-        )
-      
-      recordPlot()
+    mus0 <- results$mus0
+    
+    # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
+    Ss <- solvedBugs$Ss_m
+    Ss0 <- solvedBugs$Ss0_m
+    
+    
+    # call plot function:
+    distPlot6_1(food_consum, unit_consum, n_sim, input_modelchoice4, input_modelchoice3, foodnamesused,
+                nfused, foodindex,nr,nd,nf,logsw,
+                mus0,
+                Ss,Ss0
+    )
+    
+    recordPlot()
     
   })
   
@@ -2509,7 +2653,6 @@ source("observers.R", local = TRUE)
   })
   
   output$plot6_cap <- renderText({
-    req(distPlot6_1_1())
     paste(tags$b("Figure 2b."), "Pairwise scatter plots of logarithms of actual positive consumptions per 
           bodyweights. Data points (blueberry color) and model based simulations (raspberry color).")
   })
@@ -2531,7 +2674,7 @@ source("observers.R", local = TRUE)
     unit_consum <- units_food$unit_consum
     food_consum <- units_food$food_consum
     
-    foodnamesused <- input$thefoodnames22
+    foodnamesused <- input$thefoodnames22 # selected foods
     input_modelchoice3 <- input$modelchoice3
     input_modelchoice4 <- input$modelchoice4
     
@@ -2546,19 +2689,20 @@ source("observers.R", local = TRUE)
     
     
     n_sim <- results$n.sims
-      mus0 <- results$mus0
-      
-      # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
-        Ss <- solvedBugs$Ss_m
-        Ss0 <- solvedBugs$Ss0_m
-        
-        distPlot7_1(food_consum, unit_consum, n_sim, input_modelchoice4, foodnamesused, nfused, foodindex,
-                    nf,nr,nd,logsw,
-                    mus0,
-                    Ss,Ss0
-        )
-      
-      recordPlot()
+    mus0 <- results$mus0
+    
+    # redefine dimensions if diagonal matrix with wrong off-diagonals, not zero off-diagonals, was returned from BUGS:
+    Ss <- solvedBugs$Ss_m
+    Ss0 <- solvedBugs$Ss0_m
+    
+    # call plot function:
+    distPlot7_1(food_consum, unit_consum, n_sim, input_modelchoice4, foodnamesused, nfused, foodindex,
+                nf,nr,nd,logsw,
+                mus0,
+                Ss,Ss0
+    )
+    
+    recordPlot()
     
   })
   
@@ -2567,7 +2711,6 @@ source("observers.R", local = TRUE)
   })
   
   output$plot7_cap <- renderText({
-    req(distPlot7_1_1())
     paste(tags$b("Figure 2c."), "Pairwise scatter plots of logarithms of mean positive consumptions per 
           bodyweights. Data points (blueberry color) and model based simulations (raspberry color). ")
   })
@@ -2575,10 +2718,6 @@ source("observers.R", local = TRUE)
   
   
   # 5. Tables----
-  
-  # file with the functions used for generating the tables:
-  source("tablefunctions.R", local = TRUE)
-  
   
   ## Table 1, posterior summary----
   
@@ -2595,7 +2734,7 @@ source("observers.R", local = TRUE)
     input_modelchoice3 <- input$modelchoice3
     input_modelchoice4 <- input$modelchoice4
     input_modelchoice5 <- input$modelchoice5
-    foodnamesused <- input$thefoodnames_t
+    foodnamesused <- input$thefoodnames_t # selected foods
     hazardnamesused <- input$thehazardnames_t
     Rall <- input$factor # optional processing factors
     Pall <- input$pfactor  # optional prevalence factors
@@ -2625,90 +2764,93 @@ source("observers.R", local = TRUE)
     
     
     n_sim <- results$n.sims
-      muw <- results$muw
-      sigw <- results$sigw
-      
-      
-       
-        # redefine dimensions if scalars were returned from BUGS:
-        if(nf==1){
-          mucK <- solvedBugs$mucK_s
-          sigcK <- solvedBugs$sigcK_s
-          pK <- solvedBugs$pK_s
-          mucM <- solvedBugs$mucM_s
-          sigcM <- solvedBugs$sigcM_s
-          pM <- solvedBugs$pM_s
-          mus0<- solvedBugs$mus0_s
-          ppred <- solvedBugs$ppred_s 
-          Ss<- solvedBugs$Ss_s
-          Ss0 <- solvedBugs$Ss0_s
-          
-          
-          if(input_modelchoice=="Independent days"){
-            logitp0 <- solvedBugs$logitp0_s
-            
-            if(input_modelchoice2=="Yes"){
-              Sp <- solvedBugs$Sp_s
-            }
-          }
-          
-        }
-        if(nf>1){
-          mucK <- results$mucK
-          sigcK <- results$sigcK
-          pK <- results$pK
-          mucM <- results$mucM
-          sigcM <- results$sigcM
-          pM <- results$pM
-          mus0 <- results$mus0
-          ppred <- results$ppred
-          logitp0 <- results$logitp0
-          
-          Ss <- solvedBugs$Ss_m
-          Ss0 <- solvedBugs$Ss0_m
-          Sp <- solvedBugs$Sp_m
-          
-        }
-        
-        
-        
-        table1(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice3,input_modelchoice4,input_modelchoice5,
-                 theresults, foodnamesused, nfused, foodindex, hazardnames, 
-                 hazardnamesusedK,hazardnamesusedM, nhusedK, nhusedM, hazardindexK, hazardindexM,
-                 Rall, Pall,nhK,nhM,nf,nexactK,nexactM,
-                 mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
-                 logitp0,
-                 Ss,Ss0,Sp
-          )
-       
-  })
- 
- 
-  output$values <- DT::renderDT({
+    muw <- results$muw
+    sigw <- results$sigw
     
-    resultValues()%>%
-      DT::datatable(rownames = FALSE,
-                    class = 'row-border stripe',
-                    extensions = c("Buttons", "RowGroup"),
-                    options = list(
-                      rowGroup = list(dataSrc = 1), # row grouping feature -> grouped by second column value 
-                      
-                      dom = "Bfrtip",
-                      buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-th"></span> Excel *', title = NULL, 
-                                          exportOptions = list(columns = ":visible"),
-                                          filename =  paste("Posterior_predictive_distribution_summaries")), 
-                                     list(extend = "csv", text = '<span class="glyphicon glyphicon-download-alt"></span> CSV *', title = NULL, 
-                                          exportOptions = list(columns = ":visible"),
-                                          filename =  paste("Posterior_predictive_distribution_summaries"))
-                      ),
-                      
-                      paging=FALSE, scrollY = "480px"
-                    )
-      )
+    
+    
+    # redefine dimensions if scalars were returned from BUGS:
+    if(nf==1){
+      mucK <- solvedBugs$mucK_s
+      sigcK <- solvedBugs$sigcK_s
+      pK <- solvedBugs$pK_s
+      mucM <- solvedBugs$mucM_s
+      sigcM <- solvedBugs$sigcM_s
+      pM <- solvedBugs$pM_s
+      mus0<- solvedBugs$mus0_s
+      ppred <- solvedBugs$ppred_s 
+      Ss<- solvedBugs$Ss_s
+      Ss0 <- solvedBugs$Ss0_s
+      
+      
+      if(input_modelchoice=="Independent days"){
+        logitp0 <- solvedBugs$logitp0_s
+        
+        if(input_modelchoice2=="Yes"){
+          Sp <- solvedBugs$Sp_s
+        }
+      }
+      
+    }
+    if(nf>1){
+      mucK <- results$mucK
+      sigcK <- results$sigcK
+      pK <- results$pK
+      mucM <- results$mucM
+      sigcM <- results$sigcM
+      pM <- results$pM
+      mus0 <- results$mus0
+      ppred <- results$ppred
+      logitp0 <- results$logitp0
+      
+      Ss <- solvedBugs$Ss_m
+      Ss0 <- solvedBugs$Ss0_m
+      Sp <- solvedBugs$Sp_m
+      
+    }
+    
+    
+    # call table function:
+    table1(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice3,input_modelchoice4,input_modelchoice5,
+           theresults, foodnamesused, nfused, foodindex, hazardnames, 
+           hazardnamesusedK,hazardnamesusedM, nhusedK, nhusedM, hazardindexK, hazardindexM,
+           Rall, Pall,nhK,nhM,nf,nexactK,nexactM,
+           mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
+           logitp0,
+           Ss,Ss0,Sp
+    )
+    
   })
-
+  
+  
+  output$values <- DT::renderDT({
+    withProgress(message = 'Generating posterior predictive summaries...',
+                 value = 0.1, {
+                   
+                   
+                   resultValues()%>%
+                     DT::datatable(rownames = FALSE,
+                                   class = 'row-border stripe',
+                                   extensions = c("Buttons", "RowGroup"),
+                                   options = list(
+                                     rowGroup = list(dataSrc = 1), # row grouping feature -> grouped by second column value 
+                                     
+                                     dom = "Bfrtip",
+                                     buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-th"></span> Excel *', title = NULL, 
+                                                         exportOptions = list(columns = ":visible"),
+                                                         filename =  paste("Posterior_predictive_distribution_summaries")), 
+                                                    list(extend = "csv", text = '<span class="glyphicon glyphicon-download-alt"></span> CSV *', title = NULL, 
+                                                         exportOptions = list(columns = ":visible"),
+                                                         filename =  paste("Posterior_predictive_distribution_summaries"))
+                                     ),
+                                     
+                                     paging=FALSE, scrollY = "480px"
+                                   )
+                     )
+                 })
+  })
+  
   output$table1_cap <- renderText({
-    req(resultValues())
     paste(tags$b("Table 1."), "Posterior predictive distributions present predictions where all uncertainties and 
           variabilities are integrated into one single probability distribution. This can be a useful summary for 
           assessing what is now probable, given all the data with all its variability and uncertainties. 
@@ -2728,7 +2870,7 @@ source("observers.R", local = TRUE)
     input_modelchoice <- input$modelchoice
     input_modelchoice2 <- input$modelchoice2
     
-    foodnamesused <- input$thefoodnames_t2
+    foodnamesused <- input$thefoodnames_t2 # selected foods
     hazardnamesused <- input$thehazardnames_t2
     Rall <- input$factor # optional processing factors
     Pall <- input$pfactor  # optional prevalence factors
@@ -2762,87 +2904,92 @@ source("observers.R", local = TRUE)
     
     
     
-      n_sim <- results$n.sims
-      muw <- results$muw
-      sigw <- results$sigw
+    n_sim <- results$n.sims
+    muw <- results$muw
+    sigw <- results$sigw
+    
+    
+    # redefine dimensions if scalars were returned from BUGS:
+    if(nf==1){
+      mucK <- solvedBugs$mucK_s
+      sigcK <- solvedBugs$sigcK_s
+      pK <- solvedBugs$pK_s
+      mucM <- solvedBugs$mucM_s
+      sigcM <- solvedBugs$sigcM_s
+      pM <- solvedBugs$pM_s
+      mus0<- solvedBugs$mus0_s
+      ppred <- solvedBugs$ppred_s 
+      Ss<- solvedBugs$Ss_s
+      Ss0 <- solvedBugs$Ss0_s
       
       
-      # redefine dimensions if scalars were returned from BUGS:
-        if(nf==1){
-          mucK <- solvedBugs$mucK_s
-          sigcK <- solvedBugs$sigcK_s
-          pK <- solvedBugs$pK_s
-          mucM <- solvedBugs$mucM_s
-          sigcM <- solvedBugs$sigcM_s
-          pM <- solvedBugs$pM_s
-          mus0<- solvedBugs$mus0_s
-          ppred <- solvedBugs$ppred_s 
-          Ss<- solvedBugs$Ss_s
-          Ss0 <- solvedBugs$Ss0_s
-          
-          
-          if(input_modelchoice=="Independent days"){
-            logitp0 <- solvedBugs$logitp0_s
-            
-            if(input_modelchoice2=="Yes"){
-              Sp <- solvedBugs$Sp_s
-            }
-          }
-          
-        }
-        if(nf>1){
-          mucK <- results$mucK
-          sigcK <- results$sigcK
-          pK <- results$pK
-          mucM <- results$mucM
-          sigcM <- results$sigcM
-          pM <- results$pM
-          mus0 <- results$mus0
-          ppred <- results$ppred
-          logitp0 <- results$logitp0
-          
-          Ss <- solvedBugs$Ss_m
-          Ss0 <- solvedBugs$Ss0_m
-          Sp <- solvedBugs$Sp_m
-          
-        }
+      if(input_modelchoice=="Independent days"){
+        logitp0 <- solvedBugs$logitp0_s
         
-         table2(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfused,foodindex,hazardnames,
-                 hazardnamesused,hazardtypesused,hazardnamesK,hazardnamesM,
-                 hazardnamesusedK,hazardnamesusedM,nhusedK,nhusedM,hazardindexK,hazardindexM,
-                 Rall,Pall,nhK,nhM,nf,nexactK,nexactM,limitexpoK,limitexpoM,
-                 mus0,ppred,mucK,mucM,sigcK,sigcM,pK,pM,logitp0,muw,sigw,
-                 Ss,Ss0,Sp 
-          )
-        
+        if(input_modelchoice2=="Yes"){
+          Sp <- solvedBugs$Sp_s
+        }
+      }
+      
+    }
+    if(nf>1){
+      mucK <- results$mucK
+      sigcK <- results$sigcK
+      pK <- results$pK
+      mucM <- results$mucM
+      sigcM <- results$sigcM
+      pM <- results$pM
+      mus0 <- results$mus0
+      ppred <- results$ppred
+      logitp0 <- results$logitp0
+      
+      Ss <- solvedBugs$Ss_m
+      Ss0 <- solvedBugs$Ss0_m
+      Sp <- solvedBugs$Sp_m
+      
+    }
+    
+    # call table function:
+    table2(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfused,foodindex,hazardnames,
+           hazardnamesused,hazardtypesused,hazardnamesK,hazardnamesM,
+           hazardnamesusedK,hazardnamesusedM,nhusedK,nhusedM,hazardindexK,hazardindexM,
+           Rall,Pall,nhK,nhM,nf,nexactK,nexactM,limitexpoK,limitexpoM,
+           mus0,ppred,mucK,mucM,sigcK,sigcM,pK,pM,logitp0,muw,sigw,
+           Ss,Ss0,Sp 
+    )
+    
   })
   
- 
+  
   output$pvalues <- DT::renderDT({
-    
-    resultProbs()%>%
-      DT::datatable(rownames = FALSE,
-                    class = 'row-border stripe',
-                    extensions = c("Buttons", "RowGroup"),
-                    options = list(
-                      rowGroup = list(dataSrc = 0), # row grouping feature -> grouped by second column value 
-                      
-                      dom = "Bfrtip",
-                      buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-th"></span> Excel *', title = NULL, 
-                                          exportOptions = list(columns = ":visible"),
-                                          filename =  paste("Exposure_limit_analysis")), 
-                                     list(extend = "csv", text = '<span class="glyphicon glyphicon-download-alt"></span> CSV *', title = NULL, 
-                                          exportOptions = list(columns = ":visible"),
-                                          filename =  paste("Exposure_limit_analysis"))
-                      ),
-                      
-                      paging=FALSE, scrollY = "480px"
-                    )
-      )
+    withProgress(message = 'Generating exposure limit analysis table...',
+                 value = 0.1, {
+                   
+                   
+                   resultProbs()%>%
+                     DT::datatable(rownames = FALSE,
+                                   class = 'row-border stripe',
+                                   extensions = c("Buttons", "RowGroup"),
+                                   options = list(
+                                     rowGroup = list(dataSrc = 0), # row grouping feature -> grouped by second column value 
+                                     
+                                     dom = "Bfrtip",
+                                     buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-th"></span> Excel *', title = NULL, 
+                                                         exportOptions = list(columns = ":visible"),
+                                                         filename =  paste("Exposure_limit_analysis")), 
+                                                    list(extend = "csv", text = '<span class="glyphicon glyphicon-download-alt"></span> CSV *', title = NULL, 
+                                                         exportOptions = list(columns = ":visible"),
+                                                         filename =  paste("Exposure_limit_analysis"))
+                                     ),
+                                     
+                                     paging=FALSE, scrollY = "480px"
+                                   )
+                     )
+                 })
   }) 
-
+  
   output$table2_cap <- renderText({
-    req(resultProbs())
+    #req(resultProbs())
     paste(tags$b("Table 2."), "Exposure limit analysis presents the part of the population (1 = 100%) with exposure below the 
           limit given in the Occurrence dataset. The estimate is given for all days and for days with only positive consumption 
           of contaminated food. The columns", tags$b("Q05, Q50, Q95"), "refer to uncertainty quantiles for the 'Quantity' in first column.
@@ -2851,24 +2998,19 @@ source("observers.R", local = TRUE)
   })
   
   
+  
   # 6. Report & downloads-------
   
   ## bugs-results for RMarkdown----
-  
   bugsresults <- reactive({
     results <- currentresults()
-    
-      results
-    
+    results
   })
-  
   
   bugsresultsls <- reactive({
     results <- currentresults()
-    
-      results%>%
-        ls()
-   
+    results%>%
+      ls()
   })
   
   
@@ -2900,150 +3042,178 @@ source("observers.R", local = TRUE)
     hazardnames
   })
   
-  ## R-markdown----
   
-  output$report <- downloadHandler(
-    filename = paste0("BIKEreport_", Sys.Date(), ".html"),
+  ## MCMC-samples rds file download----
+  output$MCMCsamples <- downloadHandler(
+    filename = paste0("BIKE_MCMC-samples", format(Sys.time(), '%d.%m.%Y'), ".rds"),
+    content = function(file) {
+      results <- currentresults()
+      saveRDS(results, file = file)
+    }
+  )  
+  
+  ## R-markdown----
+  ### report_view html file----
+  output$report_view <- downloadHandler(
+    filename = paste0("BIKEreport_app-view", format(Sys.time(), '%d.%m.%Y'), ".html"), #"report1.docx",
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
-      if (nf_dl() == 1) {
-       tempReport <- file.path(tempdir(), "report1.Rmd") 
-        reportfile <- "report1.Rmd"
-      } 
-      if (nf_dl() > 1) {
-       tempReport <- file.path(tempdir(), "report.Rmd") 
-        reportfile <- "report.Rmd"
-      }
+      
+      
+      tempReport <- file.path(tempdir(), "report.Rmd") # for desktop app
+      reportfile <- "report.Rmd"
       
       file.copy(reportfile, tempReport, overwrite = TRUE)
+      
+      
+      # Knit the document, passing in the `params` list, and eval it in a
+      # child of the global environment (this isolates the code in the document
+      # from the code in this app).
+      withProgress(message = 'Preparing the report in progress...',
+                   value = 0.1, {
+                     
+                     bugsresults = bugsresults()
+                     bugsresultsls = bugsresultsls()
+                     plot1 = distPlot1_1_1()
+                     plot2 = distPlot2_1_1()
+                     plot3 = distPlot3_1_1()
+                     plot4 = distPlot4_1_1()
+                     plot51 = distPlot5_1_1()
+                     plot52 = distPlot5_2_1()
+                     plot6 = distPlot6_1_1()
+                     plot7 = distPlot7_1_1()
+                     resultProbs = resultProbs()
+                     resultValues = resultValues()
+                     
+                     
+                     params <- list(
+                       data1 = data1(),
+                       bugsresults = bugsresults,
+                       bugsresultsls = bugsresultsls,
+                       plot1 = plot1, 
+                       plot2 = plot2,
+                       plot3 = plot3,
+                       plot4 = plot4,
+                       plot51 = plot51,
+                       plot52 = plot52,
+                       plot6 = plot6,
+                       plot7 = plot7,
+                       resultValues = resultValues,
+                       resultProbs = resultProbs,
+                       modelchoice = model_parameters(),
+                       factor = input$factor,
+                       pfactor = input$pfactor,
+                       thefoodnames1 = input$thefoodnames1,
+                       thehazardnames1 = input$thehazardnames1,
+                       thefoodnames2 = input$thefoodnames2,
+                       thefoodnames21=input$thefoodnames21,
+                       thefoodnames22=input$thefoodnames22,
+                       thefoodnames3 = input$thefoodnames3,
+                       thehazardnames3 = input$thehazardnames3,
+                       thefoodnames4 = input$thefoodnames4,
+                       thehazardnames4 = input$thehazardnames4,
+                       thefoodnames5 = input$thefoodnames5,
+                       thefoodnames52 = input$thefoodnames52,
+                       thehazardnames5 = input$thehazardnames5,
+                       conf_interval1 = input$conf_interval1,
+                       conf_interval2 = input$conf_interval2,
+                       conf_interval3 = input$conf_interval3,
+                       selectscale1 = input$selectscale1,
+                       selectscale2 = input$selectscale2,
+                       selectscale3 = input$selectscale3,
+                       selectscale4 = input$selectscale4,
+                       selectdist1 = input$selectdist1,
+                       selectdist2 = input$selectdist2,
+                       selectdist3 = input$selectdist3,
+                       concen = concen(),
+                       consum = consum(),
+                       ocdata = ocdata(),
+                       prevdata = prevdata(), 
+                       nf = nf_dl(),
+                       food = food_dl(),
+                       hazard = hazard_dl(),
+                       nU = input$nU,
+                       nV = input$nV,
+                       input_selectQ = input$selectQ
+                     )
+                     
+                     
+                     # Set up parameters to pass to Rmd document
+                     
+                     rmarkdown::render(tempReport, output_file = file,
+                                       params = params,
+                                       envir = new.env(parent = globalenv())
+                     )
+                   })
+      
+      
+    }
+  )
+  
+  ### report_hazard html file----
+  output$report_hazard <- downloadHandler(
+    filename = function() {
+      paste0("BIKEreport_", input$thehazardnames_dl, format(Sys.time(), '%d.%m.%Y'), ".html")
+    },
+    content = function(file) {
+      # Copy the report file to a temporary directory before processing it, in
+      # case we don't have write permissions to the current working dir (which
+      # can happen when deployed).
+      
+      tempReport <- file.path(tempdir(), "report1.Rmd")
+      reportfile <- "report1.Rmd"
+      file.copy(reportfile, tempReport, overwrite = TRUE)
+      
+      
+      tempR <- file.path(tempdir(), "plotsfunctions.R")
+      rfile <- "plotsfunctions.R"
+      file.copy(rfile, tempR, overwrite = TRUE)
+      
+      tempRtable <- file.path(tempdir(), "tablefunctions.R")
+      rfiletable <- "tablefunctions.R"
+      file.copy(rfiletable, tempRtable, overwrite = TRUE)
       
       # Knit the document, passing in the `params` list, and eval it in a
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
       
       withProgress(message = 'Preparing the report in progress...',
-                   value = 0.1, {
-     
-        solvedBugs = solvedBugs()
-        bugsresults = bugsresults()
-        bugsresultsls = bugsresultsls()
-        plot1 = distPlot1_1_1()
-        plot2 = distPlot2_1_1()
-        plot3 = distPlot3_1_1()
-        plot4 = distPlot4_1_1()
-        plot51 = distPlot5_1_1()
-        plot52 = distPlot5_2_1()
-        plot6 = distPlot6_1_1()
-        plot7 = distPlot7_1_1()
-        resultProbs = resultProbs()
-        resultValues = resultValues()
-        
-        
-        if (nf_dl() == 1) {
-          params <- list(
-                         data1 = data1(),
-                         bugsresults = bugsresults,
-                         bugsresultsls = bugsresultsls,
-                         plot1 = plot1, 
-                         plot2 = plot2,
-                         plot3 = plot3,
-                         plot4 = plot4,
-                         plot51 = plot51,
-                         plot52 = plot52,
-                         resultValues = resultValues,
-                         resultProbs = resultProbs,
-                         modelchoice = model_parameters(),
-                         factor = input$factor,
-                         pfactor = input$pfactor,
-                         thefoodnames1 = input$thefoodnames1,
-                         thehazardnames1 = input$thehazardnames1,
-                         thefoodnames2 = input$thefoodnames2,
-                         thefoodnames3 = input$thefoodnames3,
-                         thehazardnames3 = input$thehazardnames3,
-                         thefoodnames4 = input$thefoodnames4,
-                         thehazardnames4 = input$thehazardnames4,
-                         thefoodnames5 = input$thefoodnames5,
-                         thefoodnames52 = input$thefoodnames52,
-                         thehazardnames5 = input$thehazardnames5,
-                         conf_interval1 = input$conf_interval1,
-                         conf_interval2 = input$conf_interval2,
-                         conf_interval3 = input$conf_interval3,
-                         selectscale1 = input$selectscale1,
-                         selectscale2 = input$selectscale2,
-                         selectscale3 = input$selectscale3,
-                         selectscale4 = input$selectscale4,
-                         selectdist1 = input$selectdist1,
-                         selectdist2 = input$selectdist2,
-                         selectdist3 = input$selectdist3,
-                         concen = concen(),
-                         consum = consum(),
-                         ocdata = ocdata(),
-                         prevdata = prevdata(), 
-                         food = food_dl(),
-                         hazard = hazard_dl(),
-                         input_selectQ = input$selectQ
-                         
-          )
-        } 
-        if (nf_dl() > 1){
-          params <- list(
-                         data1 = data1(),
-                         bugsresults = bugsresults,
-                         bugsresultsls = bugsresultsls,
-                         plot1 = plot1, 
-                         plot2 = plot2,
-                         plot3 = plot3,
-                         plot4 = plot4,
-                         plot51 = plot51,
-                         plot52 = plot52,
-                         plot6 = plot6,
-                         plot7 = plot7,
-                         resultValues = resultValues,
-                         resultProbs = resultProbs,
-                         modelchoice = model_parameters(),
-                         factor = input$factor,
-                         pfactor = input$pfactor,
-                         thefoodnames1 = input$thefoodnames1,
-                         thehazardnames1 = input$thehazardnames1,
-                         thefoodnames2 = input$thefoodnames2,
-                         thefoodnames21=input$thefoodnames21,
-                         thefoodnames22=input$thefoodnames22,
-                         thefoodnames3 = input$thefoodnames3,
-                         thehazardnames3 = input$thehazardnames3,
-                         thefoodnames4 = input$thefoodnames4,
-                         thehazardnames4 = input$thehazardnames4,
-                         thefoodnames5 = input$thefoodnames5,
-                         thefoodnames52 = input$thefoodnames52,
-                         thehazardnames5 = input$thehazardnames5,
-                         conf_interval1 = input$conf_interval1,
-                         conf_interval2 = input$conf_interval2,
-                         conf_interval3 = input$conf_interval3,
-                         selectscale1 = input$selectscale1,
-                         selectscale2 = input$selectscale2,
-                         selectscale3 = input$selectscale3,
-                         selectscale4 = input$selectscale4,
-                         selectdist1 = input$selectdist1,
-                         selectdist2 = input$selectdist2,
-                         selectdist3 = input$selectdist3,
-                         concen = concen(),
-                         consum = consum(),
-                         ocdata = ocdata(),
-                         prevdata = prevdata(), 
-                         nf = nf_dl(),
-                         food = food_dl(),
-                         hazard = hazard_dl(),
-                         input_selectQ = input$selectQ
-          )
-        }
-        
-        
-          rmarkdown::render(tempReport, output_file = file,
-                            params = params,
-                            envir = new.env(parent = globalenv())
-          )
-        
+                   value = 0.1,
+                   {
+                     params <- list(solvedBugs = solvedBugs(),
+                                    data1 = data1(),
+                                    bugsresults = bugsresults(),
+                                    modelchoice = model_parameters(),
+                                    factor = input$factor,
+                                    pfactor = input$pfactor,
+                                    conf_interval1 = input$conf_interval_dl,
+                                    selectscale1 = input$selectscale_dl,
+                                    selectdist1 = input$selectdist_dl,
+                                    concen = concen(),
+                                    consum = consum(),
+                                    ocdata = ocdata(),
+                                    prevdata = prevdata(),
+                                    nf = nf_dl(),
+                                    food = food_dl(),
+                                    hazard = hazard_dl(),
+                                    food_used = food_used_dl(),
+                                    input_modelchoice = input$modelchoice,
+                                    input_modelchoice2 = input$modelchoice2,
+                                    input_modelchoice3 = input$modelchoice3,
+                                    units_hazard = units_hazard(),
+                                    units_food = units_food(),
+                                    nU = input$nU_dl,
+                                    nV = input$nV_dl,
+                                    selectQ_dl = input$selectQ_dl,
+                                    thehazardnames_dl = input$thehazardnames_dl
+                                    
+                     )
+                     rmarkdown::render(tempReport, output_file = file,
+                                       params = params,
+                                       envir = new.env(parent = globalenv())
+                     )
                    })
     }
   )
@@ -3054,7 +3224,7 @@ source("observers.R", local = TRUE)
   ## Model settings for download---- 
   model_parameters <- reactive({
     
-    param_table <- matrix(data=NA,nrow = 10, ncol = 2)
+    param_table <- matrix(data=NA,nrow = 7, ncol = 2)
     
     param_table[1,1] = paste("Consumption model")
     param_table[1,2] = input$modelchoice
@@ -3070,13 +3240,6 @@ source("observers.R", local = TRUE)
     param_table[6,2] = input$priorchoice
     param_table[7,1] = paste("Number of MCMC iterations")
     param_table[7,2] = input$Iterations
-    
-    if (input$selectQ != "None") {param_table[8,1] = paste("Total exposure quantile")
-    param_table[8,2] = input$selectQ
-    param_table[9,1] = paste("Variability sample size for Q%")
-    param_table[9,2] = input$nV
-    param_table[10,1] = paste("Uncertainty sample size for Q%")
-    param_table[10,2] = input$nU}
     
     param_table
     
@@ -3120,16 +3283,15 @@ source("observers.R", local = TRUE)
   )
   
   output$downloadPrevData <- downloadHandler(
-    filename <- function() {
+    
+    filename = function() {
       paste("DataPrevalence", ".csv", sep=".")
     },
-    
-    content <- function(file) {
+    content = function(file) {
       file.copy("files/DataPrevalence.csv", file)
     },
-    contentType = "text/csv"
+    contentType = "application/zip"
   )
-  
   
   
   

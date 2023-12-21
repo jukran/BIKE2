@@ -1,112 +1,222 @@
 ---
-title: <div><b style="color:#004F71">BIKE report</b></div>
+title: <div><b style="color:#004F71">BIKE report for</b> <i style="color:#004F71">`r params$thehazardnames_dl`</i></div>
 
 output:
   html_document:
-    toc: true
-    toc_depth: 4
-    toc_float:
-      collapsed: false
-      smooth_scroll: false
-    theme: lumen 
-    highlight: tango
-    
+   toc: true
+   number_sections: true
+   theme: lumen 
+   highlight: tango
+   fig_width: 12
+   fig_height: 8
+  
 date: "`r format(Sys.time(), '%d.%m.%Y')`"
 
-runtime: shiny
-
 params: 
+  solvedBugs: NA
   data1: NA
   bugsresults: NA
-  bugsresultsls: NA
-  plot1: NA 
-  plot2: NA
-  plot3: NA
-  plot4: NA
-  plot51: NA
-  plot52: NA
-  resultValues: NA
-  resultProbs: NA
   modelchoice: NA
   factor: NA
   pfactor: NA
-  thefoodnames1: NA
-  thehazardnames1: NA
-  thefoodnames2: NA
-  thefoodnames3: NA
-  thehazardnames3: NA
-  thefoodnames4: NA
-  thehazardnames4: NA
-  thefoodnames5: NA
-  thefoodnames52: NA
-  thehazardnames5: NA
   conf_interval1: NA
-  conf_interval2: NA
-  conf_interval3: NA
   selectscale1: NA
-  selectscale2: NA
-  selectscale3: NA
-  selectscale4: NA
   selectdist1: NA
-  selectdist2: NA
-  selectdist3: NA
   concen: NA
   consum: NA
   ocdata: NA
   prevdata: NA 
+  nf: NA
   food: NA
   hazard: NA
-  input_selectQ: NA
-
+  food_used: NA
+  input_modelchoice: NA
+  input_modelchoice2: NA
+  input_modelchoice3: NA
+  units_hazard: NA
+  units_food: NA
+  nU: NA
+  nV: NA
+  selectQ_dl: NA
+  thehazardnames_dl: NA
   
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, results='asis', fig.retina = 2)
 
 library(knitr)
 library(shiny)
-library(tidyverse)
-library(shinyjs)
+library(mvtnorm)
 library(DT)
-library(rmarkdown)
+#library(rmarkdown)
 
-```
 
-```{css style settings, echo = FALSE}
-blockquote {
-    padding: 0 15px;
-    margin: 0 0 10px;
-    font-size: 14px;
-    border-left: 3px solid #eee;
+
+unit_concen <- params$units_hazard$unit_concen
+hazard_concen <- params$units_hazard$hazard_concen
+
+unit_consum <- params$units_food$unit_consum
+food_consum <- params$units_food$food_consum
+
+
+foodnamesused <- params$food_used # instead of input$thefoodnames5
+hazardnamesused <- params$thehazardnames_dl # instead of input$thehazardnames5
+
+foodnames<-params$food
+
+# transform the credible interval selected by the user to upper and lower limits:
+input_conf_interval <- as.double(params$conf_interval1)
+input_upper <- 1-(1-input_conf_interval)/2
+input_lower <- (1-input_conf_interval)/2
+
+# selections come from plot 1 selections and apply to all plots below. need to add to Download report page!!!
+input_selectdist <- params$selectdist1
+input_selectscale <- params$selectscale1  # absolute or logarithmic  
+
+foodindex <- match(foodnamesused,foodnames) # indexing of selected foods in all foods
+nfused <- length(foodnamesused)     # number of selected foods
+nhused <- length(hazardnamesused) # number of selected hazards
+hazardtypes <- params$ocdata$hazardtypes
+hazardnames <- params$ocdata$hazardnames
+hazardtypesused <- hazardtypes[is.element(hazardnames,hazardnamesused)] # types of selected hazards (chemical/microbiological)
+nf <- params$nf   # Calculate the number of foods
+nh <- length(hazardnames) # Calculate the number of hazards
+nhK <- sum(hazardtypes=='K') # number of chemical hazards
+nhM <- sum(hazardtypes=='M') # number of microbiological hazards
+hazardnamesK <- hazardnames[hazardtypes=='K'] # chemical hazard names
+hazardnamesM <- hazardnames[hazardtypes=='M'] # microbiological hazard names
+hazardnamesusedK <- hazardnamesused[hazardtypesused=='K'] # selected che hazard names
+hazardnamesusedM <- hazardnamesused[hazardtypesused=='M'] # selected mic hazard names
+nhusedK <- length(hazardnamesusedK) # number of che hazards selected
+nhusedM <- length(hazardnamesusedM) # number of mic hazards selected
+hazardindex <- match(hazardnamesused,hazardnames) # 
+hazardindexK <- match(hazardnamesusedK,hazardnamesK) # indexing of selected hazards in all che hazards
+hazardindexM <- match(hazardnamesusedM,hazardnamesM) # indexing of selected hazards in all mic hazards
+
+limitexpo <- params$ocdata$limitexpo
+limitexpoK <- numeric()
+limitexpoM <- numeric()
+limitexpoK <- as.numeric(limitexpo[hazardtypes=="K"])
+limitexpoM <- as.numeric(limitexpo[hazardtypes=="M"])
+
+Rall <- params$factor  # adjustment factor for concentrations
+Pall <- params$pfactor # adjustment factor for prevalences
+nU <- params$nU
+nV <- params$nV
+
+logcK <- params$data1$logcK #raspberry
+logLOQK <- params$data1$logLOQK #green
+logLODK <- params$data1$logLODK #Siitepöly
+logLOQLimK <- params$data1$logLOQLimK
+logLODLimK <- params$data1$logLODLimK
+logcM <- params$data1$logcM #raspberry
+logLOQM <- params$data1$logLOQM # green
+logLODM <- params$data1$logLODM #Siitepöly
+logLOQLimM <- params$data1$logLOQLimM
+logLODLimM <- params$data1$logLODLimM
+nexactK <- params$data1$nexactK
+nexactM <- params$data1$nexactM
+
+n_sim <- params$bugsresults$n.sims
+muw <- params$bugsresults$muw
+sigw <- params$bugsresults$sigw
+
+input_modelchoice <- params$input_modelchoice
+input_modelchoice2 <- params$input_modelchoice2
+input_modelchoice3 <- params$input_modelchoice3
+
+input_selectQ <- params$selectQ_dl
+
+
+IDnum <- params$data1$IDnum
+nd <- params$data1$nd # number of days reported
+nr <- params$data1$nr  	   # number of respondents
+logs <- params$data1$logs
+logsw <- params$data1$logsw
+
+if(nf==1){
+  mus0<- params$solvedBugs$mus0_s
+  ppred <- params$solvedBugs$ppred_s 
+  Ss<- params$solvedBugs$Ss_s
+  Ss0 <- params$solvedBugs$Ss0_s
+  mucK <- params$solvedBugs$mucK_s
+  sigcK <- params$solvedBugs$sigcK_s
+  pK <- params$solvedBugs$pK_s
+  mucM <- params$solvedBugs$mucM_s
+  sigcM <- params$solvedBugs$sigcM_s
+  pM <- params$solvedBugs$pM_s
+  
+  if(input_modelchoice=="Independent days"){
+    logitp0 <- params$solvedBugs$logitp0_s
+    
+    if(input_modelchoice2=="Yes"){
+      Sp <- params$solvedBugs$Sp_s
+    }
+  }
+  
 }
+if(nf>1){ 
+  mus0 <- params$bugsresults$mus0
+  ppred <- params$bugsresults$ppred
+  Ss <- params$solvedBugs$Ss_m
+  Ss0 <- params$solvedBugs$Ss0_m
+  mucK <- params$bugsresults$mucK
+  sigcK <- params$bugsresults$sigcK
+  pK <- params$bugsresults$pK
+  mucM <- params$bugsresults$mucM
+  sigcM <- params$bugsresults$sigcM
+  pM <- params$bugsresults$pM
+  
+  logitp0 <- params$bugsresults$logitp0
+  Sp <- params$solvedBugs$Sp_m
+}  
+
+Vs <- numeric() # variances
+Vs0 <- numeric() # variances
+
+input_lim = 0.95
+
+theresults <- c("Concentrations","Consumptions","Exposures")
+
+```
+
+```{css style settings}
+blockquote {
+padding: 0 15px;
+margin: 0 0 10px;
+font-size: 14px;
+border-left: 3px solid #eee;
+}
+
 ```
 
 
 ------------------------------------------------------------------------
 
-[The report was generated from BIKE shiny app. It includes (i) only the results that are visualized in the app after the latest view selections (i.e., figures that have not been visualized in the app are not visible in this document), (ii) short information text for each result, and (iii) the input data. Every figure in this document could be downloaded as a png file by using, e.g., the browser's 'Save image as...' option. All tables have their own download buttons.]{style="color: #004F71;font-size: 14px;"}
+[The report was generated from BIKE shiny app. It includes (i) the results from the MCMC simulations presented as figures and tables for the selected hazard, (ii) short information text for each result, and (iii) the input data. Every figure in this document could be downloaded as a png file by using, e.g., the browser's 'Save image as...' option. All tables have their own download buttons.]{style="color: #004F71;font-size: 14px;"}
 
 ------------------------------------------------------------------------
 
-# [**Settings**]{style="color: #004F71"}
+
+# [**Settings**]{style="color: #004F71"} {.tabset}
 [The settings used for the model simulations, and the adjustment factors used in the exposures visualizations are presented in the tables below.]{style="color: #004F71;"}
 
-## [Model settings]{style="color: #004F71"}
+## [**Model settings**]{style="color: #004F71"}
 
 <br />
 
-::: {.cols style="display: grid; grid-template-columns:  1.4fr 1.6fr; grid-column-gap: 25px;"}
+::: {.cols style="display: grid; grid-template-columns:  1.5fr 1.5fr; grid-column-gap: 25px;"}
 ::: col
 
-```{r model-params, echo = F, results='asis'}
+```{r model-params}
 
 DT::datatable(params$modelchoice, 
               colnames = list(h5(tags$b("Model settings")), h5(tags$b("Selected"))),
               class = "table-border stripe", #c("hover", ),
               extensions = c("Buttons","FixedColumns"),
               options = list(
-               dom = "Bt",
+                dom = "Bt",
                 buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span>Excel', title = NULL, 
                                     exportOptions = list(columns = ":visible"),
                                     filename =  paste("Model_settings"))
@@ -116,17 +226,16 @@ DT::datatable(params$modelchoice,
                 searching = FALSE,
                 ordering = FALSE
               )
-    )%>%
-      formatStyle("V2",  fontWeight = "bold", fontStyle = "normal")
-     
+)%>%
+  formatStyle("V2",  fontWeight = "bold", fontStyle = "normal")
+# formatStyle("V1",  fontWeight = "bold", fontStyle = "normal")
 
 ```
 
 
-```{r food-hazard, echo = F, results='asis'}
+```{r food-hazard}
 
 cat('\n\n', "Food types: `", params$food,'`\n\n')
-cat('\n\n', "Hazards: `", params$hazard,'`\n\n')
 
 ```
 
@@ -172,18 +281,18 @@ cat('\n\n', "Hazards: `", params$hazard,'`\n\n')
 <br />
 <hr />
 
-## [Adjustment factors]{style="color: #004F71; bold"}
+## [**Adjustment factors**]{style="color: #004F71"}
 
 Changes in the adjustment factors modify the modelled contamination when calculating exposure. The default values are 1. A factor for **concentrations** should be any positive number. A factor for **prevalence** should be between zero (0) and one (1) to ensure that the multiplication produces a mathematically valid prevalence. The factors allow accounting for food processing effects which may either reduce the prevalence, and/or reduce or increase the concentration. Processing effects may be due to cooking, heating, freezing, washing, peeling, storage, etc. 
 
 <br /> 
 
-```{r adj-factors-concen, echo = F, results='asis'}
+```{r adj-factors-concen}
 
 cat('**Concentration factors**')
 
 DT::datatable(params$factor,
-              
+              #caption = "Concentration factors",
               class = "cell-border",
               extensions = "Buttons",
               options = list(
@@ -195,21 +304,23 @@ DT::datatable(params$factor,
                 
                 paging=FALSE,
                 searching = FALSE,
-                ordering = FALSE
+                ordering = FALSE#,
+                #scrollX = TRUE,
+                #fixedColumns = TRUE
               )
-    )%>%
-      
-      formatStyle(0,  fontWeight = "bold", fontStyle = "normal")
+)%>%
+  
+  formatStyle(0,  fontWeight = "bold", fontStyle = "normal")
 ```
 
 <br />
 
-```{r adj-factors-prev, echo = F, results='asis'}
+```{r adj-factors-prev}
 
 cat('**Prevalence factors**')
 
 DT::datatable(params$pfactor,
-              
+              #caption = "Prevalence factors",
               class = "cell-border",
               extensions = "Buttons",
               options = list(
@@ -220,11 +331,13 @@ DT::datatable(params$pfactor,
                 ),
                 paging=FALSE,
                 searching = FALSE,
-                ordering = FALSE
+                ordering = FALSE#,
+                #scrollX = TRUE,
+                #fixedColumns = TRUE
               )
-    )%>%
-      
-      formatStyle(0,  fontWeight = "bold", fontStyle = "normal")
+)%>%
+  
+  formatStyle(0,  fontWeight = "bold", fontStyle = "normal")
 ```
 
 <br />
@@ -232,37 +345,55 @@ DT::datatable(params$pfactor,
 
 # [**Results**]{style="color: #004F71"}
 
-## [Figures]{style="color: #004F71"}
+## [**Figures**]{style="color: #004F71"} {.tabset}
 
-### [**Concentrations**]{style="color: #004F71; bold"}
+### [**Concentrations**]{style="color: #004F71"}
 
-<br />
 
 ::: {.cols style="display: grid; grid-template-columns:  2fr 1fr; grid-column-gap: 25px;"}
 ::: col
 
-```{r concen-plot, echo=FALSE, results='asis', dev = "png", fig.dim = c(12, 8), fig.align = 'left'}
+
+```{r, echo=FALSE}
 
 
-
-
-
-cat('\n\n', "Food-hazard combination: `", params$thehazardnames1, '` in `', params$thefoodnames1, '`\n\n')
+#cat('\n\n', "Food-hazard combination: `", params$thehazardnames1, '` in `', params$thefoodnames1, '`\n\n')
 cat('\n', "Confidence interval: `", params$conf_interval1, '`\n')
 cat('\n',"Scale: `", params$selectscale1, '`\n')
 cat('\n',"Distribution: `", params$selectdist1, '`\n')
 
+```
 
-if (is.null(params$plot1)){cat('**The plot was not generated in the app.**')} else
-{params$plot1}
 
+
+$Figure$ $1.$ Variability distribution for positive hazard concentrations in food. The uncertainty of the true variability distribution is expressed by plotting a range (e.g. pointwise 95%CI) of probable variability distributions ([**straw color**]{style="color: #CEB888;"}). The uncertainty distribution for mean concentration ([**yellow color**]{style="color: #F7CE3C;"}) and median concentration ([**black color**]{style="color:#343841;"}) are plotted in bold lines. In log-scale, the mean and median are equal. For comparison with data, the raw data are represented as cumulative empirical distribution. For data containing censored concentration values, two empirical distributions are plotted, one with lower bound substitution ([**blueberry color**]{style="color: #004F71;"}) and one with upper bound substitution method ([**raspberry color**]{style="color: #D0006F;"}). These represent the best case and worst case interpretations for censored values. Also, data points are plotted as tick marks on the x-axis, showing exact measurements in [**raspberry color**]{style="color: #D0006F;"}, LOQ-values in [**green color**]{style="color: green;"}, and LOD-values in [**blueberry color**]{style="color: #004F71;"}. Note that the distributions in the figures represent truly positive concentrations, excluding zeros.
+
+```{r, include=FALSE, code= readLines('plotsfunctions.R'), cache=FALSE}
+
+knitr::read_chunk('plotsfunctions.R')
+
+```
+
+
+
+```{r concen-plot, distPlot1_1, fig.show ='hold', out.width="600px", out.height="400px"}
+
+
+
+distPlot1_1(input_lim, unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused,
+            nfused, foodindex, hazardnamesused, hazardtypesused, nhused, 
+            hazardnamesK, hazardnamesM, hazardnamesusedK, hazardnamesusedM,
+            nhusedK, nhusedM, hazardindex, hazardindexK, hazardindexM,
+            nexactK,nexactM,
+            nhK, nf, mucK, sigcK, pK, nhM, mucM, sigcM, pM,
+            logcK, logLOQK, logLODK, logLOQLimK, logLODLimK, logcM, logLOQM, logLODM, logLOQLimM, logLODLimM
+)
 
 
 ```
 
-<br />
 
-$Figure$ $1.$ Variability distribution for positive hazard concentrations in food. The uncertainty of the true variability distribution is expressed by plotting a range (e.g. pointwise 95%CI) of probable variability distributions ([**straw color**]{style="color: #CEB888;"}). The uncertainty distribution for mean concentration ([**yellow color**]{style="color: #F7CE3C;"}) and median concentration ([**black color**]{style="color:#343841;"}) are plotted in bold lines. In log-scale, the mean and median are equal. For comparison with data, the raw data are represented as cumulative empirical distribution. For data containing censored concentration values, two empirical distributions are plotted, one with lower bound substitution ([**blueberry color**]{style="color: #004F71;"}) and one with upper bound substitution method ([**raspberry color**]{style="color: #D0006F;"}). These represent the best case and worst case interpretations for censored values. Also, data points are plotted as tick marks on the x-axis, showing exact measurements in [**raspberry color**]{style="color: #D0006F;"}, LOQ-values in [**green color**]{style="color: green;"}, and LOD-values in [**blueberry color**]{style="color: #004F71;"}. Note that the distributions in the figures represent truly positive concentrations, excluding zeros.
+
 :::
 
 ::: {.col data-latex="{0.4\\textwidth}" style="background-color: #F4F3F2;"}
@@ -275,31 +406,36 @@ $Figure$ $1.$ Variability distribution for positive hazard concentrations in foo
 
 <hr />
 
-### [**Consumptions**]{style="color: #004F71; bold"}
+### [**Consumptions**]{style="color: #004F71"}{.tabset}
 
-<br />
+#### [**Consumptions**]{style="color: #004F71"}
 
 ::: {.cols style="display: grid; grid-template-columns:  2fr 1fr; grid-column-gap: 25px;"}
 ::: col
-```{r consum-plot, echo = F, results='asis', dev = "png",fig.dim = c(12, 8)}
+
+```{r}
+#cat('\n\n', "Food: `", params$thefoodnames2, '`\n\n')
+cat('\n', "Confidence interval: `", params$conf_interval1, '`\n')
+cat('\n',"Scale: `", params$selectscale1, '`\n')
+cat('\n',"Distribution: `", params$selectdist1, '`\n')
+
+```
+
+$Figure$$2a$ Variability distributions for both mean consumptions per bodyweight ('chronic') and single consumptions ('acute'). The uncertainty of the true variability distribution of positive consumptions is expressed by plotting a range (e.g. pointwise 95%CI) of probable variability distributions ([**straw color**]{style="color: #CEB888;"}). The uncertainty distributions for mean ([**yellow color**]{style="color: #F7CE3C;"}) and median ([**black color**]{style="color: #343841;"}) are plotted in bold lines. Observed data for positive consumptions are shown as [**raspberry color**]{style="color: #D0006F;"} ticks and the empirical cumulative distribution in [**raspberry color**]{style="color: #D0006F;"} line. Note that the distributions in the figures represent truly positive consumptions, excluding zeros.
 
 
-cat('\n\n', "Food: `", params$thefoodnames2, '`\n\n')
-cat('\n', "Confidence interval: `", params$conf_interval2, '`\n')
-cat('\n',"Scale: `", params$selectscale2, '`\n')
-cat('\n',"Distribution: `", params$selectdist2, '`\n')
 
+```{r consum-plot, distPlot2_1, fig.show ='hold', out.width="600px", out.height="400px"}
 
-if (is.null(params$plot2)){cat('**The plot was not generated in the app.**')} else
-{params$plot2}
-
+distPlot2_1(input_lim, food_consum, unit_consum, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, foodnamesused, nfused, foodindex,
+            nf, nr, nd, logs, logsw, input_modelchoice, input_modelchoice2, input_modelchoice3, input_modelchoice4, input_modelchoice5,
+            mus0, muw, ppred, sigw, Ss, Ss0
+)
 
 
 ```
 
-<br />
 
-$Figure$$2a$ Variability distributions for both mean consumptions per bodyweight ('chronic') and single consumptions ('acute'). The uncertainty of the true variability distribution of positive consumptions is expressed by plotting a range (e.g. pointwise 95%CI) of probable variability distributions ([**straw color**]{style="color: #CEB888;"}). The uncertainty distributions for mean ([**yellow color**]{style="color: #F7CE3C;"}) and median ([**black color**]{style="color: #343841;"}) are plotted in bold lines. Observed data for positive consumptions are shown as [**raspberry color**]{style="color: #D0006F;"} ticks and the empirical cumulative distribution in [**raspberry color**]{style="color: #D0006F;"} line. Note that the distributions in the figures represent truly positive consumptions, excluding zeros.
 :::
 
 ::: {.col data-latex="{0.4\\textwidth}" style="background-color: #F4F3F2;"}
@@ -310,33 +446,101 @@ $Figure$$2a$ Variability distributions for both mean consumptions per bodyweight
 :::
 :::
 
-<br />
 
-<hr />
 
-### [**Exposures**]{style="color: #004F71; bold"}
-
-<br />
-
+#### [**Serving correlations**]{style="color: #004F71"}
 ::: {.cols style="display: grid; grid-template-columns:  2fr 1fr; grid-column-gap: 25px;"}
 ::: col
-```{r exposures-plot, echo = F, results='asis', dev = "png",fig.dim = c(12, 8)}
 
 
-cat('\n\n', "Food-hazard combination: `", params$thehazardnames3, '` in `', params$thefoodnames3, '`\n\n')
-cat('\n', "Confidence interval: `", params$conf_interval3, '`\n')
-cat('\n',"Scale: `", params$selectscale3, '`\n')
-cat('\n',"Distribution: `", params$selectdist3, '`\n')
+$Figure$ $2b$ Pairwise scatter plots of logarithms of actual positive consumptions per bodyweights. Data points ([**blueberry color**]{style="color: #004F71;"}) and model based simulations ([**raspberry color**]{style="color: #D0006F;"}).
 
+```{r correl-plot1, distPlot6_1, fig.show ='hold', out.width="600px", out.height="400px"}
 
-if (is.null(params$plot3)){cat('**The plot was not generated in the app.**')} else
-{params$plot3}
+if (nfused<2){
+  cat("**Requires at least two food types.**")
+} else
+  distPlot6_1(food_consum, unit_consum, n_sim, input_modelchoice4, input_modelchoice3, foodnamesused,
+              nfused, foodindex,nr,nd,nf,logsw,
+              mus0,
+              Ss,Ss0
+  )
+
 
 ```
 
 <br />
+<br />
+
+$Figure$ $2c$ Pairwise scatter plots of logarithms of mean positive consumptions per bodyweights. Data points ([**blueberry color**]{style="color: #004F71;"}) and model based simulations ([**raspberry color**]{style="color: #D0006F;"}).
+
+
+```{r correl-plot2, distPlot7_1, fig.show ='hold', out.width="600px", out.height="400px"}
+
+if (nfused<2){
+  cat("**Requires at least two food types.**")
+} else
+  distPlot7_1(food_consum, unit_consum, n_sim, input_modelchoice4, foodnamesused, nfused, foodindex,
+              nf,nr,nd,logsw,
+              mus0,
+              Ss,Ss0
+  )
+
+
+```
+
+
+:::
+
+::: {.col data-latex="{0.4\\textwidth}" style="background-color: #F4F3F2;"}
+
+> <br>
+> The food consumption model contains **two correlation structures** for consumption amounts for food types: **(i)** all pairwise correlations for the actual consumption amounts in log-scale, and **(ii)** all pairwise correlations for the mean log-amounts. These are not specific correlations per each individual consumer, but generally for the whole group of consumers. These models aim to capture all such pairwise correlations in the consumer population if there are any. The correlation models (if used) are always running for the full set of foods in the data even if only some food types were selected for results. The correlations can be visualised for the actual amounts or for the expected amounts in two figure plots.
+
+:::
+:::
+
+<hr />
+
+### [**Exposures**]{style="color: #004F71"}
+
+
+
+::: {.cols style="display: grid; grid-template-columns:  2fr 1fr; grid-column-gap: 25px;"}
+::: col
+
+```{r}
+
+cat('\n', "Confidence interval: `", params$conf_interval1, '`\n')
+cat('\n',"Scale: `", params$selectscale1, '`\n')
+cat('\n',"Distribution: `", params$selectdist1, '`\n')
+
+```
+
+
 
 $Figure$ $3$ Variability distribution for mean positive exposures per bodyweight (chemical) or acute positive exposures (microbial). The uncertainty of the true variability distribution of positive exposures is expressed by plotting a range (e.g. pointwise 95%CI) of probable variability distributions ([**straw color**]{style="color: #CEB888;"}). The uncertainty distributions for mean ([**yellow color**]{style="color: #F7CE3C;"}) and median ([**black color**]{style="color: #343841;"}) are plotted in bold lines. The (pseudo)empirical cumulative distribution simulated from bootstrapped data are shown using LB substitution ([**blueberry color**]{style="color: #004F71;"}) and UB substitution ([**raspberry color**]{style="color: #D0006F;"}) method. Note that the distributions in the figures represent truly positive exposures, excluding zeros.
+
+<br />
+
+```{r exposures-plot, distPlot3_1, fig.show ='hold', out.width="600px", out.height="400px"}
+
+
+distPlot3_1(input_lim, unit_concen, hazard_concen, input_upper, input_lower, n_sim, input_selectdist, input_selectscale, input_modelchoice, input_modelchoice2, input_modelchoice3,input_modelchoice4,
+            foodnamesused, nfused, foodindex, hazardnames,
+            nhused,  hazardnamesusedK, hazardnamesusedM,
+            nhusedK, nhusedM, hazardindexK, hazardindexM, Rall, Pall,nhK,nhM,nf,nr,nd,
+            nexactK, nexactM, 
+            logs,logsw,logcK,logLOQK,logLODK,logLOQLimK,logLODLimK, logcM,logLOQM,logLODM,logLOQLimM,logLODLimM,
+            logitp0,mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
+            Ss,Ss0,Sp
+)
+
+
+
+```
+
+
 :::
 
 ::: {.col data-latex="{0.4\\textwidth}" style="background-color: #F4F3F2;"}
@@ -353,26 +557,48 @@ $Figure$ $3$ Variability distribution for mean positive exposures per bodyweight
 
 <hr />
 
-### [**Quantiles**]{style="color: #004F71; bold"}
-
-<br />
+### [**Quantiles**]{style="color: #004F71"}
 
 ::: {.cols style="display: grid; grid-template-columns:  2fr 1fr; grid-column-gap: 25px;"}
 ::: col
 
-```{r quantiles-plot, echo = F, results='asis', dev = "png",fig.dim = c(12, 8), fig.cap=""}
+```{r }
 
-cat('\n\n', "Food-hazard combination: `",params$thehazardnames4, '` from `', params$thefoodnames4, '`\n\n')
-cat('\n',"Scale: `", params$selectscale4, '`\n')
+#cat('\n\n', "Food-hazard combination: `",params$thehazardnames4, '` from `', params$thefoodnames4, '`\n\n')
+cat('\n',"Scale: `", input_selectscale, '`\n')
+cat('\n',"Total exposure quantile (Q%): `", input_selectQ, '`\n')
+cat('\n',"Variability sample size for Q%: `", nV, '`\n')
+cat('\n',"Uncertainty sample size for Q%: `", nU, '`\n')
 
-
-if (params$input_selectQ == "None" | is.null(params$plot4)){cat('**Total exposure quantile is not selected!**')} else {params$plot4}
 
 ```
 
-<br />
 
 $Figure$ $4$ Cumulative distributions for separation of uncertainty and variability for mean exposures per bodyweight (chemical) or acute exposures (microbial). The uncertainty of true variability distribution of positive exposures summed from all selected foods is expressed by plotting a sample of probable variability distributions ([**raspberry color**]{style="color: #D0006F;"}). The uncertainty distribution for the selected variability quantile is shown between vertical bars (and is subject to Monte Carlo error of 2D simulations).
+
+
+```{r quantiles-plot, distPlot4_1, fig.show ='hold', out.width="600px", out.height="400px"}
+
+if (is.element("None", input_selectQ)){
+  cat("**Total exposure quantile not selected.**")
+} else
+  
+  distPlot4_1(unit_concen, hazard_concen, n_sim, input_selectscale, input_selectQ, nV,
+              nU, Rall, Pall, input_modelchoice, input_modelchoice2,
+              input_modelchoice5, input_modelchoice4, input_modelchoice3,
+              nfused, foodindex, 
+              nexactK, nexactM, 
+              nhused, hazardnames, hazardnamesusedK, hazardnamesusedM,
+              nhusedK, nhusedM, hazardindexK, hazardindexM, nhK,nhM,nf,
+              mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
+              Ss,Ss0,Sp,
+              logitp0
+  )
+
+
+```
+
+
 
 :::
 
@@ -387,85 +613,134 @@ $Figure$ $4$ Cumulative distributions for separation of uncertainty and variabil
 <br>
 <hr />
 
-### [**MCMC samples of parameters**]{style="color: #004F71; bold"}
+### [**MCMC samples of parameters**]{style="color: #004F71"}{.tabset}
 
-<br />
+#### [**Concentration parameters**]{style="color: #004F71"}
 
 ::: {.cols style="display: grid; grid-template-columns:  2fr 1fr; grid-column-gap: 25px;"}
 ::: col
 
-```{r concen-params-plot, echo = F, results='asis', dev = "png", fig.dim = c(12, 8)}
-
-cat('**Concentration parameters**')
-
-cat('\n\n', "Food-hazard combination: `",params$thehazardnames5, '` in `', params$thefoodnames5, '`\n\n')
-
-if (is.null(params$plot51)){cat('**The plot was not generated in the app.**')} else
-{params$plot51}
-```
-
-<br />
-
 $Figure$ $5a$ Permuted MCMC samples of model parameters $mu$ and $sigma$ of the log-normal ($mu$, $sigma$)-distribution, and prevalence $q$ of the **hazard**. For each parameter, also the approximated marginal probability density is shown.
 
-------------------------------------------------------------------------
-
-```{r consum-params-plot, echo = F, results='asis', dev = "png", fig.dim = c(12, 8) }
-
-cat('**Consumption parameters**')
-
-cat('\n\n', "Food: `",params$thefoodnames52, '`\n\n')
-
-if (is.null(params$plot52)){cat('**The plot was not generated in the app.**')} else
-{params$plot52}
-```
-
 <br />
 
-$Figure$ $5b$ Permuted MCMC samples of model parameters $mu$ and $sigma$ of the log-normal ($mu$, $sigma$)-distribution, and consumption frequency $p$ of the **food**. For each parameter, also the approximated marginal probability density is shown.
+
+```{r concen-params-plot, distPlot5_1, fig.show ='hold', out.width="600px", out.height="400px"}
+
+#cat('**Concentration parameters**')
+
+distPlot5_1(n_sim, foodnamesused, nfused, foodindex, 
+            hazardnamesusedK, hazardnamesusedM, nhusedK, nhusedM,
+            hazardindexK, hazardindexM,nf,nhK,nhM,
+            nexactK, nexactM,
+            mucK,mucM,pK,pM,sigcK,sigcM
+)
+
+
+```
+
 
 :::
 
 ::: {.col data-latex="{0.4\\textwidth}" style="background-color: #F4F3F2;"}
 
 > <br>
-> The posterior distribution is computed using **Markov Chain Monte Carlo (MCMC)** sampling. In MCMC, each iteration step depends on the values generated at the previous step. This sampling converges to the correct target distribution which is the posterior distribution of all unknown parameters. In difficulties, the posterior may be nearly flat or with multiple peaks. This, and/or insufficient iterations may then result into poor convergence, and the obtained parameter estimates would not be valid. Poor convergence and poor mixing of the algorithm could be detected as instability in the parameter distributions. The MCMC sample of the parameters, and the marginal posterior distribution are provided for critical inspection. Although a visual inspection is informal and indicative, it can reveal problems in MCMC sampling. The sample should look smoothly scattered without clustering at some values only. The marginal probability density should look smooth without ‘extra bumps’. New or increased MCMC runs should lead to same results. If a possible problem is detected, increase MCMC iterations and/or investigate whether there are simply insufficient data for the parameter to be well estimated. Note also that the full joint distribution is a multidimensional distribution which cannot be pictured and these plots only show marginal one-dimensional distributions for each parameter, like shadows of the multidimensional distribution. The parameter samples can be viewed for both the concentration distributions and consumption distributions. The values at the peaks of those distributions could also be compared with the corresponding parameter estimates directly evaluated from raw (log-)data, e.g., mean and standard deviation, although censored data can make direct comparison less straightforward.
+> The posterior distribution is computed using **Markov Chain Monte Carlo (MCMC)** sampling. In MCMC, each iteration step depends on the values generated at the previous step. This sampling converges to the correct target distribution which is the posterior distribution of all unknown parameters. In difficulties, the posterior may be nearly flat or with multiple peaks. This, and/or insufficient iterations may then result into poor convergence, and the obtained parameter estimates would not be valid. Poor convergence and poor mixing of the algorithm could be detected as instability in the parameter distributions. The MCMC sample of the parameters, and the marginal posterior distribution are provided for critical inspection. Although a visual inspection is informal and indicative, it can reveal problems in MCMC sampling. The sample should look smoothly scattered without clustering at some values only. The marginal probability density (plotted vertically on the left side) should look smooth without ‘extra bumps’. New or increased MCMC runs should lead to same results. If a possible problem is detected, increase MCMC iterations and/or investigate whether there are simply insufficient data for the parameter to be well estimated. Note also that the full joint distribution is a multidimensional distribution which cannot be pictured and these plots only show marginal one-dimensional distributions for each parameter, like shadows of the multidimensional distribution. The parameter samples can be viewed for both the concentration distributions and consumption distributions. The values at the peaks of those distributions could also be compared with the corresponding parameter estimates directly evaluated from raw (log-)data, e.g., mean and standard deviation, although censored data can make direct comparison less straightforward.
 
 :::
 :::
 
+<br>
+<hr />
+
+#### [**Concentration parameters**]{style="color: #004F71"}
+
+::: {.cols style="display: grid; grid-template-columns:  2fr 1fr; grid-column-gap: 25px;"}
+::: col
+
+$Figure$ $5b$ Permuted MCMC samples of model parameters $mu$ and $sigma$ of the log-normal ($mu$, $sigma$)-distribution, and consumption frequency $p$ of the **food**. For each parameter, also the approximated marginal probability density is shown.
+
+<br />
+
+```{r consum-params-plot, distPlot5_2, fig.show ='hold', out.width="600px", out.height="400px"}
+
+#cat('**Consumption parameters**')
+
+distPlot5_2(n_sim,foodnamesused, nfused, foodindex,
+            nf,
+            mus0,ppred,
+            Ss
+)
+
+```
+
+
+
+:::
+
+::: {.col data-latex="{0.4\\textwidth}" style="background-color: #F4F3F2;"}
+
+> <br>
+> The posterior distribution is computed using **Markov Chain Monte Carlo (MCMC)** sampling. In MCMC, each iteration step depends on the values generated at the previous step. This sampling converges to the correct target distribution which is the posterior distribution of all unknown parameters. In difficulties, the posterior may be nearly flat or with multiple peaks. This, and/or insufficient iterations may then result into poor convergence, and the obtained parameter estimates would not be valid. Poor convergence and poor mixing of the algorithm could be detected as instability in the parameter distributions. The MCMC sample of the parameters, and the marginal posterior distribution are provided for critical inspection. Although a visual inspection is informal and indicative, it can reveal problems in MCMC sampling. The sample should look smoothly scattered without clustering at some values only. The marginal probability density (plotted vertically on the left side) should look smooth without ‘extra bumps’. New or increased MCMC runs should lead to same results. If a possible problem is detected, increase MCMC iterations and/or investigate whether there are simply insufficient data for the parameter to be well estimated. Note also that the full joint distribution is a multidimensional distribution which cannot be pictured and these plots only show marginal one-dimensional distributions for each parameter, like shadows of the multidimensional distribution. The parameter samples can be viewed for both the concentration distributions and consumption distributions. The values at the peaks of those distributions could also be compared with the corresponding parameter estimates directly evaluated from raw (log-)data, e.g., mean and standard deviation, although censored data can make direct comparison less straightforward.
+
+:::
+:::
+
+<br>
 <hr />
 
 
-## [Tables]{style="color: #004F71"}
+## [**Tables**]{style="color: #004F71"}{.tabset}
+
 
 ### [**Posterior predictive distributions**]{style="color: #004F71"}
 
 Posterior predictive distributions present predictions where all uncertainties and variabilities are integrated into one single probability distribution. This can be a useful summary for assessing what is now probable, given all the data with all its variability and uncertainties. The distribution is obtained by averaging (weighing) the possible variability distributions over the uncertainty distribution of their parameters.
 
 
-```{r summary-table, echo = F}
 
-datatable(params$resultValues, rownames = FALSE,
-          caption = "POSTERIOR PREDICTIVE DISTRIBUTION SUMMARIES",
-                    class = 'row-border stripe',
-                    extensions = c("Buttons", "RowGroup"),
-                    options = list(
-                      rowGroup = list(dataSrc = 1), # row grouping feature -> grouped by second column value 
-                      
-                      dom = "Bfrtip",
-                      buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
-                                          exportOptions = list(columns = ":visible"),
-                                          filename =  paste("Posterior_predictive_distribution_summaries"))
-                      ),
-                      
-                      paging=FALSE, scrollY = "480px"
-                    )
-      )
-            
+```{r, include=FALSE, code= readLines('tablefunctions.R'), cache=FALSE}
+
+knitr::read_chunk('tablefunctions.R')
+
 ```
 
-<br /> <br />
+
+
+
+```{r summary-table, echo = F}
+
+# create data frame containing posterior predictive summaries----
+
+resultValues <- table1(n_sim, input_modelchoice,input_modelchoice2,input_modelchoice3,input_modelchoice4,input_modelchoice5,
+                       theresults, foodnamesused, nfused, foodindex, hazardnames, 
+                       hazardnamesusedK,hazardnamesusedM, nhusedK, nhusedM, hazardindexK, hazardindexM,
+                       Rall, Pall,nhK,nhM,nf,nexactK,nexactM,
+                       mucK,mucM,mus0,muw,pK,pM,ppred,sigcK,sigcM,sigw,
+                       logitp0,
+                       Ss,Ss0,Sp
+)
+
+datatable(resultValues, rownames = FALSE,
+          caption = "POSTERIOR PREDICTIVE DISTRIBUTION SUMMARIES",
+          class = 'row-border stripe',
+          extensions = c("Buttons", "RowGroup"),
+          options = list(
+            rowGroup = list(dataSrc = 1), # row grouping feature -> grouped by second column value 
+            #selection = 'none',
+            dom = "Bfrtip",
+            buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
+                                exportOptions = list(columns = ":visible"),
+                                filename =  paste("Posterior_predictive_distribution_summaries"))
+            ),
+            ## All results appear on same page:
+            paging=FALSE, scrollY = "480px"
+          )
+)
+
+```
+
+<br />
 
 <hr />
 
@@ -475,131 +750,151 @@ Exposure limit analysis presents the part of the population (1 = 100%) with expo
 
 The columns Q05, Q50, Q95 refer to uncertainty quantiles for the 'Quantity' in first column. The 'Quantity' Q95(exposure) refer to the unknown quantiles of variability distribution. This becomes estimated with the indicated uncertainty quantiles Q05, Q50, Q95.
 
-
-
 ```{r limits-table, echo = F}
 
-datatable(params$resultProbs, rownames = FALSE,
+# create data frame containing exposure limit analysis table----
+
+resultProbs <- table2(n_sim, input_modelchoice,input_modelchoice2,foodnamesused,nfused,foodindex,hazardnames,
+                      hazardnamesused,hazardtypesused,hazardnamesK,hazardnamesM,
+                      hazardnamesusedK,hazardnamesusedM,nhusedK,nhusedM,hazardindexK,hazardindexM,
+                      Rall,Pall,nhK,nhM,nf,nexactK,nexactM,limitexpoK,limitexpoM,
+                      mus0,ppred,mucK,mucM,sigcK,sigcM,pK,pM,logitp0,muw,sigw,
+                      Ss,Ss0,Sp 
+)
+
+datatable(resultProbs, rownames = FALSE,
           caption = "Exposure limit analysis",
-                    class = 'row-border stripe',
-                    extensions = c("Buttons", "RowGroup"),
-                    options = list(
-                      rowGroup = list(dataSrc = 0), # row grouping feature -> grouped by second column value 
-                     
-                      dom = "Bfrtip",
-                      buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
-                                          exportOptions = list(columns = ":visible"),
-                                            filename =  paste("Exposure_limit_analysis"))
-                      ),
-                      
-                      paging=FALSE, scrollY = "480px"
-                    )
-      )
+          class = 'row-border stripe',
+          extensions = c("Buttons", "RowGroup"),
+          options = list(
+            rowGroup = list(dataSrc = 0), # row grouping feature -> grouped by second column value 
             
+            dom = "Bfrtip",
+            buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
+                                exportOptions = list(columns = ":visible"),
+                                filename =  paste("Exposure_limit_analysis"))
+            ),
+            
+            paging=FALSE, scrollY = "480px"
+          )
+)
+
+
 ```
 
-<br /> <br />
+<br /> 
 
 <hr />
 
-# [**Input data**]{style="color:  #004F71"}
+
+# [**Input data**]{style="color:  #004F71"}{.tabset}
 
 <br /> [The following tables contain the input data used for the model simulations. Each table could be downloaded and saved as an Excel file. Note that currently the NAs from the original data are saved as empty cells.]{style="color: #004F71;"} <br />
 
-## [Concentrations data]{style="color: #004F71; bold"}
+## [**Concentrations data**]{style="color: #004F71"}
 
 ```{r concentab, echo = F}
 
+
 datatable(params$concen, 
-             
-              class = "hover",
+          # colnames = list(h5("Model parameter"), h5("Selected")),
+          class = "hover",
           rownames = FALSE,
-              extensions = c("Buttons","FixedColumns"),
-              options = list(
-                dom = "Bt",
-                buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
-                                    exportOptions = list(columns = ":visible"),
-                                    filename =  paste("Concentrations_data"))
-                ),
-                paging=FALSE,
-                searching = FALSE,
-                ordering = FALSE,
-                scrollX = TRUE, scrollY = "400px"
-              )
-    )
+          extensions = c("Buttons","FixedColumns"),
+          options = list(
+            dom = "Bt",
+            buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
+                                exportOptions = list(columns = ":visible"),
+                                filename =  paste("Concentrations_data"))
+            ),
+            paging=FALSE,
+            searching = FALSE,
+            ordering = FALSE,
+            scrollX = TRUE, scrollY = "400px"
+          )
+)
+
 
 ```
 
-## [Consumptions data]{style="color: #004F71; bold"}
+## [**Consumptions data**]{style="color: #004F71"}
 
 ```{r consumtab, echo = F}
 
+
 datatable(params$consum, 
-             
-              class = "hover",
+          # colnames = list(h5("Model parameter"), h5("Selected")),
+          class = "hover",
           rownames = FALSE,
-              extensions = c("Buttons","FixedColumns"),
-              options = list(
-                dom = "Bt",
-                buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
-                                    exportOptions = list(columns = ":visible"),
-                                    filename =  paste("Consumptions_data"))
-                ),
-                paging=FALSE,
-                searching = FALSE,
-                ordering = FALSE,
-                scrollX = TRUE, scrollY = "400px"
-              )
-    )
+          extensions = c("Buttons","FixedColumns"),
+          options = list(
+            dom = "Bt",
+            buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
+                                exportOptions = list(columns = ":visible"),
+                                filename =  paste("Consumptions_data"))
+            ),
+            paging=FALSE,
+            searching = FALSE,
+            ordering = FALSE,
+            scrollX = TRUE, scrollY = "400px"
+          )
+)
+
 
 ```
 
-## [Occurrance data]{style="color: #004F71; bold"}
+## [**Occurrance data**]{style="color: #004F71"}
 
 ```{r ocdatatab, echo = F}
 
+
 datatable(params$ocdata, 
-             
-              class = "hover",
+          # colnames = list(h5("Model parameter"), h5("Selected")),
+          class = "hover",
           rownames = FALSE,
-              extensions = c("Buttons","FixedColumns"),
-              options = list(
-                dom = "Bt",
-                buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
-                                    exportOptions = list(columns = ":visible"),
-                                    filename =  paste("Occurrance_data"))
-                ),
-                paging=FALSE,
-                searching = FALSE,
-                ordering = FALSE,
-                scrollX = TRUE, scrollY = "400px"
-              )
-    )
+          extensions = c("Buttons","FixedColumns"),
+          options = list(
+            dom = "Bt",
+            buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
+                                exportOptions = list(columns = ":visible"),
+                                filename =  paste("Occurrance_data"))
+            ),
+            paging=FALSE,
+            searching = FALSE,
+            ordering = FALSE,
+            scrollX = TRUE, scrollY = "400px"
+          )
+)
+
 
 ```
 
-## [Prevalence data]{style="color: #004F71; bold"}
+## [**Prevalence data**]{style="color: #004F71"}
 
 ```{r prevdatatab, echo = F}
 
+
 datatable(params$prevdata, 
-            
-              class = "hover",
+          # colnames = list(h5("Model parameter"), h5("Selected")),
+          class = "hover",
           rownames = FALSE,
-              extensions = c("Buttons","FixedColumns"),
-              options = list(
-                dom = "Bt",
-                buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
-                                    exportOptions = list(columns = ":visible"),
-                                    filename =  paste("Prevalence_data"))
-                ),
-                paging=FALSE,
-                searching = FALSE,
-                ordering = FALSE,
-                scrollX = TRUE, scrollY = "400px"
-              )
-    )
+          extensions = c("Buttons","FixedColumns"),
+          options = list(
+            dom = "Bt",
+            buttons = list(list(extend = "excel", text = '<span class="glyphicon glyphicon-download-alt"></span> Excel', title = NULL, 
+                                exportOptions = list(columns = ":visible"),
+                                filename =  paste("Prevalence_data"))
+            ),
+            paging=FALSE,
+            searching = FALSE,
+            ordering = FALSE,
+            scrollX = TRUE, scrollY = "400px"
+          )
+)
+
 
 ```
 
 <br>
+
+
